@@ -1,0 +1,22 @@
+/**
+ * Admin styles for Social Feed plugin.
+ *
+ * @package SocialFeed
+ */
+
+.sf-admin-wrap {
+	max-width: 1200px;
+	margin-top: 20px;
+}
+
+.sf-admin-content {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	padding: 20px;
+	margin-top: 20px;
+}
+
+.sf-admin-wrap h1 {
+	margin-bottom: 10px;
+}
