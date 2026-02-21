@@ -1,0 +1,243 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  # ===========================================
+  # PHP Linting Job
+  # ===========================================
+  lint:
+    name: PHP Lint & PHPCS
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0', '8.1', '8.2']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, intl
+          tools: composer, phpcs, phpcbf
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest || true
+
+      - name: Install WordPress Coding Standards
+        run: |
+          composer global require "wp-coding-standards/wpcs"
+          composer global require "phpcompatibility/phpcompatibility-wp"
+          phpcs --config-set installed_paths $(composer global config home)/vendor/wp-coding-standards/wpcs,$(composer global config home)/vendor/phpcompatibility/phpcompatibility-wp
+
+      - name: Run PHP Syntax Check
+        run: |
+          find . -name "*.php" -not -path "./vendor/*" -not -path "./node_modules/*" | xargs -n1 php -l
+
+      - name: Run PHPCS
+        run: |
+          phpcs --standard=WordPress --extensions=php --ignore=vendor/,node_modules/,tests/ --report=summary . || true
+
+  # ===========================================
+  # Build Job
+  # ===========================================
+  build:
+    name: Build Plugin ZIP
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm ci || npm install
+          fi
+
+      - name: Build assets
+        run: |
+          if [ -f package.json ]; then
+            npm run build || true
+          fi
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+          coverage: none
+
+      - name: Install Composer dependencies (production)
+        run: |
+          if [ -f composer.json ]; then
+            composer install --no-dev --prefer-dist --no-progress || true
+          fi
+
+      - name: Get plugin version
+        id: version
+        run: |
+          VERSION=$(grep -oP "Version:\s*\K[0-9.]+" social-feed.php || echo "1.0.0")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Plugin version: $VERSION"
+
+      - name: Create plugin directory
+        run: |
+          mkdir -p build/social-feed
+
+      - name: Copy plugin files
+        run: |
+          # Copy all PHP files
+          find . -name "*.php" -not -path "./vendor/*" -not -path "./node_modules/*" -not -path "./tests/*" -not -path "./build/*" | while read file; do
+            mkdir -p "build/social-feed/$(dirname $file)"
+            cp "$file" "build/social-feed/$file"
+          done
+          
+          # Copy asset directories
+          cp -r assets build/social-feed/ 2>/dev/null || true
+          cp -r templates build/social-feed/ 2>/dev/null || true
+          cp -r languages build/social-feed/ 2>/dev/null || true
+          cp -r blocks build/social-feed/ 2>/dev/null || true
+          
+          # Copy documentation files
+          cp README.txt build/social-feed/ 2>/dev/null || true
+          cp LICENSE build/social-feed/ 2>/dev/null || true
+          cp LICENSE.txt build/social-feed/ 2>/dev/null || true
+          cp CHANGELOG.md build/social-feed/ 2>/dev/null || true
+          
+          # Copy uninstall.php
+          cp uninstall.php build/social-feed/ 2>/dev/null || true
+
+      - name: Remove development files from build
+        run: |
+          cd build/social-feed
+          # Remove development files
+          rm -rf .git .github .gitignore .gitattributes
+          rm -rf node_modules vendor
+          rm -rf tests coverage
+          rm -rf .phpunit.result.cache phpunit.xml phpunit.xml.dist
+          rm -rf phpcs.xml phpcs.xml.dist .phpcs.xml
+          rm -rf .eslintrc .eslintrc.js .eslintrc.json
+          rm -rf .prettierrc .stylelintrc .editorconfig
+          rm -rf package.json package-lock.json composer.json composer.lock
+          rm -rf webpack.config.js rollup.config.js Gruntfile.js Gulpfile.js
+          rm -rf .travis.yml .scrutinizer.yml codeception.yml
+          rm -rf CONTRIBUTING.md SECURITY.md
+          rm -rf *.log *.map
+          rm -rf .DS_Store Thumbs.db desktop.ini
+
+      - name: Create ZIP archive
+        run: |
+          cd build
+          zip -r social-feed-${{ steps.version.outputs.version }}.zip social-feed
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-feed-${{ steps.version.outputs.version }}
+          path: build/social-feed-${{ steps.version.outputs.version }}.zip
+          retention-days: 30
+
+  # ===========================================
+  # Release Job (only on tags)
+  # ===========================================
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: tag
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: social-feed-${{ steps.tag.outputs.version }}
+          path: ./
+
+      - name: Extract changelog for version
+        id: changelog
+        run: |
+          # Extract changelog section for this version
+          CHANGELOG=$(awk '/^## \[?${{ steps.tag.outputs.version }}\]?/,/^## \[?[0-9]/' CHANGELOG.md | head -n -1 || echo "Release ${{ steps.tag.outputs.version }}")
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Social Feed v${{ steps.tag.outputs.version }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: ${{ contains(steps.tag.outputs.version, '-') }}
+          files: social-feed-${{ steps.tag.outputs.version }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ===========================================
+  # WordPress.org Deploy Job (optional)
+  # ===========================================
+  # Uncomment this job to enable automatic deployment to WordPress.org
+  # You'll need to add SVN_USERNAME and SVN_PASSWORD as repository secrets
+  
+  # wporg-deploy:
+  #   name: Deploy to WordPress.org
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: startsWith(github.ref, 'refs/tags/v')
+  #   
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     - name: WordPress Plugin Deploy
+  #       uses: 10up/action-wordpress-plugin-deploy@stable
+  #       env:
+  #         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+  #         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+  #         SLUG: social-feed
