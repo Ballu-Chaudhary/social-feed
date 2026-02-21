@@ -57,7 +57,11 @@ spl_autoload_register( 'sf_autoloader' );
  */
 function sf_activate() {
 	require_once SF_PLUGIN_PATH . 'includes/class-sf-database.php';
+	require_once SF_PLUGIN_PATH . 'includes/class-sf-cron.php';
+
 	SF_Database::create_tables();
+	SF_Cron::schedule_events();
+
 	flush_rewrite_rules();
 }
 
@@ -67,20 +71,10 @@ register_activation_hook( __FILE__, 'sf_activate' );
  * Plugin deactivation.
  */
 function sf_deactivate() {
-	$cron = get_option( 'cron', array() );
-	if ( is_array( $cron ) ) {
-		$cleared = array();
-		foreach ( $cron as $timestamp => $hooks ) {
-			if ( is_array( $hooks ) ) {
-				foreach ( $hooks as $hook => $events ) {
-					if ( strpos( $hook, 'sf_' ) === 0 && ! isset( $cleared[ $hook ] ) ) {
-						wp_clear_scheduled_hook( $hook );
-						$cleared[ $hook ] = true;
-					}
-				}
-			}
-		}
-	}
+	require_once SF_PLUGIN_PATH . 'includes/class-sf-cron.php';
+
+	SF_Cron::clear_events();
+
 	flush_rewrite_rules();
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Shortcode handler for Social Feed plugin.
+ * Shortcode registration for Social Feed plugin.
  *
  * @package SocialFeed
  */
@@ -11,92 +11,178 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Class SF_Shortcode
+ *
+ * Handles [social_feed] shortcode registration and rendering.
  */
 class SF_Shortcode {
+
+	/**
+	 * Whether assets have been registered.
+	 *
+	 * @var bool
+	 */
+	private static $assets_registered = false;
+
+	/**
+	 * Whether a feed has been rendered on this page.
+	 *
+	 * @var bool
+	 */
+	private static $feed_rendered = false;
 
 	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		add_shortcode( 'social_feed', array( $this, 'render' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 5 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_assets' ), 10 );
+		add_action( 'wp_footer', array( $this, 'late_enqueue_assets' ), 1 );
 	}
 
 	/**
-	 * Render shortcode.
-	 *
-	 * @param array $atts Shortcode attributes.
-	 * @return string
+	 * Register assets early without enqueueing.
 	 */
-	public function render( $atts ) {
-		$this->enqueue();
-
-		$atts = SF_Helpers::sanitize_shortcode_atts( $atts );
-
-		$platform = $atts['platform'];
-		$layout   = $atts['layout'];
-		$limit    = $atts['limit'];
-		$columns  = $atts['columns'];
-
-		$class_name = 'SF_' . ucfirst( $platform );
-		if ( ! class_exists( $class_name ) ) {
-			$platform_file = SF_PLUGIN_PATH . 'platforms/class-sf-' . $platform . '.php';
-			if ( file_exists( $platform_file ) ) {
-				require_once $platform_file;
-			}
+	public function register_assets() {
+		if ( self::$assets_registered ) {
+			return;
 		}
 
-		$posts = array();
-		if ( class_exists( $class_name ) ) {
-			$platform_instance = new $class_name();
-			$posts            = $platform_instance->fetch_posts( $limit );
-			if ( is_wp_error( $posts ) ) {
-				$posts = array();
-			}
+		$settings = get_option( 'sf_settings', array() );
+
+		if ( ! isset( $settings['load_css'] ) || '1' === $settings['load_css'] ) {
+			wp_register_style(
+				'sf-frontend',
+				SF_PLUGIN_URL . 'assets/css/frontend.css',
+				array(),
+				SF_VERSION
+			);
 		}
 
-		$renderer = new SF_Renderer();
-		$output   = $renderer->render( $platform, $layout, $posts, $atts );
+		if ( ! isset( $settings['load_js'] ) || '1' === $settings['load_js'] ) {
+			wp_register_script(
+				'sf-frontend',
+				SF_PLUGIN_URL . 'assets/js/frontend.js',
+				array( 'jquery' ),
+				SF_VERSION,
+				true
+			);
+		}
 
-		$wrapper_class = sprintf(
-			'sf-feed sf-feed--%s sf-feed--%s sf-feed--cols-%d',
-			esc_attr( $platform ),
-			esc_attr( $layout ),
-			$columns
+		self::$assets_registered = true;
+	}
+
+	/**
+	 * Render the shortcode.
+	 *
+	 * @param array  $atts    Shortcode attributes.
+	 * @param string $content Shortcode content.
+	 * @return string Rendered HTML.
+	 */
+	public function render( $atts, $content = '' ) {
+		$atts = shortcode_atts(
+			array(
+				'id'      => 0,
+				'title'   => '',
+				'columns' => '',
+				'limit'   => '',
+			),
+			$atts,
+			'social_feed'
 		);
 
-		return '<div class="' . esc_attr( $wrapper_class ) . '">' . $output . '</div>';
+		$feed_id = absint( $atts['id'] );
+
+		if ( ! $feed_id ) {
+			if ( current_user_can( 'manage_options' ) ) {
+				return '<p class="sf-error">' . esc_html__( 'Social Feed: Please specify a feed ID. Example: [social_feed id="1"]', 'social-feed' ) . '</p>';
+			}
+			return '';
+		}
+
+		$overrides = array();
+
+		if ( ! empty( $atts['title'] ) ) {
+			$overrides['feed_title'] = sanitize_text_field( $atts['title'] );
+		}
+
+		if ( ! empty( $atts['columns'] ) ) {
+			$overrides['columns'] = absint( $atts['columns'] );
+		}
+
+		if ( ! empty( $atts['limit'] ) ) {
+			$overrides['posts_per_page'] = absint( $atts['limit'] );
+		}
+
+		self::$feed_rendered = true;
+
+		$this->enqueue_assets();
+
+		return SF_Renderer::render_feed( $feed_id, $overrides );
+	}
+
+	/**
+	 * Maybe enqueue assets if shortcode is present in content.
+	 */
+	public function maybe_enqueue_assets() {
+		global $post;
+
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return;
+		}
+
+		if ( has_shortcode( $post->post_content, 'social_feed' ) ) {
+			$this->enqueue_assets();
+		}
+	}
+
+	/**
+	 * Late enqueue in footer if a feed was rendered but assets weren't loaded.
+	 */
+	public function late_enqueue_assets() {
+		if ( ! self::$feed_rendered ) {
+			return;
+		}
+
+		if ( ! wp_script_is( 'sf-frontend', 'enqueued' ) ) {
+			$this->enqueue_assets();
+			wp_print_styles( 'sf-frontend' );
+			wp_print_scripts( 'sf-frontend' );
+		}
 	}
 
 	/**
 	 * Enqueue frontend assets.
 	 */
-	public function enqueue_assets() {
-		global $post;
-		if ( ! is_singular() || ! $post || ! has_shortcode( $post->post_content, 'social_feed' ) ) {
-			return;
+	private function enqueue_assets() {
+		$settings = get_option( 'sf_settings', array() );
+
+		if ( ! isset( $settings['load_css'] ) || '1' === $settings['load_css'] ) {
+			wp_enqueue_style( 'sf-frontend' );
 		}
 
-		$this->enqueue();
-	}
+		if ( ! isset( $settings['load_js'] ) || '1' === $settings['load_js'] ) {
+			wp_enqueue_script( 'sf-frontend' );
 
-	/**
-	 * Enqueue CSS and JS assets.
-	 */
-	private function enqueue() {
-		wp_enqueue_style(
-			'sf-frontend',
-			SF_PLUGIN_URL . 'assets/css/frontend.css',
-			array(),
-			SF_VERSION
-		);
-
-		wp_enqueue_script(
-			'sf-frontend',
-			SF_PLUGIN_URL . 'assets/js/frontend.js',
-			array( 'jquery' ),
-			SF_VERSION,
-			true
-		);
+			if ( ! wp_script_is( 'sf-frontend', 'done' ) ) {
+				wp_localize_script(
+					'sf-frontend',
+					'sfFrontend',
+					array(
+						'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+						'nonce'   => wp_create_nonce( 'sf_frontend_nonce' ),
+						'i18n'    => array(
+							'loading'   => __( 'Loading...', 'social-feed' ),
+							'load_more' => __( 'Load More', 'social-feed' ),
+							'no_more'   => __( 'No more posts', 'social-feed' ),
+							'error'     => __( 'Error loading posts', 'social-feed' ),
+							'close'     => __( 'Close', 'social-feed' ),
+							'prev'      => __( 'Previous', 'social-feed' ),
+							'next'      => __( 'Next', 'social-feed' ),
+						),
+					)
+				);
+			}
+		}
 	}
 }

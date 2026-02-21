@@ -1,92 +1,704 @@
 /**
- * Frontend styles for Social Feed plugin.
+ * Frontend Styles for Social Feed
  *
  * @package SocialFeed
+ *
+ * CSS Variables (customizable via feed settings):
+ * --sf-columns: Number of grid columns
+ * --sf-columns-tablet: Columns on tablet
+ * --sf-columns-mobile: Columns on mobile
+ * --sf-gap: Gap between items
+ * --sf-border-radius: Item border radius
+ * --sf-bg-color: Feed background
+ * --sf-text-color: Text color
+ * --sf-link-color: Link color
+ * --sf-overlay-color: Hover overlay background
+ * --sf-overlay-text: Hover overlay text color
+ * --sf-header-bg: Header background
+ * --sf-header-text: Header text color
+ * --sf-button-bg: Button background
+ * --sf-button-text: Button text color
+ * --sf-item-bg: Item background
+ * --sf-border-color: Border color
+ * --sf-border-width: Border width
  */
+
+/* =========================================================================
+   Base Feed Container
+   ========================================================================= */
 
 .sf-feed {
 	width: 100%;
-	overflow: hidden;
+	max-width: 100%;
+	box-sizing: border-box;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-size: var(--sf-font-size, 14px);
+	color: var(--sf-text-color, #1d2327);
+	background: var(--sf-bg-color, transparent);
 }
 
-.sf-feed__grid {
-	display: grid;
-	gap: 1rem;
+.sf-feed *,
+.sf-feed *::before,
+.sf-feed *::after {
+	box-sizing: border-box;
 }
 
-.sf-feed__grid--cols-1 { grid-template-columns: 1fr; }
-.sf-feed__grid--cols-2 { grid-template-columns: repeat(2, 1fr); }
-.sf-feed__grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
-.sf-feed__grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
-.sf-feed__grid--cols-5 { grid-template-columns: repeat(5, 1fr); }
-.sf-feed__grid--cols-6 { grid-template-columns: repeat(6, 1fr); }
+/* =========================================================================
+   Feed Header
+   ========================================================================= */
 
-@media (max-width: 768px) {
-	.sf-feed__grid--cols-3,
-	.sf-feed__grid--cols-4,
-	.sf-feed__grid--cols-5,
-	.sf-feed__grid--cols-6 {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-.sf-feed__list {
+.sf-feed__header {
 	display: flex;
-	flex-direction: column;
-	gap: 1rem;
+	align-items: center;
+	gap: 15px;
+	padding: 20px;
+	background: var(--sf-header-bg, #fff);
+	color: var(--sf-header-text, inherit);
+	border-radius: var(--sf-border-radius, 0) var(--sf-border-radius, 0) 0 0;
+	margin-bottom: var(--sf-gap, 10px);
 }
 
-.sf-feed__carousel {
-	overflow-x: auto;
-	overflow-y: hidden;
-}
-
-.sf-feed__carousel-track {
-	display: flex;
-	gap: 1rem;
-	padding-bottom: 1rem;
-}
-
-.sf-post {
-	border-radius: 8px;
+.sf-feed__avatar {
+	flex-shrink: 0;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
 	overflow: hidden;
-	background: #fff;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.sf-post__link {
-	display: block;
 	text-decoration: none;
-	color: inherit;
 }
 
-.sf-post__media {
-	aspect-ratio: 1;
-	overflow: hidden;
-}
-
-.sf-post__media img {
+.sf-feed__avatar img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	display: block;
 }
 
-.sf-post__content {
-	padding: 12px;
+.sf-feed__header-info {
+	flex: 1;
+	min-width: 0;
 }
 
-.sf-post__text {
-	margin: 0 0 8px;
-	font-size: 0.875rem;
+.sf-feed__username {
+	display: inline-block;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--sf-link-color, #1d2327);
+	text-decoration: none;
+}
+
+.sf-feed__username:hover {
+	text-decoration: underline;
+}
+
+.sf-feed__followers {
+	display: block;
+	font-size: 13px;
+	color: #646970;
+	margin-top: 2px;
+}
+
+.sf-feed__bio {
+	margin: 8px 0 0;
+	font-size: 13px;
+	color: #646970;
 	line-height: 1.4;
 }
 
-.sf-post__meta {
-	font-size: 0.75rem;
-	color: #666;
+.sf-feed__follow-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 20px;
+	background: var(--sf-button-bg, #0095f6);
+	color: var(--sf-button-text, #fff);
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+	border-radius: 8px;
+	transition: background 0.2s, transform 0.2s;
+	flex-shrink: 0;
 }
 
-.sf-post__author::after {
-	content: " · ";
+.sf-feed__follow-btn:hover {
+	background: var(--sf-button-hover-bg, #0077c5);
+	transform: translateY(-1px);
+}
+
+.sf-feed__follow-btn svg {
+	width: 16px;
+	height: 16px;
+}
+
+.sf-feed__follow-btn--instagram {
+	background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.sf-feed__follow-btn--instagram:hover {
+	background: linear-gradient(45deg, #d98030, #cf5e36, #c6233d, #b8205c, #a9167a);
+}
+
+/* =========================================================================
+   Feed Items Grid
+   ========================================================================= */
+
+.sf-feed__items {
+	display: grid;
+	grid-template-columns: repeat(var(--sf-columns, 3), 1fr);
+	gap: var(--sf-gap, 10px);
+}
+
+/* =========================================================================
+   Feed Item
+   ========================================================================= */
+
+.sf-feed__item {
+	position: relative;
+	overflow: hidden;
+	background: var(--sf-item-bg, #f6f7f7);
+	border-radius: var(--sf-border-radius, 0);
+}
+
+.sf-feed--bordered .sf-feed__item {
+	border: var(--sf-border-width, 1px) solid var(--sf-border-color, #e0e0e0);
+}
+
+.sf-feed__item-link {
+	display: block;
+	position: relative;
+	text-decoration: none;
+	color: inherit;
+}
+
+.sf-feed__item-media {
+	position: relative;
+	padding-top: 100%;
+	overflow: hidden;
+	background: #e0e0e0;
+}
+
+.sf-feed__item-image {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.3s ease;
+}
+
+/* =========================================================================
+   Video/Carousel Overlays
+   ========================================================================= */
+
+.sf-feed__item-play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #fff;
+	opacity: 0.9;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.sf-feed__item-play svg {
+	filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.sf-feed__item-carousel-icon {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	color: #fff;
+	pointer-events: none;
+	z-index: 2;
+	filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+
+/* =========================================================================
+   Hover Effects
+   ========================================================================= */
+
+.sf-feed--hover-enabled .sf-feed__item-link:hover .sf-feed__item-image {
+	transform: scale(1.05);
+}
+
+.sf-feed--hover-zoom .sf-feed__item-link:hover .sf-feed__item-image {
+	transform: scale(1.1);
+}
+
+.sf-feed__item-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: var(--sf-overlay-color, rgba(0, 0, 0, 0.5));
+	color: var(--sf-overlay-text, #fff);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	z-index: 3;
+}
+
+.sf-feed__item-link:hover .sf-feed__item-overlay,
+.sf-feed__item-link:focus .sf-feed__item-overlay {
+	opacity: 1;
+}
+
+.sf-feed__item-stats {
+	display: flex;
+	gap: 20px;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.sf-feed__stat {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.sf-feed__stat svg {
+	fill: currentColor;
+}
+
+/* =========================================================================
+   Caption & Date
+   ========================================================================= */
+
+.sf-feed__item-caption {
+	padding: 12px;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--sf-text-color, #1d2327);
+	background: var(--sf-item-bg, #fff);
+}
+
+.sf-feed__item-date {
+	display: block;
+	padding: 0 12px 12px;
+	font-size: 12px;
+	color: #646970;
+	background: var(--sf-item-bg, #fff);
+}
+
+/* Show caption/date only when enabled */
+.sf-feed__item-caption:empty,
+.sf-feed__item-date:empty {
+	display: none;
+}
+
+/* =========================================================================
+   Load More
+   ========================================================================= */
+
+.sf-feed__load-more {
+	text-align: center;
+	margin-top: 30px;
+}
+
+.sf-feed__load-more-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 14px 32px;
+	background: var(--sf-button-bg, #1d2327);
+	color: var(--sf-button-text, #fff);
+	font-size: 14px;
+	font-weight: 600;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.2s, transform 0.2s;
+}
+
+.sf-feed__load-more-btn:hover {
+	background: var(--sf-button-hover-bg, #3c434a);
+	transform: translateY(-1px);
+}
+
+.sf-feed__load-more-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.sf-feed__load-more-btn.loading {
+	pointer-events: none;
+}
+
+/* =========================================================================
+   Infinite Scroll Trigger
+   ========================================================================= */
+
+.sf-feed__infinite-trigger {
+	display: flex;
+	justify-content: center;
+	padding: 30px 0;
+	min-height: 60px;
+}
+
+.sf-feed__loader {
+	width: 32px;
+	height: 32px;
+	border: 3px solid #e0e0e0;
+	border-top-color: var(--sf-button-bg, #1d2327);
+	border-radius: 50%;
+	animation: sf-loader-spin 0.8s linear infinite;
+}
+
+@keyframes sf-loader-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* =========================================================================
+   Empty State
+   ========================================================================= */
+
+.sf-feed__empty {
+	text-align: center;
+	padding: 60px 20px;
+	color: #646970;
+}
+
+.sf-feed__empty-icon {
+	margin-bottom: 20px;
+}
+
+.sf-feed__empty-icon svg {
+	fill: #c3c4c7;
+}
+
+.sf-feed__empty-text {
+	margin: 0;
+	font-size: 16px;
+}
+
+/* =========================================================================
+   Error State
+   ========================================================================= */
+
+.sf-feed-error {
+	padding: 20px;
+	background: #fce4e4;
+	border: 1px solid #d63638;
+	border-radius: 4px;
+	color: #721c24;
+}
+
+.sf-feed-error p {
+	margin: 0;
+}
+
+/* =========================================================================
+   Lightbox
+   ========================================================================= */
+
+.sf-lightbox {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.95);
+	z-index: 999999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s, visibility 0.3s;
+}
+
+.sf-lightbox.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+.sf-lightbox__content {
+	position: relative;
+	max-width: 90%;
+	max-height: 90%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sf-lightbox__media {
+	max-width: 100%;
+	max-height: 85vh;
+	object-fit: contain;
+}
+
+.sf-lightbox__close {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 44px;
+	height: 44px;
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 24px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s;
+	z-index: 10;
+}
+
+.sf-lightbox__close:hover {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+.sf-lightbox__nav {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 50px;
+	height: 50px;
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 24px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s;
+}
+
+.sf-lightbox__nav:hover {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+.sf-lightbox__nav--prev {
+	left: 20px;
+}
+
+.sf-lightbox__nav--next {
+	right: 20px;
+}
+
+.sf-lightbox__caption {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 20px;
+	background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+	color: #fff;
+	font-size: 14px;
+	line-height: 1.5;
+	max-height: 150px;
+	overflow-y: auto;
+}
+
+/* =========================================================================
+   Responsive Breakpoints
+   ========================================================================= */
+
+@media screen and (max-width: 1024px) {
+	.sf-feed__items {
+		grid-template-columns: repeat(var(--sf-columns-tablet, 2), 1fr);
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.sf-feed__items {
+		grid-template-columns: repeat(var(--sf-columns-mobile, 1), 1fr);
+	}
+
+	.sf-feed__header {
+		flex-wrap: wrap;
+	}
+
+	.sf-feed__follow-btn {
+		width: 100%;
+		justify-content: center;
+		margin-top: 10px;
+	}
+
+	.sf-feed__item-stats {
+		font-size: 14px;
+		gap: 15px;
+	}
+
+	.sf-lightbox__nav {
+		width: 40px;
+		height: 40px;
+	}
+
+	.sf-lightbox__nav--prev {
+		left: 10px;
+	}
+
+	.sf-lightbox__nav--next {
+		right: 10px;
+	}
+}
+
+/* =========================================================================
+   Layout Variations
+   ========================================================================= */
+
+/* List Layout */
+.sf-feed--list .sf-feed__items {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sf-gap, 20px);
+}
+
+.sf-feed--list .sf-feed__item {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.sf-feed--list .sf-feed__item-media {
+	flex-shrink: 0;
+	width: 200px;
+	padding-top: 0;
+	height: 200px;
+}
+
+.sf-feed--list .sf-feed__item-link {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.sf-feed--list .sf-feed__item-caption,
+.sf-feed--list .sf-feed__item-date {
+	flex: 1;
+	padding: 15px;
+}
+
+@media screen and (max-width: 600px) {
+	.sf-feed--list .sf-feed__item {
+		flex-direction: column;
+	}
+
+	.sf-feed--list .sf-feed__item-media {
+		width: 100%;
+		padding-top: 100%;
+		height: auto;
+	}
+}
+
+/* Carousel Layout */
+.sf-feed--carousel .sf-feed__items {
+	display: flex;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch;
+	gap: var(--sf-gap, 10px);
+	padding-bottom: 10px;
+}
+
+.sf-feed--carousel .sf-feed__item {
+	flex-shrink: 0;
+	width: calc(100% / var(--sf-columns, 3) - var(--sf-gap, 10px));
+	scroll-snap-align: start;
+}
+
+.sf-feed--carousel::-webkit-scrollbar {
+	height: 6px;
+}
+
+.sf-feed--carousel::-webkit-scrollbar-track {
+	background: #f0f0f0;
+	border-radius: 3px;
+}
+
+.sf-feed--carousel::-webkit-scrollbar-thumb {
+	background: #c3c4c7;
+	border-radius: 3px;
+}
+
+.sf-feed--carousel::-webkit-scrollbar-thumb:hover {
+	background: #8c8f94;
+}
+
+/* Masonry Layout (JavaScript-powered) */
+.sf-feed--masonry .sf-feed__items {
+	column-count: var(--sf-columns, 3);
+	column-gap: var(--sf-gap, 10px);
+}
+
+.sf-feed--masonry .sf-feed__item {
+	break-inside: avoid;
+	margin-bottom: var(--sf-gap, 10px);
+}
+
+.sf-feed--masonry .sf-feed__item-media {
+	padding-top: 0;
+	height: auto;
+}
+
+.sf-feed--masonry .sf-feed__item-image {
+	position: relative;
+	height: auto;
+}
+
+@media screen and (max-width: 1024px) {
+	.sf-feed--masonry .sf-feed__items {
+		column-count: var(--sf-columns-tablet, 2);
+	}
+
+	.sf-feed--carousel .sf-feed__item {
+		width: calc(100% / var(--sf-columns-tablet, 2) - var(--sf-gap, 10px));
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.sf-feed--masonry .sf-feed__items {
+		column-count: var(--sf-columns-mobile, 1);
+	}
+
+	.sf-feed--carousel .sf-feed__item {
+		width: calc(100% / var(--sf-columns-mobile, 1) - var(--sf-gap, 10px));
+	}
+}
+
+/* =========================================================================
+   Accessibility
+   ========================================================================= */
+
+.sf-feed__item-link:focus-visible {
+	outline: 2px solid var(--sf-link-color, #0073aa);
+	outline-offset: 2px;
+}
+
+.sf-lightbox__close:focus-visible,
+.sf-lightbox__nav:focus-visible,
+.sf-feed__load-more-btn:focus-visible {
+	outline: 2px solid #fff;
+	outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.sf-feed__item-image,
+	.sf-feed__item-overlay,
+	.sf-lightbox,
+	.sf-feed__load-more-btn,
+	.sf-feed__follow-btn {
+		transition: none;
+	}
+
+	.sf-feed__loader {
+		animation: none;
+	}
 }

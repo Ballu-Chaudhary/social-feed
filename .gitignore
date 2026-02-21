@@ -1,0 +1,175 @@
+# ===========================================
+# Social Feed Plugin - Git Ignore
+# ===========================================
+
+# ===========================================
+# Dependencies
+# ===========================================
+node_modules/
+vendor/
+bower_components/
+
+# ===========================================
+# Build Artifacts
+# ===========================================
+/build/
+/dist/
+*.zip
+*.tar.gz
+
+# ===========================================
+# Logs
+# ===========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================================
+# OS Generated Files
+# ===========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# ===========================================
+# IDE / Editor Files
+# ===========================================
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.project
+.settings/
+*.tmproj
+*.tmproject
+.phpintel/
+*.phpintel
+
+# ===========================================
+# Environment & Config Files
+# ===========================================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+config.local.php
+wp-config.php
+wp-config-local.php
+
+# ===========================================
+# WordPress Specific
+# ===========================================
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/backup-db/
+wp-content/backups/
+wp-content/blogs.dir/
+wp-content/cache/
+wp-content/debug.log
+
+# ===========================================
+# Testing
+# ===========================================
+/tests/coverage/
+/coverage/
+.phpunit.result.cache
+phpunit.xml
+phpcs.xml
+
+# ===========================================
+# Package Manager Lock Files (optional)
+# ===========================================
+# Uncomment if you don't want to commit lock files
+# package-lock.json
+# composer.lock
+# yarn.lock
+
+# ===========================================
+# Development Files
+# ===========================================
+/dev/
+/scripts/
+Gruntfile.js
+Gulpfile.js
+webpack.config.js
+rollup.config.js
+.babelrc
+.eslintrc
+.eslintrc.js
+.eslintrc.json
+.prettierrc
+.stylelintrc
+.editorconfig
+phpcs.xml.dist
+phpunit.xml.dist
+.travis.yml
+.scrutinizer.yml
+codeception.yml
+CONTRIBUTING.md
+SECURITY.md
+
+# ===========================================
+# Documentation (if separate docs folder)
+# ===========================================
+/docs/
+/documentation/
+
+# ===========================================
+# Temporary Files
+# ===========================================
+/tmp/
+/temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# ===========================================
+# Sass / CSS
+# ===========================================
+.sass-cache/
+*.css.map
+*.scss.map
+
+# ===========================================
+# TypeScript
+# ===========================================
+*.tsbuildinfo
+
+# ===========================================
+# Source Maps (optional - uncomment to ignore)
+# ===========================================
+# *.map
+# *.js.map
+
+# ===========================================
+# Composer
+# ===========================================
+/vendor/
+composer.phar
+
+# ===========================================
+# NPM / Yarn
+# ===========================================
+.npm/
+.yarn/
+.pnp.*
+
+# ===========================================
+# Git
+# ===========================================
+# Keep these tracked, but ignore local configs
+# .git/
+# .gitattributes

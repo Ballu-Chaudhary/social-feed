@@ -1,0 +1,86 @@
+/**
+ * Block Editor Styles
+ *
+ * @package SocialFeed
+ */
+
+/* Block Wrapper */
+.sf-block-wrapper {
+	width: 100%;
+}
+
+/* Placeholder Styles */
+.sf-block-wrapper .components-placeholder {
+	padding: 30px;
+	background: #f6f7f7;
+	border: 1px dashed #c3c4c7;
+	border-radius: 4px;
+}
+
+.sf-block-wrapper .components-placeholder__icon {
+	color: #1d2327;
+}
+
+.sf-block-wrapper .components-placeholder__label {
+	font-weight: 600;
+	margin-bottom: 10px;
+}
+
+.sf-block-wrapper .components-placeholder__instructions {
+	margin-bottom: 20px;
+	color: #646970;
+}
+
+.sf-block-wrapper .components-placeholder .components-select-control {
+	max-width: 300px;
+}
+
+/* Inspector Panel Actions */
+.sf-block-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 15px;
+	padding-top: 15px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.sf-block-actions .components-button {
+	justify-content: center;
+}
+
+/* Feed Preview in Editor */
+.sf-block-wrapper .sf-feed {
+	pointer-events: none;
+}
+
+.sf-block-wrapper .sf-feed__load-more-btn,
+.sf-block-wrapper .sf-feed__follow-btn {
+	pointer-events: none;
+	cursor: default;
+}
+
+/* Loading State */
+.sf-block-wrapper .components-spinner {
+	margin: 20px auto;
+	display: block;
+}
+
+/* Error State */
+.sf-block-placeholder {
+	padding: 40px;
+	background: #f6f7f7;
+	border: 1px dashed #c3c4c7;
+	border-radius: 4px;
+	text-align: center;
+}
+
+.sf-block-placeholder p {
+	margin: 0;
+	color: #646970;
+}
+
+/* Server Side Render Loading */
+.sf-block-wrapper .block-editor-server-side-render__placeholder {
+	opacity: 0.5;
+}
