@@ -67,7 +67,6 @@ class SF_Core {
 			new SF_Ajax();
 		}
 
-		new SF_Renderer();
 		new SF_Shortcode();
 	}
 }

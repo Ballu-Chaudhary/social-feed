@@ -33,11 +33,13 @@ function sf_autoloader( $class_name ) {
 		return;
 	}
 
-	$class_file = 'class-' . strtolower( str_replace( '_', '-', substr( $class_name, 3 ) ) ) . '.php';
+	$class_file = 'class-' . strtolower( str_replace( '_', '-', $class_name ) ) . '.php';
 
 	$paths = array(
 		SF_PLUGIN_PATH . 'includes/' . $class_file,
 		SF_PLUGIN_PATH . 'admin/' . $class_file,
+		SF_PLUGIN_PATH . 'frontend/' . $class_file,
+		SF_PLUGIN_PATH . 'platforms/' . $class_file,
 	);
 
 	foreach ( $paths as $path ) {
