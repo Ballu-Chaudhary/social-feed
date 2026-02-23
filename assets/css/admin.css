@@ -768,13 +768,14 @@ body.admin-color-fresh .sf-dashboard-wrap .sf-stat-card--blue {
    Two-Panel Customizer Layout - Redesigned
    ========================================================================== */
 
-body.sf-admin-page.sf-customizer-page .wrap { margin: 0; padding: 0; }
+body.sf-admin-page.sf-customizer-page .wrap { margin: 0; padding: 0; max-width: none; }
 body.sf-admin-page.sf-customizer-page #wpbody-content { padding-bottom: 0; }
-body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap { margin-left: -20px; margin-right: 0; }
+body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap { margin-left: -20px; margin-right: -20px; }
 
 .sf-customizer-wrap {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
+	width: 100%;
 	min-height: calc(100vh - 80px);
 	background: #fff;
 	overflow: hidden;
@@ -1276,9 +1277,9 @@ body.folded .sf-customizer-wrap .sf-customizer-footer {
 	left: 36px;
 }
 
-/* Right Panel - Preview (58%) - Sticky so it stays visible when scrolling left panel */
+/* Right Panel - Preview - Fills right side, sticky when scrolling */
 .sf-customizer-panel.sf-customizer-preview {
-	width: 58%;
+	flex: 1;
 	min-width: 400px;
 	display: flex;
 	flex-direction: column;
@@ -2449,12 +2450,14 @@ tr:hover .sf-row-actions {
    Responsive - Tablet
    ========================================================================== */
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1024px) {
 	.sf-stats-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
 	
+	/* Stack layout only on tablets/small screens - preview goes below */
 	.sf-customizer-wrap {
+		flex-wrap: wrap;
 		flex-direction: column;
 	}
 	
@@ -2466,6 +2469,7 @@ tr:hover .sf-row-actions {
 	}
 	
 	.sf-customizer-panel.sf-customizer-preview {
+		flex: none;
 		min-height: 500px;
 		width: 100%;
 	}
