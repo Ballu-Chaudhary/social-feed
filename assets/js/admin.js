@@ -683,8 +683,45 @@
 		 */
 		init: function () {
 			this.bindEvents();
+			this.initTabs();
 			this.initColorPickers();
 			this.loadPreview();
+		},
+
+		/**
+		 * Initialize tab visibility and persistence.
+		 */
+		initTabs: function () {
+			var $wrap = $('.sf-customizer-wrap');
+			if (!$wrap.length) return;
+
+			var savedTab = null;
+			try {
+				savedTab = sessionStorage.getItem('sf_customizer_tab');
+			} catch (e) {}
+			var validTabs = ['feed', 'layout', 'design', 'header', 'posts', 'loadmore', 'advanced'];
+			var tab = (savedTab && validTabs.indexOf(savedTab) !== -1) ? savedTab : 'feed';
+
+			this.switchToTab($wrap, tab);
+		},
+
+		/**
+		 * Switch to a tab and update visibility.
+		 *
+		 * @param {jQuery} $wrap Customizer wrap element.
+		 * @param {string} tab   Tab identifier.
+		 */
+		switchToTab: function ($wrap, tab) {
+			if (!$wrap || !$wrap.length || !tab) return;
+
+			var $contents = $wrap.find('.sf-customizer-content .sf-tab-content');
+			var $target = $wrap.find('.sf-customizer-content .sf-tab-content[data-tab="' + tab + '"]');
+
+			$wrap.find('.sf-tab-btn').removeClass('active');
+			$wrap.find('.sf-tab-btn[data-tab="' + tab + '"]').addClass('active');
+
+			$contents.removeClass('active');
+			$target.addClass('active');
 		},
 
 		/**
@@ -745,13 +782,16 @@
 		 */
 		handleTabClick: function (e) {
 			e.preventDefault();
+			e.stopPropagation();
 			var tab = $(this).data('tab');
+			var $wrap = $(this).closest('.sf-customizer-wrap');
+			if (!$wrap.length || !tab) return;
 
-			$('.sf-tab-btn').removeClass('active');
-			$(this).addClass('active');
+			SF_Customizer.switchToTab($wrap, tab);
 
-			$('.sf-tab-content').removeClass('active');
-			$('.sf-tab-content[data-tab="' + tab + '"]').addClass('active');
+			try {
+				sessionStorage.setItem('sf_customizer_tab', tab);
+			} catch (e) {}
 		},
 
 		/**
@@ -817,9 +857,9 @@
 		 */
 		handleFollowBtnToggle: function () {
 			if ($(this).is(':checked')) {
-				$('.sf-follow-btn-options').slideDown(200);
+				$('.sf-follow-btn-section').slideDown(200);
 			} else {
-				$('.sf-follow-btn-options').slideUp(200);
+				$('.sf-follow-btn-section').slideUp(200);
 			}
 		},
 
@@ -854,13 +894,12 @@
 			if (type === 'none') {
 				$('.sf-loadmore-options').slideUp(200);
 			} else {
-				$('.sf-loadmore-options').slideDown(200);
-			}
-
-			if (type === 'button') {
-				$('.sf-button-text-option').slideDown(200);
-			} else {
-				$('.sf-button-text-option').slideUp(200);
+				$('.sf-loadmore-options').not('.sf-loadmore-button-section').slideDown(200);
+				if (type === 'button') {
+					$('.sf-loadmore-button-section').slideDown(200);
+				} else {
+					$('.sf-loadmore-button-section').slideUp(200);
+				}
 			}
 		},
 

@@ -296,9 +296,9 @@ class SF_Customizer {
 		<div class="sf-tab-content" data-tab="layout">
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Layout Type', 'social-feed' ); ?></div>
-			<div class="sf-field">
-				<label><?php esc_html_e( 'Layout Type', 'social-feed' ); ?></label>
-				<div class="sf-layout-options">
+				<div class="sf-field">
+					<label><?php esc_html_e( 'Layout Type', 'social-feed' ); ?></label>
+					<div class="sf-layout-options">
 					<?php
 					$layouts = array(
 						'grid'     => array( 'icon' => 'dashicons-grid-view', 'label' => __( 'Grid', 'social-feed' ) ),
@@ -314,40 +314,39 @@ class SF_Customizer {
 							<span class="sf-layout-label"><?php echo esc_html( $layout['label'] ); ?></span>
 						</label>
 					<?php endforeach; ?>
+					</div>
 				</div>
 			</div>
-
-			<div class="sf-field">
-				<label for="sf_columns_desktop"><?php esc_html_e( 'Columns (Desktop)', 'social-feed' ); ?></label>
-				<div class="sf-range-wrapper">
-					<input type="range" id="sf_columns_desktop" name="columns_desktop" value="<?php echo esc_attr( $settings['columns_desktop'] ); ?>" min="1" max="6">
-					<span class="sf-range-value"><?php echo esc_html( $settings['columns_desktop'] ); ?></span>
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Columns &amp; Spacing', 'social-feed' ); ?></div>
+				<div class="sf-field">
+					<label for="sf_columns_desktop"><?php esc_html_e( 'Columns (Desktop)', 'social-feed' ); ?></label>
+					<div class="sf-range-wrapper">
+						<input type="range" id="sf_columns_desktop" name="columns_desktop" value="<?php echo esc_attr( $settings['columns_desktop'] ); ?>" min="1" max="6">
+						<span class="sf-range-value"><?php echo esc_html( $settings['columns_desktop'] ); ?></span>
+					</div>
 				</div>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_columns_tablet"><?php esc_html_e( 'Columns (Tablet)', 'social-feed' ); ?></label>
-				<div class="sf-range-wrapper">
-					<input type="range" id="sf_columns_tablet" name="columns_tablet" value="<?php echo esc_attr( $settings['columns_tablet'] ); ?>" min="1" max="4">
-					<span class="sf-range-value"><?php echo esc_html( $settings['columns_tablet'] ); ?></span>
+				<div class="sf-field">
+					<label for="sf_columns_tablet"><?php esc_html_e( 'Columns (Tablet)', 'social-feed' ); ?></label>
+					<div class="sf-range-wrapper">
+						<input type="range" id="sf_columns_tablet" name="columns_tablet" value="<?php echo esc_attr( $settings['columns_tablet'] ); ?>" min="1" max="4">
+						<span class="sf-range-value"><?php echo esc_html( $settings['columns_tablet'] ); ?></span>
+					</div>
 				</div>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_columns_mobile"><?php esc_html_e( 'Columns (Mobile)', 'social-feed' ); ?></label>
-				<div class="sf-range-wrapper">
-					<input type="range" id="sf_columns_mobile" name="columns_mobile" value="<?php echo esc_attr( $settings['columns_mobile'] ); ?>" min="1" max="2">
-					<span class="sf-range-value"><?php echo esc_html( $settings['columns_mobile'] ); ?></span>
+				<div class="sf-field">
+					<label for="sf_columns_mobile"><?php esc_html_e( 'Columns (Mobile)', 'social-feed' ); ?></label>
+					<div class="sf-range-wrapper">
+						<input type="range" id="sf_columns_mobile" name="columns_mobile" value="<?php echo esc_attr( $settings['columns_mobile'] ); ?>" min="1" max="2">
+						<span class="sf-range-value"><?php echo esc_html( $settings['columns_mobile'] ); ?></span>
+					</div>
 				</div>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_image_padding"><?php esc_html_e( 'Image Gap', 'social-feed' ); ?></label>
-				<div class="sf-range-wrapper">
-					<input type="range" id="sf_image_padding" name="image_padding" value="<?php echo esc_attr( $settings['image_padding'] ); ?>" min="0" max="20">
-					<span class="sf-range-value"><?php echo esc_html( $settings['image_padding'] ); ?>px</span>
+				<div class="sf-field">
+					<label for="sf_image_padding"><?php esc_html_e( 'Image Gap', 'social-feed' ); ?></label>
+					<div class="sf-range-wrapper">
+						<input type="range" id="sf_image_padding" name="image_padding" value="<?php echo esc_attr( $settings['image_padding'] ); ?>" min="0" max="20">
+						<span class="sf-range-value"><?php echo esc_html( $settings['image_padding'] ); ?>px</span>
+					</div>
 				</div>
-			</div>
 			</div>
 		</div>
 		<?php
@@ -363,56 +362,54 @@ class SF_Customizer {
 		<div class="sf-tab-content" data-tab="design">
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Colors', 'social-feed' ); ?></div>
-			<div class="sf-field">
-				<label for="sf_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
-				<div class="sf-color-picker-wrap"><input type="text" id="sf_bg_color" name="bg_color" value="<?php echo esc_attr( $settings['bg_color'] ); ?>" class="sf-color-picker"></div>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_text_color"><?php esc_html_e( 'Text Color', 'social-feed' ); ?></label>
-				<div class="sf-color-picker-wrap"><input type="text" id="sf_text_color" name="text_color" value="<?php echo esc_attr( $settings['text_color'] ); ?>" class="sf-color-picker"></div>
-			</div>
-			</div>
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Borders &amp; Effects', 'social-feed' ); ?></div>
-			<div class="sf-field">
-				<label for="sf_border_style"><?php esc_html_e( 'Border Style', 'social-feed' ); ?></label>
-				<select id="sf_border_style" name="border_style">
-					<option value="none" <?php selected( $settings['border_style'], 'none' ); ?>><?php esc_html_e( 'None', 'social-feed' ); ?></option>
-					<option value="solid" <?php selected( $settings['border_style'], 'solid' ); ?>><?php esc_html_e( 'Solid', 'social-feed' ); ?></option>
-					<option value="dashed" <?php selected( $settings['border_style'], 'dashed' ); ?>><?php esc_html_e( 'Dashed', 'social-feed' ); ?></option>
-				</select>
-			</div>
-
-			<div class="sf-field sf-border-options" <?php echo 'none' === $settings['border_style'] ? 'style="display:none;"' : ''; ?>>
-				<label for="sf_border_color"><?php esc_html_e( 'Border Color', 'social-feed' ); ?></label>
-				<div class="sf-color-picker-wrap"><input type="text" id="sf_border_color" name="border_color" value="<?php echo esc_attr( $settings['border_color'] ); ?>" class="sf-color-picker"></div>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_border_radius"><?php esc_html_e( 'Border Radius', 'social-feed' ); ?></label>
-				<div class="sf-range-wrapper">
-					<input type="range" id="sf_border_radius" name="border_radius" value="<?php echo esc_attr( $settings['border_radius'] ); ?>" min="0" max="20">
-					<span class="sf-range-value"><?php echo esc_html( $settings['border_radius'] ); ?>px</span>
+				<div class="sf-field">
+					<label for="sf_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
+					<div class="sf-color-picker-wrap"><input type="text" id="sf_bg_color" name="bg_color" value="<?php echo esc_attr( $settings['bg_color'] ); ?>" class="sf-color-picker"></div>
+				</div>
+				<div class="sf-field">
+					<label for="sf_text_color"><?php esc_html_e( 'Text Color', 'social-feed' ); ?></label>
+					<div class="sf-color-picker-wrap"><input type="text" id="sf_text_color" name="text_color" value="<?php echo esc_attr( $settings['text_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
 			</div>
-
-			<div class="sf-field">
-				<label for="sf_hover_effect"><?php esc_html_e( 'Hover Effect', 'social-feed' ); ?></label>
-				<select id="sf_hover_effect" name="hover_effect">
-					<option value="none" <?php selected( $settings['hover_effect'], 'none' ); ?>><?php esc_html_e( 'None', 'social-feed' ); ?></option>
-					<option value="zoom" <?php selected( $settings['hover_effect'], 'zoom' ); ?>><?php esc_html_e( 'Zoom', 'social-feed' ); ?></option>
-					<option value="fade" <?php selected( $settings['hover_effect'], 'fade' ); ?>><?php esc_html_e( 'Fade', 'social-feed' ); ?></option>
-				</select>
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Borders', 'social-feed' ); ?></div>
+				<div class="sf-field">
+					<label for="sf_border_style"><?php esc_html_e( 'Border Style', 'social-feed' ); ?></label>
+					<select id="sf_border_style" name="border_style">
+						<option value="none" <?php selected( $settings['border_style'], 'none' ); ?>><?php esc_html_e( 'None', 'social-feed' ); ?></option>
+						<option value="solid" <?php selected( $settings['border_style'], 'solid' ); ?>><?php esc_html_e( 'Solid', 'social-feed' ); ?></option>
+						<option value="dashed" <?php selected( $settings['border_style'], 'dashed' ); ?>><?php esc_html_e( 'Dashed', 'social-feed' ); ?></option>
+					</select>
+				</div>
+				<div class="sf-field sf-border-options" <?php echo 'none' === $settings['border_style'] ? 'style="display:none;"' : ''; ?>>
+					<label for="sf_border_color"><?php esc_html_e( 'Border Color', 'social-feed' ); ?></label>
+					<div class="sf-color-picker-wrap"><input type="text" id="sf_border_color" name="border_color" value="<?php echo esc_attr( $settings['border_color'] ); ?>" class="sf-color-picker"></div>
+				</div>
+				<div class="sf-field">
+					<label for="sf_border_radius"><?php esc_html_e( 'Border Radius', 'social-feed' ); ?></label>
+					<div class="sf-range-wrapper">
+						<input type="range" id="sf_border_radius" name="border_radius" value="<?php echo esc_attr( $settings['border_radius'] ); ?>" min="0" max="20">
+						<span class="sf-range-value"><?php echo esc_html( $settings['border_radius'] ); ?>px</span>
+					</div>
+				</div>
 			</div>
-
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_dark_mode"><?php esc_html_e( 'Dark Mode', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_dark_mode" name="dark_mode" value="1" <?php checked( $settings['dark_mode'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
-			</div>
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Display Options', 'social-feed' ); ?></div>
+				<div class="sf-field">
+					<label for="sf_hover_effect"><?php esc_html_e( 'Hover Effect', 'social-feed' ); ?></label>
+					<select id="sf_hover_effect" name="hover_effect">
+						<option value="none" <?php selected( $settings['hover_effect'], 'none' ); ?>><?php esc_html_e( 'None', 'social-feed' ); ?></option>
+						<option value="zoom" <?php selected( $settings['hover_effect'], 'zoom' ); ?>><?php esc_html_e( 'Zoom', 'social-feed' ); ?></option>
+						<option value="fade" <?php selected( $settings['hover_effect'], 'fade' ); ?>><?php esc_html_e( 'Fade', 'social-feed' ); ?></option>
+					</select>
+				</div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_dark_mode"><?php esc_html_e( 'Dark Mode', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_dark_mode" name="dark_mode" value="1" <?php checked( $settings['dark_mode'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
 			</div>
 		</div>
 		<?php
@@ -428,46 +425,42 @@ class SF_Customizer {
 		<div class="sf-tab-content" data-tab="header">
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Header Visibility', 'social-feed' ); ?></div>
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_show_header"><?php esc_html_e( 'Show Header', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_show_header" name="show_header" value="1" <?php checked( $settings['show_header'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
-			</div>
-
-			<div class="sf-header-options" <?php echo ! $settings['show_header'] ? 'style="display:none;"' : ''; ?>>
 				<div class="sf-field sf-toggle-field">
-					<label for="sf_show_profile_pic"><?php esc_html_e( 'Show Profile Picture', 'social-feed' ); ?></label>
+					<label for="sf_show_header"><?php esc_html_e( 'Show Header', 'social-feed' ); ?></label>
 					<label class="sf-toggle">
-						<input type="checkbox" id="sf_show_profile_pic" name="show_profile_pic" value="1" <?php checked( $settings['show_profile_pic'] ); ?>>
+						<input type="checkbox" id="sf_show_header" name="show_header" value="1" <?php checked( $settings['show_header'] ); ?>>
 						<span class="sf-toggle-slider"></span>
 					</label>
 				</div>
-
-				<div class="sf-field sf-toggle-field">
-					<label for="sf_show_username"><?php esc_html_e( 'Show Username', 'social-feed' ); ?></label>
-					<label class="sf-toggle">
-						<input type="checkbox" id="sf_show_username" name="show_username" value="1" <?php checked( $settings['show_username'] ); ?>>
-						<span class="sf-toggle-slider"></span>
-					</label>
-				</div>
-
-				<div class="sf-field sf-toggle-field">
-					<label for="sf_show_followers"><?php esc_html_e( 'Show Follower Count', 'social-feed' ); ?></label>
-					<label class="sf-toggle">
-						<input type="checkbox" id="sf_show_followers" name="show_followers" value="1" <?php checked( $settings['show_followers'] ); ?>>
-						<span class="sf-toggle-slider"></span>
-					</label>
-				</div>
-
-				<div class="sf-field sf-toggle-field">
-					<label for="sf_show_bio"><?php esc_html_e( 'Show Bio', 'social-feed' ); ?></label>
-					<label class="sf-toggle">
-						<input type="checkbox" id="sf_show_bio" name="show_bio" value="1" <?php checked( $settings['show_bio'] ); ?>>
-						<span class="sf-toggle-slider"></span>
-					</label>
-				</div>
+				<div class="sf-header-options" <?php echo ! $settings['show_header'] ? 'style="display:none;"' : ''; ?>>
+					<div class="sf-field sf-toggle-field">
+						<label for="sf_show_profile_pic"><?php esc_html_e( 'Show Profile Picture', 'social-feed' ); ?></label>
+						<label class="sf-toggle">
+							<input type="checkbox" id="sf_show_profile_pic" name="show_profile_pic" value="1" <?php checked( $settings['show_profile_pic'] ); ?>>
+							<span class="sf-toggle-slider"></span>
+						</label>
+					</div>
+					<div class="sf-field sf-toggle-field">
+						<label for="sf_show_username"><?php esc_html_e( 'Show Username', 'social-feed' ); ?></label>
+						<label class="sf-toggle">
+							<input type="checkbox" id="sf_show_username" name="show_username" value="1" <?php checked( $settings['show_username'] ); ?>>
+							<span class="sf-toggle-slider"></span>
+						</label>
+					</div>
+					<div class="sf-field sf-toggle-field">
+						<label for="sf_show_followers"><?php esc_html_e( 'Show Follower Count', 'social-feed' ); ?></label>
+						<label class="sf-toggle">
+							<input type="checkbox" id="sf_show_followers" name="show_followers" value="1" <?php checked( $settings['show_followers'] ); ?>>
+							<span class="sf-toggle-slider"></span>
+						</label>
+					</div>
+					<div class="sf-field sf-toggle-field">
+						<label for="sf_show_bio"><?php esc_html_e( 'Show Bio', 'social-feed' ); ?></label>
+						<label class="sf-toggle">
+							<input type="checkbox" id="sf_show_bio" name="show_bio" value="1" <?php checked( $settings['show_bio'] ); ?>>
+							<span class="sf-toggle-slider"></span>
+						</label>
+					</div>
 
 				<div class="sf-field sf-toggle-field">
 					<label for="sf_show_follow_btn"><?php esc_html_e( 'Show Follow Button', 'social-feed' ); ?></label>
@@ -476,8 +469,10 @@ class SF_Customizer {
 						<span class="sf-toggle-slider"></span>
 					</label>
 				</div>
-
-				<div class="sf-follow-btn-options" <?php echo ! $settings['show_follow_btn'] ? 'style="display:none;"' : ''; ?>>
+			</div>
+			<div class="sf-section sf-follow-btn-section" <?php echo ! $settings['show_follow_btn'] ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-section-title"><?php esc_html_e( 'Follow Button', 'social-feed' ); ?></div>
+				<div class="sf-follow-btn-options">
 					<div class="sf-field">
 						<label for="sf_follow_btn_color"><?php esc_html_e( 'Button Color', 'social-feed' ); ?></label>
 						<div class="sf-color-picker-wrap"><input type="text" id="sf_follow_btn_color" name="follow_btn_color" value="<?php echo esc_attr( $settings['follow_btn_color'] ); ?>" class="sf-color-picker"></div>
@@ -488,7 +483,6 @@ class SF_Customizer {
 						<input type="text" id="sf_follow_btn_text" name="follow_btn_text" value="<?php echo esc_attr( $settings['follow_btn_text'] ); ?>">
 					</div>
 				</div>
-			</div>
 			</div>
 		</div>
 		<?php
@@ -592,9 +586,9 @@ class SF_Customizer {
 		<div class="sf-tab-content" data-tab="loadmore">
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Load More Type', 'social-feed' ); ?></div>
-			<div class="sf-field">
-				<label><?php esc_html_e( 'Load More Type', 'social-feed' ); ?></label>
-				<div class="sf-radio-group">
+				<div class="sf-field">
+					<label><?php esc_html_e( 'Load More Type', 'social-feed' ); ?></label>
+					<div class="sf-radio-group">
 					<label class="sf-radio-option">
 						<input type="radio" name="loadmore_type" value="button" <?php checked( $settings['loadmore_type'], 'button' ); ?>>
 						<span><?php esc_html_e( 'Button', 'social-feed' ); ?></span>
@@ -611,25 +605,27 @@ class SF_Customizer {
 						<input type="radio" name="loadmore_type" value="none" <?php checked( $settings['loadmore_type'], 'none' ); ?>>
 						<span><?php esc_html_e( 'None', 'social-feed' ); ?></span>
 					</label>
+					</div>
+					</div>
 				</div>
 			</div>
-
-			<div class="sf-loadmore-options" <?php echo 'none' === $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
-				<div class="sf-field sf-button-text-option" <?php echo 'button' !== $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
+			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'none' === $settings['loadmore_type'] || 'button' !== $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-section-title"><?php esc_html_e( 'Button Appearance', 'social-feed' ); ?></div>
+				<div class="sf-field">
 					<label for="sf_loadmore_text"><?php esc_html_e( 'Button Text', 'social-feed' ); ?></label>
 					<input type="text" id="sf_loadmore_text" name="loadmore_text" value="<?php echo esc_attr( $settings['loadmore_text'] ); ?>">
 				</div>
-
-				<div class="sf-field sf-button-text-option" <?php echo 'button' !== $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-field">
 					<label for="sf_loadmore_bg_color"><?php esc_html_e( 'Button Background', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_bg_color" name="loadmore_bg_color" value="<?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
-
+			</div>
+			<div class="sf-section sf-loadmore-options" <?php echo 'none' === $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-section-title"><?php esc_html_e( 'Loading', 'social-feed' ); ?></div>
 				<div class="sf-field">
 					<label for="sf_posts_per_load"><?php esc_html_e( 'Posts to Load', 'social-feed' ); ?></label>
 					<input type="number" id="sf_posts_per_load" name="posts_per_load" value="<?php echo esc_attr( $settings['posts_per_load'] ); ?>" min="1" max="50">
 				</div>
-			</div>
 			</div>
 		</div>
 		<?php
@@ -646,7 +642,7 @@ class SF_Customizer {
 		<div class="sf-tab-content" data-tab="advanced">
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Customization', 'social-feed' ); ?></div>
-			<div class="sf-field" style="flex-direction:column;align-items:stretch;">
+			<div class="sf-field sf-field-textarea">
 				<label for="sf_custom_css"><?php esc_html_e( 'Custom CSS', 'social-feed' ); ?></label>
 				<textarea id="sf_custom_css" name="custom_css" rows="8" class="sf-code-textarea" placeholder="<?php esc_attr_e( '.sf-feed { /* your styles */ }', 'social-feed' ); ?>"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea>
 			</div>
