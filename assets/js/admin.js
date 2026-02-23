@@ -735,9 +735,16 @@
 			$(document).on('click', '.sf-refresh-preview', this.loadPreview.bind(this));
 			$(document).on('click', '.sf-save-feed', this.handleSave.bind(this));
 
-			$(document).on('click', '.sf-layout-option', function () {
-				$('.sf-layout-option').removeClass('active');
-				$(this).addClass('active');
+			$(document).on('click', '.sf-layout-option', function (e) {
+				e.preventDefault();
+				var $opt = $(this);
+				var $radio = $opt.find('input[type="radio"]');
+				if ($radio.length) {
+					$radio.prop('checked', true);
+					$('.sf-layout-option').removeClass('active');
+					$opt.addClass('active');
+					self.debouncePreview();
+				}
 			});
 
 			$(document).on('input change', '.sf-customizer-settings input, .sf-customizer-settings select, .sf-customizer-settings textarea', function () {

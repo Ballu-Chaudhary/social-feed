@@ -106,6 +106,7 @@ class SF_Ajax {
 	 * @return string
 	 */
 	private function render_preview_html( $settings, $device = 'desktop' ) {
+		$layout  = isset( $settings['layout'] ) ? sanitize_key( $settings['layout'] ) : 'grid';
 		$columns = $settings['columns_desktop'];
 		if ( 'tablet' === $device ) {
 			$columns = $settings['columns_tablet'];
@@ -163,6 +164,43 @@ class SF_Ajax {
 				display: grid;
 				grid-template-columns: repeat(<?php echo intval( $columns ); ?>, 1fr);
 				gap: <?php echo intval( $settings['image_padding'] ); ?>px;
+			}
+			.sf-preview-masonry {
+				column-count: <?php echo intval( $columns ); ?>;
+				column-gap: <?php echo intval( $settings['image_padding'] ); ?>px;
+			}
+			.sf-preview-masonry .sf-preview-item {
+				break-inside: avoid;
+				margin-bottom: <?php echo intval( $settings['image_padding'] ); ?>px;
+			}
+			.sf-preview-masonry .sf-preview-item-inner { padding-bottom: 80%; }
+			.sf-preview-list {
+				display: flex;
+				flex-direction: column;
+				gap: <?php echo intval( $settings['image_padding'] ); ?>px;
+			}
+			.sf-preview-list .sf-preview-item {
+				display: flex;
+				gap: 16px;
+				align-items: flex-start;
+			}
+			.sf-preview-list .sf-preview-item-inner {
+				flex-shrink: 0;
+				width: 120px;
+				padding-bottom: 120px;
+			}
+			.sf-preview-list .sf-preview-content { flex: 1; padding-top: 0; }
+			.sf-preview-carousel {
+				display: flex;
+				gap: <?php echo intval( $settings['image_padding'] ); ?>px;
+				overflow-x: auto;
+				scroll-snap-type: x mandatory;
+				-webkit-overflow-scrolling: touch;
+			}
+			.sf-preview-carousel .sf-preview-item {
+				flex: 0 0 calc((100% - <?php echo intval( $settings['image_padding'] ) * ( intval( $columns ) - 1 ); ?>px) / <?php echo intval( $columns ); ?>);
+				min-width: 140px;
+				scroll-snap-align: start;
 			}
 			.sf-preview-item {
 				border-radius: <?php echo intval( $settings['border_radius'] ); ?>px;
@@ -269,7 +307,7 @@ class SF_Ajax {
 			</div>
 			<?php endif; ?>
 
-			<div class="sf-preview-grid">
+			<div class="sf-preview-<?php echo esc_attr( $layout ); ?>">
 				<?php foreach ( $items as $item ) : ?>
 				<div class="sf-preview-item">
 					<div class="sf-preview-item-inner">

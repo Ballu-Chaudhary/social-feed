@@ -76,7 +76,7 @@ class SF_Renderer {
 		self::enqueue_feed_assets( $feed_id );
 
 		$platform    = $feed['platform'];
-		$layout_type = $settings['layout_type'] ?? 'grid';
+		$layout_type = $settings['layout'] ?? $settings['layout_type'] ?? 'grid';
 		$template    = self::get_template_path( $platform, $layout_type );
 
 		if ( ! file_exists( $template ) ) {
@@ -168,7 +168,12 @@ class SF_Renderer {
 			return $theme_template;
 		}
 
-		return SF_PLUGIN_PATH . 'templates/' . $platform . '/' . $layout_type . '.php';
+		$plugin_template = SF_PLUGIN_PATH . 'templates/' . $platform . '/' . $layout_type . '.php';
+		if ( file_exists( $plugin_template ) ) {
+			return $plugin_template;
+		}
+
+		return SF_PLUGIN_PATH . 'templates/' . $platform . '/grid.php';
 	}
 
 	/**
@@ -230,7 +235,7 @@ class SF_Renderer {
 		$classes = array(
 			'sf-feed',
 			'sf-feed--' . sanitize_html_class( $feed['platform'] ),
-			'sf-feed--' . sanitize_html_class( $settings['layout_type'] ?? 'grid' ),
+			'sf-feed--' . sanitize_html_class( $settings['layout'] ?? $settings['layout_type'] ?? 'grid' ),
 		);
 
 		if ( ! empty( $settings['enable_hover'] ) ) {
