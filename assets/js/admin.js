@@ -969,6 +969,7 @@
 				},
 				success: function (response) {
 					if (response.success) {
+						SF_BackNav.clearUnsaved();
 						SF_Admin.showNotice(response.data.message, 'success');
 
 						if (!feedId && response.data.feed_id) {
@@ -1354,11 +1355,84 @@
 		}
 	};
 
+	/**
+	 * Back navigation and unsaved changes.
+	 */
+	var SF_BackNav = {
+		hasUnsavedChanges: false,
+		beforeUnloadHandler: null,
+
+		init: function () {
+			this.bindKeyboardShortcut();
+			if ($('.sf-customizer-wrap').length) {
+				this.initUnsavedChanges();
+			}
+		},
+
+		initUnsavedChanges: function () {
+			var self = this;
+			var $indicator = $('.sf-unsaved-indicator');
+
+			$('.sf-customizer-settings input, .sf-customizer-settings select, .sf-customizer-settings textarea').on('change input', function () {
+				self.hasUnsavedChanges = true;
+				if ($indicator.length) {
+					$indicator.css('display', 'flex');
+				}
+			});
+
+			this.beforeUnloadHandler = function (e) {
+				if (self.hasUnsavedChanges) {
+					e.preventDefault();
+					e.returnValue = '';
+					return '';
+				}
+			};
+			window.addEventListener('beforeunload', this.beforeUnloadHandler);
+
+			$(document).on('click', '.sf-back-link, .sf-cancel-btn.sf-back-nav', function (e) {
+				if (!self.hasUnsavedChanges) return;
+				var msg = (sfAdmin.i18n && sfAdmin.i18n.unsaved_leave) || 'You have unsaved changes. Are you sure you want to leave?';
+				if (!confirm(msg)) {
+					e.preventDefault();
+				}
+			});
+		},
+
+		clearUnsaved: function () {
+			this.hasUnsavedChanges = false;
+			$('.sf-unsaved-indicator').css('display', 'none');
+			if (this.beforeUnloadHandler) {
+				window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+				this.beforeUnloadHandler = null;
+			}
+		},
+
+		bindKeyboardShortcut: function () {
+			$(document).on('keydown', function (e) {
+				if (e.altKey && (e.key === 'ArrowLeft' || e.keyCode === 37)) {
+					var $back = $('.sf-back-link');
+					if ($back.length) {
+						e.preventDefault();
+						if ($('.sf-customizer-wrap').length && SF_BackNav.hasUnsavedChanges) {
+							var msg = (sfAdmin.i18n && sfAdmin.i18n.unsaved_leave) || 'You have unsaved changes. Are you sure you want to leave?';
+							if (confirm(msg)) {
+								window.location.href = $back.attr('href');
+							}
+						} else {
+							window.location.href = $back.attr('href');
+						}
+					}
+				}
+			});
+		}
+	};
+
 	$(function () {
 		SF_Admin.init();
 		SF_Accounts.init();
 		SF_Settings.init();
 		SF_License.init();
+		SF_BackNav.init();
 
 		if ($('.sf-customizer-wrap').length) {
 			SF_Customizer.init();

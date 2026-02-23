@@ -49,6 +49,117 @@
 }
 
 /* ==========================================================================
+   BACK NAVIGATION
+   ========================================================================== */
+
+.sf-breadcrumb-bar {
+	margin: 0 20px 16px 0;
+	padding: 0 0 12px;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.sf-create-feed-wrap .sf-breadcrumb-bar {
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.sf-back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 0;
+	margin-bottom: 12px;
+	color: #6b7280;
+	font-size: 13px;
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+.sf-back-link:hover {
+	color: #3b82f6;
+}
+
+.sf-back-link:hover .dashicons {
+	transform: translateX(-3px);
+}
+
+.sf-back-link .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	transition: transform 0.15s ease;
+}
+
+.sf-breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	font-size: 13px;
+	color: #9ca3af;
+}
+
+.sf-breadcrumb a {
+	color: #6b7280;
+	text-decoration: none;
+}
+
+.sf-breadcrumb a:hover {
+	color: #3b82f6;
+}
+
+.sf-breadcrumb__sep {
+	color: #d1d5db;
+	user-select: none;
+}
+
+.sf-breadcrumb__current {
+	color: #111827;
+	font-weight: 500;
+}
+
+.sf-unsaved-indicator {
+	display: none;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: #f97316;
+	margin-left: 12px;
+}
+
+.sf-unsaved-indicator .sf-unsaved-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #f97316;
+	animation: sf-unsaved-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes sf-unsaved-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.5; }
+}
+
+@media screen and (max-width: 782px) {
+	.sf-back-link .sf-back-link-text {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		border: 0;
+	}
+
+	.sf-breadcrumb .sf-breadcrumb__item--hide-mobile,
+	.sf-breadcrumb .sf-breadcrumb__sep.sf-breadcrumb__item--hide-mobile,
+	.sf-breadcrumb .sf-breadcrumb__current.sf-breadcrumb__item--hide-mobile {
+		display: none !important;
+	}
+}
+
+/* ==========================================================================
    Dashboard Page - Modern Layout (RankMath/WP Rocket style)
    ========================================================================== */
 
@@ -659,7 +770,7 @@ body.admin-color-fresh .sf-dashboard-wrap .sf-stat-card--blue {
 
 body.sf-admin-page.sf-customizer-page .wrap { margin: 0; padding: 0; }
 body.sf-admin-page.sf-customizer-page #wpbody-content { padding-bottom: 0; }
-body.sf-admin-page.sf-customizer-page .wrap { margin-left: -20px; margin-right: 0; }
+body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap { margin-left: -20px; margin-right: 0; }
 
 .sf-customizer-wrap {
 	display: flex;

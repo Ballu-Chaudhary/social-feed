@@ -234,6 +234,7 @@ class SF_Admin {
 					'check_license'           => __( 'Check License', 'social-feed' ),
 					'confirm_deactivate'      => __( 'Are you sure you want to deactivate your license?', 'social-feed' ),
 					'save_feed'               => __( 'Save Feed', 'social-feed' ),
+					'unsaved_leave'           => __( 'You have unsaved changes. Are you sure you want to leave?', 'social-feed' ),
 				),
 			)
 		);
@@ -334,6 +335,15 @@ class SF_Admin {
 		$is_pro        = $this->is_pro();
 		?>
 		<div class="wrap sf-admin-wrap sf-dashboard-wrap">
+			<?php
+			sf_render_breadcrumb(
+				array(
+					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => '' ),
+				),
+				'',
+				''
+			);
+			?>
 			<h1 class="sf-admin-title">
 				<?php esc_html_e( 'Social Feed Dashboard', 'social-feed' ); ?>
 				<span class="sf-version"><?php echo esc_html( 'v' . SF_VERSION ); ?></span>
@@ -532,6 +542,16 @@ class SF_Admin {
 		}
 		?>
 		<div class="wrap sf-admin-wrap">
+			<?php
+			sf_render_breadcrumb(
+				array(
+					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
+					array( 'label' => __( 'All Feeds', 'social-feed' ), 'url' => '' ),
+				),
+				admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
+				__( 'Back to Dashboard', 'social-feed' )
+			);
+			?>
 			<h1 class="sf-admin-title">
 				<?php esc_html_e( 'All Feeds', 'social-feed' ); ?>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="page-title-action">
@@ -706,9 +726,27 @@ class SF_Admin {
 	 */
 	public function render_create_feed() {
 		$feed_id = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
-
-		require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
-		SF_Customizer::render( $feed_id );
+		$feed    = $feed_id ? SF_Database::get_feed( $feed_id ) : null;
+		$current_label = $feed_id
+			? sprintf( /* translators: %s: Feed name */ __( 'Edit: %s', 'social-feed' ), $feed ? $feed['name'] : '' )
+			: __( 'Create New Feed', 'social-feed' );
+		?>
+		<div class="wrap sf-admin-wrap sf-create-feed-wrap">
+			<?php
+			sf_render_breadcrumb(
+				array(
+					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
+					array( 'label' => __( 'All Feeds', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ),
+					array( 'label' => $current_label, 'url' => '' ),
+				),
+				admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ),
+				__( 'Back to All Feeds', 'social-feed' )
+			);
+			require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
+			SF_Customizer::render( $feed_id );
+			?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -716,6 +754,14 @@ class SF_Admin {
 	 */
 	public function render_accounts() {
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
+		sf_render_breadcrumb(
+			array(
+				array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
+				array( 'label' => __( 'Connected Accounts', 'social-feed' ), 'url' => '' ),
+			),
+			admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
+			__( 'Back to Dashboard', 'social-feed' )
+		);
 		SF_Accounts::render();
 	}
 
@@ -723,6 +769,14 @@ class SF_Admin {
 	 * Render settings page.
 	 */
 	public function render_settings() {
+		sf_render_breadcrumb(
+			array(
+				array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
+				array( 'label' => __( 'Settings', 'social-feed' ), 'url' => '' ),
+			),
+			admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
+			__( 'Back to Dashboard', 'social-feed' )
+		);
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-settings.php';
 		SF_Settings::render();
 	}
@@ -731,6 +785,14 @@ class SF_Admin {
 	 * Render license page.
 	 */
 	public function render_license() {
+		sf_render_breadcrumb(
+			array(
+				array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
+				array( 'label' => __( 'License', 'social-feed' ), 'url' => '' ),
+			),
+			admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
+			__( 'Back to Dashboard', 'social-feed' )
+		);
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-license-page.php';
 		SF_License_Page::render();
 	}
@@ -741,6 +803,16 @@ class SF_Admin {
 	public function render_help() {
 		?>
 		<div class="wrap sf-admin-wrap">
+			<?php
+			sf_render_breadcrumb(
+				array(
+					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
+					array( 'label' => __( 'Help & Support', 'social-feed' ), 'url' => '' ),
+				),
+				admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
+				__( 'Back to Dashboard', 'social-feed' )
+			);
+			?>
 			<h1 class="sf-admin-title"><?php esc_html_e( 'Help & Support', 'social-feed' ); ?></h1>
 
 			<div class="sf-help-grid">

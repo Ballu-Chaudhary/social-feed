@@ -100,7 +100,11 @@ class SF_Customizer {
 						</div>
 					</div>
 					<div class="sf-footer-right">
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="button sf-cancel-btn">
+						<span class="sf-unsaved-indicator" style="display:none;">
+							<span class="sf-unsaved-dot"></span>
+							<?php esc_html_e( 'Unsaved changes', 'social-feed' ); ?>
+						</span>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="button sf-cancel-btn sf-back-nav" data-back-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>">
 							<?php esc_html_e( 'Cancel', 'social-feed' ); ?>
 						</a>
 						<button type="button" class="button button-primary sf-save-feed">
