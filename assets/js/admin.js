@@ -897,8 +897,12 @@
 					if ($el.is(':checked')) {
 						settings[name] = $el.val();
 					}
-				} else if ($el.hasClass('wp-color-picker')) {
-					settings[name] = $el.wpColorPicker('color') || $el.val();
+				} else if ($el.hasClass('wp-color-picker') || $el.hasClass('sf-color-picker')) {
+					try {
+						settings[name] = $el.wpColorPicker('color') || $el.val();
+					} catch (e) {
+						settings[name] = $el.val();
+					}
 				} else {
 					settings[name] = $el.val();
 				}
@@ -915,7 +919,7 @@
 			var settings = this.collectSettings();
 
 			$('.sf-preview-loading').addClass('active');
-			$('.sf-preview-content').css('opacity', '0.5');
+			$('.sf-preview-content').css('visibility', 'hidden');
 
 			$.ajax({
 				url: sfAdmin.ajaxUrl,
@@ -936,7 +940,7 @@
 				},
 				complete: function () {
 					$('.sf-preview-loading').removeClass('active');
-					$('.sf-preview-content').css('opacity', '1');
+					$('.sf-preview-content').css('visibility', '');
 				}
 			});
 		},
@@ -986,7 +990,7 @@
 					$btn.prop('disabled', false).html('<span class="dashicons dashicons-saved"></span> ' + sfAdmin.i18n.saved);
 
 					setTimeout(function () {
-						$btn.html('<span class="dashicons dashicons-saved"></span> Save Feed');
+						$btn.html('<span class="dashicons dashicons-saved"></span> ' + (sfAdmin.i18n.save_feed || 'Save Feed'));
 					}, 2000);
 				}
 			});

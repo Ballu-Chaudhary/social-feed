@@ -54,19 +54,19 @@ class SF_Customizer {
 						<?php esc_html_e( 'Layout', 'social-feed' ); ?>
 					</button>
 					<button type="button" class="sf-tab-btn" data-tab="design">
-						<span class="dashicons dashicons-admin-customizer"></span>
+						<span class="dashicons dashicons-art"></span>
 						<?php esc_html_e( 'Design', 'social-feed' ); ?>
 					</button>
 					<button type="button" class="sf-tab-btn" data-tab="header">
-						<span class="dashicons dashicons-id"></span>
+						<span class="dashicons dashicons-admin-users"></span>
 						<?php esc_html_e( 'Header', 'social-feed' ); ?>
 					</button>
 					<button type="button" class="sf-tab-btn" data-tab="posts">
-						<span class="dashicons dashicons-format-gallery"></span>
+						<span class="dashicons dashicons-format-image"></span>
 						<?php esc_html_e( 'Posts', 'social-feed' ); ?>
 					</button>
 					<button type="button" class="sf-tab-btn" data-tab="loadmore">
-						<span class="dashicons dashicons-plus-alt"></span>
+						<span class="dashicons dashicons-download"></span>
 						<?php esc_html_e( 'Load More', 'social-feed' ); ?>
 					</button>
 					<button type="button" class="sf-tab-btn" data-tab="advanced">
@@ -87,54 +87,60 @@ class SF_Customizer {
 					self::render_tab_advanced( $settings, $is_pro );
 					?>
 				</div>
+
+				<!-- Bottom Save Bar -->
+				<div class="sf-customizer-footer">
+					<div class="sf-footer-left">
+						<div class="sf-shortcode-display" <?php echo ! $feed_id ? 'style="display:none;"' : ''; ?>>
+							<label><?php esc_html_e( 'Shortcode:', 'social-feed' ); ?></label>
+							<code class="sf-generated-shortcode">[social_feed id="<?php echo esc_attr( $feed_id ); ?>"]</code>
+							<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed_id ); ?>&quot;]">
+								<span class="dashicons dashicons-clipboard"></span>
+							</button>
+						</div>
+					</div>
+					<div class="sf-footer-right">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="button sf-cancel-btn">
+							<?php esc_html_e( 'Cancel', 'social-feed' ); ?>
+						</a>
+						<button type="button" class="button button-primary sf-save-feed">
+							<span class="dashicons dashicons-saved"></span>
+							<?php esc_html_e( 'Save Feed', 'social-feed' ); ?>
+						</button>
+					</div>
+				</div>
 			</div>
 
 			<!-- Right Panel - Preview -->
 			<div class="sf-customizer-panel sf-customizer-preview">
 				<div class="sf-preview-header">
-					<div class="sf-device-switcher">
-						<button type="button" class="sf-device-btn active" data-device="desktop" title="<?php esc_attr_e( 'Desktop', 'social-feed' ); ?>">
-							<span class="dashicons dashicons-desktop"></span>
-						</button>
-						<button type="button" class="sf-device-btn" data-device="tablet" title="<?php esc_attr_e( 'Tablet', 'social-feed' ); ?>">
-							<span class="dashicons dashicons-tablet"></span>
-						</button>
-						<button type="button" class="sf-device-btn" data-device="mobile" title="<?php esc_attr_e( 'Mobile', 'social-feed' ); ?>">
-							<span class="dashicons dashicons-smartphone"></span>
+					<span class="sf-preview-label"><?php esc_html_e( 'Live Preview', 'social-feed' ); ?></span>
+					<div class="sf-preview-header-right">
+						<div class="sf-device-switcher">
+							<button type="button" class="sf-device-btn active" data-device="desktop" title="<?php esc_attr_e( 'Desktop', 'social-feed' ); ?>">
+								<span class="dashicons dashicons-desktop"></span>
+							</button>
+							<button type="button" class="sf-device-btn" data-device="tablet" title="<?php esc_attr_e( 'Tablet', 'social-feed' ); ?>">
+								<span class="dashicons dashicons-tablet"></span>
+							</button>
+							<button type="button" class="sf-device-btn" data-device="mobile" title="<?php esc_attr_e( 'Mobile', 'social-feed' ); ?>">
+								<span class="dashicons dashicons-smartphone"></span>
+							</button>
+						</div>
+						<button type="button" class="sf-refresh-preview" title="<?php esc_attr_e( 'Refresh Preview', 'social-feed' ); ?>">
+							<span class="dashicons dashicons-update"></span>
 						</button>
 					</div>
-					<button type="button" class="sf-refresh-preview" title="<?php esc_attr_e( 'Refresh Preview', 'social-feed' ); ?>">
-						<span class="dashicons dashicons-update"></span>
-					</button>
 				</div>
 				<div class="sf-preview-container" data-device="desktop">
 					<div class="sf-preview-loading">
-						<span class="spinner is-active"></span>
-						<span><?php esc_html_e( 'Loading preview...', 'social-feed' ); ?></span>
+						<div class="sf-skeleton-grid">
+							<?php for ( $i = 0; $i < 9; $i++ ) : ?>
+								<div class="sf-skeleton-item"></div>
+							<?php endfor; ?>
+						</div>
 					</div>
 					<div class="sf-preview-content"></div>
-				</div>
-			</div>
-
-			<!-- Bottom Bar -->
-			<div class="sf-customizer-footer">
-				<div class="sf-footer-left">
-					<button type="button" class="button button-primary sf-save-feed">
-						<span class="dashicons dashicons-saved"></span>
-						<?php esc_html_e( 'Save Feed', 'social-feed' ); ?>
-					</button>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="button sf-cancel-btn">
-						<?php esc_html_e( 'Cancel', 'social-feed' ); ?>
-					</a>
-				</div>
-				<div class="sf-footer-right">
-					<div class="sf-shortcode-display" <?php echo ! $feed_id ? 'style="display:none;"' : ''; ?>>
-						<label><?php esc_html_e( 'Shortcode:', 'social-feed' ); ?></label>
-						<code class="sf-generated-shortcode">[social_feed id="<?php echo esc_attr( $feed_id ); ?>"]</code>
-						<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed_id ); ?>&quot;]">
-							<span class="dashicons dashicons-clipboard"></span>
-						</button>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -211,6 +217,8 @@ class SF_Customizer {
 		$platforms = SF_Helpers::get_platforms();
 		?>
 		<div class="sf-tab-content active" data-tab="feed">
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></div>
 			<div class="sf-field">
 				<label for="sf_name"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></label>
 				<input type="text" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>">
@@ -229,17 +237,19 @@ class SF_Customizer {
 
 			<div class="sf-field">
 				<label for="sf_account_id"><?php esc_html_e( 'Connected Account', 'social-feed' ); ?></label>
-				<select id="sf_account_id" name="account_id">
-					<option value=""><?php esc_html_e( 'Select an account...', 'social-feed' ); ?></option>
-					<?php foreach ( $accounts as $account ) : ?>
-						<option value="<?php echo esc_attr( $account['id'] ); ?>" data-platform="<?php echo esc_attr( $account['platform'] ); ?>" <?php selected( $settings['account_id'], $account['id'] ); ?>>
-							<?php echo esc_html( $account['account_name'] ); ?> (<?php echo esc_html( ucfirst( $account['platform'] ) ); ?>)
-						</option>
-					<?php endforeach; ?>
-				</select>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-accounts' ) ); ?>" class="sf-link-small">
-					<?php esc_html_e( '+ Connect new account', 'social-feed' ); ?>
-				</a>
+				<div class="sf-field-control sf-field-control-stack">
+					<select id="sf_account_id" name="account_id">
+						<option value=""><?php esc_html_e( 'Select an account...', 'social-feed' ); ?></option>
+						<?php foreach ( $accounts as $account ) : ?>
+							<option value="<?php echo esc_attr( $account['id'] ); ?>" data-platform="<?php echo esc_attr( $account['platform'] ); ?>" <?php selected( $settings['account_id'], $account['id'] ); ?>>
+								<?php echo esc_html( $account['account_name'] ); ?> (<?php echo esc_html( ucfirst( $account['platform'] ) ); ?>)
+							</option>
+						<?php endforeach; ?>
+					</select>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-accounts' ) ); ?>" class="sf-link-small">
+						<?php esc_html_e( '+ Connect new account', 'social-feed' ); ?>
+					</a>
+				</div>
 			</div>
 
 			<div class="sf-field">
@@ -267,6 +277,7 @@ class SF_Customizer {
 				<label for="sf_post_count"><?php esc_html_e( 'Number of Posts', 'social-feed' ); ?></label>
 				<input type="number" id="sf_post_count" name="post_count" value="<?php echo esc_attr( $settings['post_count'] ); ?>" min="1" max="50">
 			</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -279,6 +290,8 @@ class SF_Customizer {
 	private static function render_tab_layout( $settings ) {
 		?>
 		<div class="sf-tab-content" data-tab="layout">
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Layout Type', 'social-feed' ); ?></div>
 			<div class="sf-field">
 				<label><?php esc_html_e( 'Layout Type', 'social-feed' ); ?></label>
 				<div class="sf-layout-options">
@@ -331,6 +344,7 @@ class SF_Customizer {
 					<span class="sf-range-value"><?php echo esc_html( $settings['image_padding'] ); ?>px</span>
 				</div>
 			</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -343,16 +357,20 @@ class SF_Customizer {
 	private static function render_tab_design( $settings ) {
 		?>
 		<div class="sf-tab-content" data-tab="design">
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Colors', 'social-feed' ); ?></div>
 			<div class="sf-field">
 				<label for="sf_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
-				<input type="text" id="sf_bg_color" name="bg_color" value="<?php echo esc_attr( $settings['bg_color'] ); ?>" class="sf-color-picker">
+				<div class="sf-color-picker-wrap"><input type="text" id="sf_bg_color" name="bg_color" value="<?php echo esc_attr( $settings['bg_color'] ); ?>" class="sf-color-picker"></div>
 			</div>
 
 			<div class="sf-field">
 				<label for="sf_text_color"><?php esc_html_e( 'Text Color', 'social-feed' ); ?></label>
-				<input type="text" id="sf_text_color" name="text_color" value="<?php echo esc_attr( $settings['text_color'] ); ?>" class="sf-color-picker">
+				<div class="sf-color-picker-wrap"><input type="text" id="sf_text_color" name="text_color" value="<?php echo esc_attr( $settings['text_color'] ); ?>" class="sf-color-picker"></div>
 			</div>
-
+			</div>
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Borders &amp; Effects', 'social-feed' ); ?></div>
 			<div class="sf-field">
 				<label for="sf_border_style"><?php esc_html_e( 'Border Style', 'social-feed' ); ?></label>
 				<select id="sf_border_style" name="border_style">
@@ -364,7 +382,7 @@ class SF_Customizer {
 
 			<div class="sf-field sf-border-options" <?php echo 'none' === $settings['border_style'] ? 'style="display:none;"' : ''; ?>>
 				<label for="sf_border_color"><?php esc_html_e( 'Border Color', 'social-feed' ); ?></label>
-				<input type="text" id="sf_border_color" name="border_color" value="<?php echo esc_attr( $settings['border_color'] ); ?>" class="sf-color-picker">
+				<div class="sf-color-picker-wrap"><input type="text" id="sf_border_color" name="border_color" value="<?php echo esc_attr( $settings['border_color'] ); ?>" class="sf-color-picker"></div>
 			</div>
 
 			<div class="sf-field">
@@ -391,6 +409,7 @@ class SF_Customizer {
 					<span class="sf-toggle-slider"></span>
 				</label>
 			</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -403,6 +422,8 @@ class SF_Customizer {
 	private static function render_tab_header( $settings ) {
 		?>
 		<div class="sf-tab-content" data-tab="header">
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Header Visibility', 'social-feed' ); ?></div>
 			<div class="sf-field sf-toggle-field">
 				<label for="sf_show_header"><?php esc_html_e( 'Show Header', 'social-feed' ); ?></label>
 				<label class="sf-toggle">
@@ -455,7 +476,7 @@ class SF_Customizer {
 				<div class="sf-follow-btn-options" <?php echo ! $settings['show_follow_btn'] ? 'style="display:none;"' : ''; ?>>
 					<div class="sf-field">
 						<label for="sf_follow_btn_color"><?php esc_html_e( 'Button Color', 'social-feed' ); ?></label>
-						<input type="text" id="sf_follow_btn_color" name="follow_btn_color" value="<?php echo esc_attr( $settings['follow_btn_color'] ); ?>" class="sf-color-picker">
+						<div class="sf-color-picker-wrap"><input type="text" id="sf_follow_btn_color" name="follow_btn_color" value="<?php echo esc_attr( $settings['follow_btn_color'] ); ?>" class="sf-color-picker"></div>
 					</div>
 
 					<div class="sf-field">
@@ -463,6 +484,7 @@ class SF_Customizer {
 						<input type="text" id="sf_follow_btn_text" name="follow_btn_text" value="<?php echo esc_attr( $settings['follow_btn_text'] ); ?>">
 					</div>
 				</div>
+			</div>
 			</div>
 		</div>
 		<?php
@@ -476,6 +498,8 @@ class SF_Customizer {
 	private static function render_tab_posts( $settings ) {
 		?>
 		<div class="sf-tab-content" data-tab="posts">
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Post Content', 'social-feed' ); ?></div>
 			<div class="sf-field sf-toggle-field">
 				<label for="sf_show_caption"><?php esc_html_e( 'Show Caption', 'social-feed' ); ?></label>
 				<label class="sf-toggle">
@@ -518,6 +542,9 @@ class SF_Customizer {
 				</label>
 			</div>
 
+			</div>
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Interaction', 'social-feed' ); ?></div>
 			<div class="sf-field">
 				<label><?php esc_html_e( 'Click Action', 'social-feed' ); ?></label>
 				<div class="sf-radio-group">
@@ -546,6 +573,7 @@ class SF_Customizer {
 					</select>
 				</div>
 			</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -558,6 +586,8 @@ class SF_Customizer {
 	private static function render_tab_loadmore( $settings ) {
 		?>
 		<div class="sf-tab-content" data-tab="loadmore">
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Load More Type', 'social-feed' ); ?></div>
 			<div class="sf-field">
 				<label><?php esc_html_e( 'Load More Type', 'social-feed' ); ?></label>
 				<div class="sf-radio-group">
@@ -588,13 +618,14 @@ class SF_Customizer {
 
 				<div class="sf-field sf-button-text-option" <?php echo 'button' !== $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
 					<label for="sf_loadmore_bg_color"><?php esc_html_e( 'Button Background', 'social-feed' ); ?></label>
-					<input type="text" id="sf_loadmore_bg_color" name="loadmore_bg_color" value="<?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>" class="sf-color-picker">
+					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_bg_color" name="loadmore_bg_color" value="<?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
 
 				<div class="sf-field">
 					<label for="sf_posts_per_load"><?php esc_html_e( 'Posts to Load', 'social-feed' ); ?></label>
 					<input type="number" id="sf_posts_per_load" name="posts_per_load" value="<?php echo esc_attr( $settings['posts_per_load'] ); ?>" min="1" max="50">
 				</div>
+			</div>
 			</div>
 		</div>
 		<?php
@@ -609,11 +640,15 @@ class SF_Customizer {
 	private static function render_tab_advanced( $settings, $is_pro ) {
 		?>
 		<div class="sf-tab-content" data-tab="advanced">
-			<div class="sf-field">
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Customization', 'social-feed' ); ?></div>
+			<div class="sf-field" style="flex-direction:column;align-items:stretch;">
 				<label for="sf_custom_css"><?php esc_html_e( 'Custom CSS', 'social-feed' ); ?></label>
 				<textarea id="sf_custom_css" name="custom_css" rows="8" class="sf-code-textarea" placeholder="<?php esc_attr_e( '.sf-feed { /* your styles */ }', 'social-feed' ); ?>"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea>
 			</div>
-
+			</div>
+			<div class="sf-section">
+				<div class="sf-section-title"><?php esc_html_e( 'Performance &amp; Privacy', 'social-feed' ); ?></div>
 			<div class="sf-field sf-toggle-field">
 				<label for="sf_lazy_load"><?php esc_html_e( 'Enable Lazy Loading', 'social-feed' ); ?></label>
 				<label class="sf-toggle">
@@ -640,6 +675,7 @@ class SF_Customizer {
 				<?php if ( ! $is_pro ) : ?>
 					<span class="sf-pro-badge"><?php esc_html_e( 'Pro', 'social-feed' ); ?></span>
 				<?php endif; ?>
+			</div>
 			</div>
 		</div>
 		<?php

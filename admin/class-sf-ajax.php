@@ -121,7 +121,43 @@ class SF_Ajax {
 			.sf-preview-feed {
 				background: <?php echo esc_attr( $settings['bg_color'] ); ?>;
 				color: <?php echo esc_attr( $settings['text_color'] ); ?>;
-				padding: 20px;
+				padding: 16px;
+				border-radius: 12px;
+				box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+				overflow: hidden;
+			}
+			.sf-preview-header {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				margin-bottom: 16px;
+				padding-bottom: 16px;
+				border-bottom: 1px solid rgba(0,0,0,0.08);
+			}
+			.sf-preview-avatar {
+				width: 48px;
+				height: 48px;
+				min-width: 48px;
+				border-radius: 50%;
+				background: #e5e7eb;
+				object-fit: cover;
+			}
+			.sf-preview-header-info {
+				flex: 1;
+				min-width: 0;
+			}
+			.sf-preview-username { font-weight: 700; font-size: 14px; margin: 0 0 2px; }
+			.sf-preview-followers { font-size: 12px; color: rgba(0,0,0,0.5); margin: 0; }
+			.sf-preview-follow-btn {
+				background: <?php echo esc_attr( $settings['follow_btn_color'] ); ?>;
+				color: #fff;
+				border: none;
+				padding: 8px 18px;
+				border-radius: 6px;
+				font-size: 13px;
+				font-weight: 600;
+				cursor: pointer;
+				flex-shrink: 0;
 			}
 			.sf-preview-grid {
 				display: grid;
@@ -135,57 +171,62 @@ class SF_Ajax {
 				border: 1px <?php echo esc_attr( $settings['border_style'] ); ?> <?php echo esc_attr( $settings['border_color'] ); ?>;
 				<?php endif; ?>
 			}
+			.sf-preview-item-inner { position: relative; padding-bottom: 100%; background: #f3f4f6; }
 			.sf-preview-item img {
+				position: absolute;
+				top: 0;
+				left: 0;
 				width: 100%;
-				aspect-ratio: 1;
+				height: 100%;
 				object-fit: cover;
 				display: block;
 				transition: transform 0.3s, opacity 0.3s;
 			}
+			.sf-preview-item:hover .sf-preview-overlay { opacity: 1; }
 			<?php if ( 'zoom' === $settings['hover_effect'] ) : ?>
-			.sf-preview-item:hover img { transform: scale(1.1); }
+			.sf-preview-item:hover img { transform: scale(1.05); }
 			<?php elseif ( 'fade' === $settings['hover_effect'] ) : ?>
-			.sf-preview-item:hover img { opacity: 0.8; }
+			.sf-preview-item:hover img { opacity: 0.85; }
 			<?php endif; ?>
-			.sf-preview-content { padding: 10px; }
-			.sf-preview-header {
+			.sf-preview-overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: linear-gradient(transparent 40%, rgba(0,0,0,0.6) 100%);
 				display: flex;
 				align-items: center;
-				gap: 12px;
-				margin-bottom: 15px;
-				padding-bottom: 15px;
-				border-bottom: 1px solid rgba(0,0,0,0.1);
-			}
-			.sf-preview-avatar {
-				width: 50px;
-				height: 50px;
-				border-radius: 50%;
-				background: #e0e0e0;
-			}
-			.sf-preview-header-info { flex: 1; }
-			.sf-preview-username { font-weight: 600; font-size: 14px; }
-			.sf-preview-followers { font-size: 12px; opacity: 0.7; }
-			.sf-preview-follow-btn {
-				background: <?php echo esc_attr( $settings['follow_btn_color'] ); ?>;
+				justify-content: center;
+				gap: 16px;
 				color: #fff;
-				border: none;
-				padding: 8px 16px;
-				border-radius: 4px;
 				font-size: 13px;
-				cursor: pointer;
+				opacity: 0;
+				transition: opacity 0.3s;
+			}
+			.sf-preview-overlay span { display: flex; align-items: center; gap: 4px; }
+			.sf-preview-content {
+				padding: 10px 0 0;
+				min-width: 0;
+			}
+			.sf-preview-caption {
+				font-size: 12px;
+				line-height: 1.4;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			.sf-preview-meta {
 				display: flex;
-				gap: 10px;
-				font-size: 12px;
-				opacity: 0.7;
-				margin-top: 8px;
+				align-items: center;
+				gap: 12px;
+				font-size: 11px;
+				color: rgba(0,0,0,0.5);
+				margin-top: 6px;
 			}
-			.sf-preview-caption {
-				font-size: 13px;
-				line-height: 1.4;
-				margin-top: 8px;
-			}
+			.sf-preview-meta span { display: flex; align-items: center; gap: 4px; }
 			.sf-preview-loadmore {
 				text-align: center;
 				margin-top: 20px;
@@ -195,16 +236,19 @@ class SF_Ajax {
 				color: #fff;
 				border: none;
 				padding: 12px 24px;
-				border-radius: 4px;
+				border-radius: 6px;
 				cursor: pointer;
 				font-size: 14px;
+				font-weight: 500;
 			}
 			<?php if ( $settings['dark_mode'] ) : ?>
 			.sf-preview-feed { background: #1a1a1a; color: #ffffff; }
+			.sf-preview-followers, .sf-preview-meta { color: rgba(255,255,255,0.6); }
 			<?php endif; ?>
 			<?php echo wp_strip_all_tags( $settings['custom_css'] ); ?>
 		</style>
 
+		<div class="sf-preview-frame">
 		<div class="sf-preview-feed">
 			<?php if ( $settings['show_header'] ) : ?>
 			<div class="sf-preview-header">
@@ -228,7 +272,19 @@ class SF_Ajax {
 			<div class="sf-preview-grid">
 				<?php foreach ( $items as $item ) : ?>
 				<div class="sf-preview-item">
-					<img src="<?php echo esc_url( $item['image'] ); ?>" alt="">
+					<div class="sf-preview-item-inner">
+						<img src="<?php echo esc_url( $item['image'] ); ?>" alt="">
+						<?php if ( $settings['show_likes'] || $settings['show_comments'] ) : ?>
+						<div class="sf-preview-overlay">
+							<?php if ( $settings['show_likes'] ) : ?>
+							<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
+							<?php endif; ?>
+							<?php if ( $settings['show_comments'] ) : ?>
+							<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
+							<?php endif; ?>
+						</div>
+						<?php endif; ?>
+					</div>
 					<?php if ( $settings['show_caption'] || $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
 					<div class="sf-preview-content">
 						<?php if ( $settings['show_caption'] ) : ?>
@@ -237,10 +293,10 @@ class SF_Ajax {
 						<?php if ( $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
 						<div class="sf-preview-meta">
 							<?php if ( $settings['show_likes'] ) : ?>
-							<span><?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?> likes</span>
+							<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
 							<?php endif; ?>
 							<?php if ( $settings['show_comments'] ) : ?>
-							<span><?php echo esc_html( $item['comments'] ); ?> comments</span>
+							<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
 							<?php endif; ?>
 							<?php if ( $settings['show_date'] ) : ?>
 							<span><?php echo esc_html( $item['date'] ); ?></span>
@@ -262,6 +318,7 @@ class SF_Ajax {
 				<?php endif; ?>
 			</div>
 			<?php endif; ?>
+		</div>
 		</div>
 		<?php
 		return ob_get_clean();

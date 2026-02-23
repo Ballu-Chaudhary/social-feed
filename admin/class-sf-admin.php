@@ -157,6 +157,9 @@ class SF_Admin {
 			if ( $page === self::PAGE_SLUG ) {
 				$classes .= ' sf-dashboard-page';
 			}
+			if ( $page === self::PAGE_SLUG . '-create' ) {
+				$classes .= ' sf-customizer-page';
+			}
 		}
 
 		return $classes;
@@ -230,6 +233,7 @@ class SF_Admin {
 					'checking'                => __( 'Checking...', 'social-feed' ),
 					'check_license'           => __( 'Check License', 'social-feed' ),
 					'confirm_deactivate'      => __( 'Are you sure you want to deactivate your license?', 'social-feed' ),
+					'save_feed'               => __( 'Save Feed', 'social-feed' ),
 				),
 			)
 		);
