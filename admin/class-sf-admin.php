@@ -339,25 +339,17 @@ class SF_Admin {
 				''
 			);
 			?>
-			<h1 class="sf-admin-title">
-				<?php esc_html_e( 'Social Feed Dashboard', 'social-feed' ); ?>
-				<span class="sf-version"><?php echo esc_html( 'v' . SF_VERSION ); ?></span>
-			</h1>
-
-			<?php if ( ! $is_pro ) : ?>
-			<div class="sf-upgrade-banner">
-				<div class="sf-upgrade-content">
-					<h3><?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?></h3>
-					<p><?php esc_html_e( 'Unlock unlimited feeds, all platforms, premium layouts, and priority support.', 'social-feed' ); ?></p>
-				</div>
-				<a href="<?php echo esc_url( 'https://socialfeedplugin.com/pricing/' ); ?>" class="button button-primary sf-upgrade-btn" target="_blank">
+			<div class="sf-dashboard-header">
+				<h1 class="sf-admin-title"><?php esc_html_e( 'Social Feed Dashboard', 'social-feed' ); ?></h1>
+				<?php if ( ! $is_pro ) : ?>
+				<a href="<?php echo esc_url( 'https://socialfeedplugin.com/pricing/' ); ?>" class="button button-primary sf-get-pro-btn" target="_blank" rel="noopener noreferrer">
 					<?php esc_html_e( 'Get Pro Now', 'social-feed' ); ?>
 				</a>
+				<?php endif; ?>
 			</div>
-			<?php endif; ?>
 
 			<div class="sf-dashboard-grid">
-				<!-- Stats Section - 4 cards in a row -->
+				<!-- Stats Section - 3 cards -->
 				<div class="sf-stats-grid">
 					<div class="sf-stat-card sf-stat-card--blue">
 						<span class="sf-stat-icon-wrap"><span class="dashicons dashicons-rss"></span></span>
@@ -371,13 +363,6 @@ class SF_Admin {
 						<div class="sf-stat-content">
 							<span class="sf-stat-number"><?php echo esc_html( (string) $stats['connected_accounts'] ); ?></span>
 							<span class="sf-stat-label"><?php esc_html_e( 'Connected Accounts', 'social-feed' ); ?></span>
-						</div>
-					</div>
-					<div class="sf-stat-card sf-stat-card--purple">
-						<span class="sf-stat-icon-wrap"><span class="dashicons dashicons-share"></span></span>
-						<div class="sf-stat-content">
-							<span class="sf-stat-number"><?php echo esc_html( (string) $stats['active_platforms'] ); ?></span>
-							<span class="sf-stat-label"><?php esc_html_e( 'Active Platforms', 'social-feed' ); ?></span>
 						</div>
 					</div>
 					<div class="sf-stat-card sf-stat-card--orange">
