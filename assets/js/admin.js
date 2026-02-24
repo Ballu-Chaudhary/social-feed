@@ -11,17 +11,15 @@
 	 * Accounts page module.
 	 */
 	var SF_Accounts = {
-		$modal: null,
 		$grid: null,
 		selectedPlatform: null,
 		oauthWindow: null,
 		reconnectAccountId: null,
 
 		init: function () {
-			this.$modal = $('#sf-connect-modal');
 			this.$grid = $('.sf-accounts-grid');
 
-			if (!this.$modal.length) {
+			if (!$('.sf-accounts-wrap').length) {
 				return;
 			}
 
@@ -33,20 +31,9 @@
 			var self = this;
 
 			$(document).on('click', '.sf-connect-account-btn', function () {
-				self.openModal();
-			});
-
-			this.$modal.find('.sf-modal-close, .sf-modal-overlay').on('click', function () {
-				self.closeModal();
-			});
-
-			this.$modal.find('.sf-oauth-connect-btn').on('click', function () {
+				self.selectedPlatform = 'instagram';
+				self.reconnectAccountId = null;
 				self.startOAuth();
-			});
-
-			this.$modal.find('.sf-modal-done-btn').on('click', function () {
-				self.closeModal();
-				self.refreshAccountsList();
 			});
 
 			$(document).on('click', '.sf-reconnect-account', function () {
@@ -63,32 +50,8 @@
 			});
 		},
 
-		openModal: function () {
-			this.selectedPlatform = 'instagram';
-			this.reconnectAccountId = null;
-			this.goToStep(1);
-			this.$modal.addClass('active');
-			$('body').addClass('sf-modal-open');
-		},
-
-		closeModal: function () {
-			this.$modal.removeClass('active');
-			$('body').removeClass('sf-modal-open');
-
-			if (this.oauthWindow && !this.oauthWindow.closed) {
-				this.oauthWindow.close();
-			}
-		},
-
-		goToStep: function (step) {
-			this.$modal.find('.sf-connect-step').removeClass('active');
-			this.$modal.find('.sf-connect-step[data-step="' + step + '"]').addClass('active');
-		},
-
 		startOAuth: function () {
 			var self = this;
-
-			this.goToStep(2);
 
 			$.ajax({
 				url: sfAdmin.ajaxUrl,
@@ -103,12 +66,10 @@
 					if (response.success && response.data.url) {
 						self.openOAuthPopup(response.data.url);
 					} else {
-						self.goToStep(1);
 						alert(response.data.message || sfAdmin.i18n.error);
 					}
 				},
 				error: function () {
-					self.goToStep(1);
 					alert(sfAdmin.i18n.error);
 				}
 			});
@@ -128,7 +89,6 @@
 
 			if (!this.oauthWindow) {
 				alert(sfAdmin.i18n.popup_blocked || 'Please allow popups for this site.');
-				this.goToStep(1);
 			}
 		},
 
@@ -168,16 +128,13 @@
 				},
 				success: function (response) {
 					if (response.success) {
-						self.$modal.find('.sf-connected-account-name').text('@' + (response.data.account_name || data.account_name));
-						self.goToStep(3);
+						self.refreshAccountsList();
 					} else {
 						alert(response.data.message || sfAdmin.i18n.error);
-						self.goToStep(1);
 					}
 				},
 				error: function () {
 					alert(sfAdmin.i18n.error);
-					self.goToStep(1);
 				}
 			});
 		},
@@ -188,15 +145,12 @@
 			}
 
 			alert(data.message || sfAdmin.i18n.error);
-			this.goToStep(1);
 		},
 
 		reconnectAccount: function (accountId, platform) {
 			this.reconnectAccountId = accountId;
 			this.selectedPlatform = platform || 'instagram';
-			this.goToStep(1);
-			this.$modal.addClass('active');
-			$('body').addClass('sf-modal-open');
+			this.startOAuth();
 		},
 
 		deleteAccount: function (accountId, feedsCount, $card) {

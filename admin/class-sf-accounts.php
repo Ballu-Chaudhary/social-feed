@@ -52,9 +52,6 @@ class SF_Accounts {
 					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
-
-			<!-- Connect Account Modal -->
-			<?php self::render_connect_modal(); ?>
 		</div>
 		<?php
 	}
@@ -204,70 +201,6 @@ class SF_Accounts {
 			return '';
 		}
 		return '<div class="sf-platform-icon-large sf-icon-instagram">' . self::get_instagram_logo_svg( 32 ) . '</div>';
-	}
-
-	/**
-	 * Render the connect account modal.
-	 * Single step: Instagram connect (no platform selection). Steps: 1=connect, 2=loading, 3=success.
-	 */
-	private static function render_connect_modal() {
-		?>
-		<div class="sf-modal sf-connect-modal" id="sf-connect-modal">
-			<div class="sf-modal-overlay"></div>
-			<div class="sf-modal-container">
-				<div class="sf-modal-header sf-connect-modal-header">
-					<h2><?php esc_html_e( 'Connect Instagram Account', 'social-feed' ); ?></h2>
-					<button type="button" class="sf-modal-close" aria-label="<?php esc_attr_e( 'Close', 'social-feed' ); ?>">&times;</button>
-				</div>
-
-				<div class="sf-modal-body sf-connect-modal-body">
-					<!-- Step 1: Connect Instagram (only step before loading) -->
-					<div class="sf-connect-step sf-step-connect active" data-step="1">
-						<div class="sf-connect-instagram-hero">
-							<div class="sf-connect-instagram-logo">
-								<?php echo self::get_instagram_logo_svg( 56 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-							</div>
-							<p class="sf-connect-intro"><?php esc_html_e( 'Authorize your Instagram Business or Creator account to display your feed on your website. You\'ll sign in through Facebook (Instagram\'s parent company).', 'social-feed' ); ?></p>
-						</div>
-
-						<ul class="sf-connect-benefits">
-							<li><?php esc_html_e( 'Works with Business and Creator accounts', 'social-feed' ); ?></li>
-							<li><?php esc_html_e( 'Displays posts, reels, and profile', 'social-feed' ); ?></li>
-							<li><?php esc_html_e( 'Auto-refreshes every hour', 'social-feed' ); ?></li>
-						</ul>
-
-						<button type="button" class="button button-primary sf-oauth-connect-btn sf-connect-instagram-btn">
-							<?php echo self::get_instagram_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-							<span><?php esc_html_e( 'Connect with Instagram', 'social-feed' ); ?></span>
-						</button>
-
-						<p class="sf-connect-note">
-							<?php esc_html_e( 'A popup will open for sign-in. Please allow popups for this site.', 'social-feed' ); ?>
-						</p>
-					</div>
-
-					<!-- Step 2: Connecting... -->
-					<div class="sf-connect-step sf-step-loading" data-step="2">
-						<div class="sf-connecting-animation">
-							<span class="spinner is-active"></span>
-						</div>
-						<h3><?php esc_html_e( 'Connecting...', 'social-feed' ); ?></h3>
-						<p><?php esc_html_e( 'Complete the authorization in the popup window.', 'social-feed' ); ?></p>
-					</div>
-
-					<!-- Step 3: Success -->
-					<div class="sf-connect-step sf-step-success" data-step="3">
-						<div class="sf-success-icon">
-							<span class="dashicons dashicons-yes-alt"></span>
-						</div>
-						<h3><?php esc_html_e( 'Account Connected!', 'social-feed' ); ?></h3>
-						<p class="sf-connected-account-name"></p>
-						<button type="button" class="button button-primary sf-modal-done-btn"><?php esc_html_e( 'Done', 'social-feed' ); ?></button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php
 	}
 
 	/**
