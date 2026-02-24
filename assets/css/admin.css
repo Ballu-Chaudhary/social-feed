@@ -2291,34 +2291,161 @@ body.folded .sf-customizer-wrap .sf-customizer-footer {
 }
 
 /* ==========================================================================
-   Feeds Table
+   All Feeds Table - Modern styling
    ========================================================================== */
+
+.sf-feeds-table-wrap {
+	background: #fff;
+	border: 1px solid var(--sf-border);
+	border-radius: 10px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+	overflow: hidden;
+	margin-top: 16px;
+}
 
 .sf-feeds-table {
 	width: 100%;
 	border-collapse: collapse;
+	font-size: 14px;
 }
 
-.sf-feeds-table th,
-.sf-feeds-table td {
-	padding: 12px 15px;
-	text-align: left;
+.sf-feeds-table thead {
+	background: #f8fafc;
 	border-bottom: 1px solid var(--sf-border);
 }
 
-.sf-feeds-table th {
-	background: var(--sf-bg);
+.sf-feeds-table thead th,
+.sf-feeds-table thead td {
+	padding: 12px 16px;
+	text-align: left;
 	font-weight: 600;
-	font-size: 12px;
+	font-size: 11px;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.04em;
+	color: var(--sf-text-muted);
+	vertical-align: middle;
+}
+
+.sf-feeds-table tbody tr {
+	border-bottom: 1px solid #f1f5f9;
+	transition: background 0.15s ease;
+}
+
+.sf-feeds-table tbody tr:last-child {
+	border-bottom: none;
+}
+
+.sf-feeds-table tbody tr:hover td {
+	background: #fafbfc;
+}
+
+.sf-feeds-table tbody td {
+	padding: 12px 16px;
+	vertical-align: middle;
+	line-height: 1.4;
+}
+
+.sf-feeds-table .sf-col-cb {
+	width: 32px;
+	padding-left: 14px;
+}
+
+.sf-feeds-table .sf-col-cb input[type="checkbox"] {
+	margin: 0;
+}
+
+.sf-feeds-table .sf-col-name {
+	min-width: 160px;
+}
+
+.sf-feeds-table .sf-col-name strong a {
+	text-decoration: none;
+	color: var(--sf-dark);
+	font-weight: 600;
+}
+
+.sf-feeds-table .sf-col-name strong a:hover {
+	color: var(--sf-primary);
+}
+
+.sf-feeds-table .row-actions {
+	font-size: 12px;
+	margin-top: 4px;
+}
+
+.sf-feeds-table .row-actions a {
+	text-decoration: none;
 	color: var(--sf-text-muted);
 }
 
-.sf-feeds-table tr:hover td {
-	background: var(--sf-bg);
+.sf-feeds-table .row-actions a:hover {
+	color: var(--sf-primary);
 }
 
+.sf-feeds-table .sf-col-type,
+.sf-feeds-table .sf-col-updated {
+	color: var(--sf-text-muted);
+	font-size: 13px;
+}
+
+.sf-feeds-table .sf-col-status {
+	white-space: nowrap;
+}
+
+.sf-feeds-table .sf-col-status .sf-toggle-inline {
+	display: inline-flex;
+	vertical-align: middle;
+}
+
+.sf-feeds-table .sf-shortcode-cell {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	white-space: nowrap;
+}
+
+.sf-feeds-table .sf-shortcode-cell code {
+	font-size: 12px;
+	background: #f1f5f9;
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: 1px solid #e2e8f0;
+}
+
+.sf-feeds-table .sf-copy-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 1px solid var(--sf-border);
+	background: #fff;
+	border-radius: 6px;
+	color: var(--sf-text-muted);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.sf-feeds-table .sf-copy-btn:hover {
+	border-color: var(--sf-primary);
+	color: var(--sf-primary);
+	background: rgba(37, 99, 235, 0.05);
+}
+
+.sf-feeds-table .sf-copy-btn .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.sf-feeds-table .sf-col-actions .button-small {
+	padding: 4px 12px;
+	font-size: 13px;
+	border-radius: 6px;
+}
+
+/* Legacy feed name/thumb (e.g. dashboard table) */
 .sf-feed-name {
 	display: flex;
 	align-items: center;

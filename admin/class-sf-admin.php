@@ -510,16 +510,6 @@ class SF_Admin {
 				}
 			);
 		}
-
-		$all_feeds       = SF_Database::get_all_feeds();
-		$platform_counts = array();
-		foreach ( $all_feeds as $feed ) {
-			$platform = $feed['platform'];
-			if ( ! isset( $platform_counts[ $platform ] ) ) {
-				$platform_counts[ $platform ] = 0;
-			}
-			$platform_counts[ $platform ]++;
-		}
 		?>
 		<div class="wrap sf-admin-wrap">
 			<?php
@@ -538,26 +528,6 @@ class SF_Admin {
 					<?php esc_html_e( 'Add New', 'social-feed' ); ?>
 				</a>
 			</h1>
-
-			<!-- Filter Tabs -->
-			<ul class="subsubsub sf-filter-tabs">
-				<li>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" class="<?php echo empty( $current_filter ) ? 'current' : ''; ?>">
-						<?php esc_html_e( 'All', 'social-feed' ); ?>
-						<span class="count">(<?php echo esc_html( count( $all_feeds ) ); ?>)</span>
-					</a> |
-				</li>
-				<?php foreach ( SF_Helpers::get_platforms() as $slug => $label ) : ?>
-					<?php if ( isset( $platform_counts[ $slug ] ) ) : ?>
-						<li>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds&platform=' . $slug ) ); ?>" class="<?php echo $current_filter === $slug ? 'current' : ''; ?>">
-								<?php echo esc_html( $label ); ?>
-								<span class="count">(<?php echo esc_html( $platform_counts[ $slug ] ); ?>)</span>
-							</a> |
-						</li>
-					<?php endif; ?>
-				<?php endforeach; ?>
-			</ul>
 
 			<!-- Bulk Actions & Search -->
 			<form method="get" class="sf-feeds-form">
@@ -608,28 +578,28 @@ class SF_Admin {
 				</div>
 			<?php else : ?>
 				<!-- Feeds Table -->
-				<table class="wp-list-table widefat fixed striped sf-feeds-table">
+				<div class="sf-feeds-table-wrap">
+				<table class="sf-feeds-table">
 					<thead>
 						<tr>
-							<td class="manage-column column-cb check-column">
-								<input type="checkbox" id="cb-select-all-1" class="sf-select-all">
+							<td class="sf-col-cb check-column">
+								<input type="checkbox" id="cb-select-all-1" class="sf-select-all" aria-label="<?php esc_attr_e( 'Select all', 'social-feed' ); ?>">
 							</td>
-							<th class="manage-column column-name column-primary"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></th>
-							<th class="manage-column column-platform"><?php esc_html_e( 'Platform', 'social-feed' ); ?></th>
-							<th class="manage-column column-type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></th>
-							<th class="manage-column column-status"><?php esc_html_e( 'Status', 'social-feed' ); ?></th>
-							<th class="manage-column column-shortcode"><?php esc_html_e( 'Shortcode', 'social-feed' ); ?></th>
-							<th class="manage-column column-updated"><?php esc_html_e( 'Last Updated', 'social-feed' ); ?></th>
-							<th class="manage-column column-actions"><?php esc_html_e( 'Actions', 'social-feed' ); ?></th>
+							<th class="sf-col-name column-primary"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></th>
+							<th class="sf-col-type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></th>
+							<th class="sf-col-status"><?php esc_html_e( 'Status', 'social-feed' ); ?></th>
+							<th class="sf-col-shortcode"><?php esc_html_e( 'Shortcode', 'social-feed' ); ?></th>
+							<th class="sf-col-updated"><?php esc_html_e( 'Last Updated', 'social-feed' ); ?></th>
+							<th class="sf-col-actions"><?php esc_html_e( 'Actions', 'social-feed' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php foreach ( $feeds as $feed ) : ?>
 							<tr data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>">
-								<th class="check-column">
+								<td class="sf-col-cb check-column">
 									<input type="checkbox" name="feed_ids[]" value="<?php echo esc_attr( $feed['id'] ); ?>" class="sf-feed-checkbox">
-								</th>
-								<td class="column-name column-primary">
+								</td>
+								<td class="sf-col-name column-primary">
 									<strong>
 										<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>">
 											<?php echo esc_html( $feed['name'] ); ?>
@@ -653,27 +623,25 @@ class SF_Admin {
 										</span>
 									</div>
 								</td>
-								<td class="column-platform">
-									<?php echo $this->get_platform_icon( $feed['platform'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-									<?php echo esc_html( ucfirst( $feed['platform'] ) ); ?>
-								</td>
-								<td class="column-type"><?php echo esc_html( ucfirst( $feed['feed_type'] ) ); ?></td>
-								<td class="column-status">
-									<label class="sf-toggle">
+								<td class="sf-col-type"><?php echo esc_html( ucfirst( $feed['feed_type'] ) ); ?></td>
+								<td class="sf-col-status">
+									<label class="sf-toggle sf-toggle-inline">
 										<input type="checkbox" class="sf-status-toggle" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" <?php checked( 'active', $feed['status'] ); ?>>
 										<span class="sf-toggle-slider"></span>
 									</label>
 								</td>
-								<td class="column-shortcode">
-									<code class="sf-shortcode">[social_feed id="<?php echo esc_attr( $feed['id'] ); ?>"]</code>
-									<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed['id'] ); ?>&quot;]" title="<?php esc_attr_e( 'Copy', 'social-feed' ); ?>">
-										<span class="dashicons dashicons-clipboard"></span>
-									</button>
+								<td class="sf-col-shortcode">
+									<span class="sf-shortcode-cell">
+										<code class="sf-shortcode">[social_feed id="<?php echo esc_attr( $feed['id'] ); ?>"]</code>
+										<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed['id'] ); ?>&quot;]" title="<?php esc_attr_e( 'Copy', 'social-feed' ); ?>">
+											<span class="dashicons dashicons-clipboard"></span>
+										</button>
+									</span>
 								</td>
-								<td class="column-updated">
+								<td class="sf-col-updated">
 									<?php echo esc_html( SF_Helpers::sf_time_ago( $feed['updated_at'] ) ); ?>
 								</td>
-								<td class="column-actions">
+								<td class="sf-col-actions">
 									<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>" class="button button-small">
 										<?php esc_html_e( 'Edit', 'social-feed' ); ?>
 									</a>
@@ -681,21 +649,8 @@ class SF_Admin {
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
-					<tfoot>
-						<tr>
-							<td class="manage-column column-cb check-column">
-								<input type="checkbox" id="cb-select-all-2" class="sf-select-all">
-							</td>
-							<th class="manage-column column-name column-primary"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></th>
-							<th class="manage-column column-platform"><?php esc_html_e( 'Platform', 'social-feed' ); ?></th>
-							<th class="manage-column column-type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></th>
-							<th class="manage-column column-status"><?php esc_html_e( 'Status', 'social-feed' ); ?></th>
-							<th class="manage-column column-shortcode"><?php esc_html_e( 'Shortcode', 'social-feed' ); ?></th>
-							<th class="manage-column column-updated"><?php esc_html_e( 'Last Updated', 'social-feed' ); ?></th>
-							<th class="manage-column column-actions"><?php esc_html_e( 'Actions', 'social-feed' ); ?></th>
-						</tr>
-					</tfoot>
 				</table>
+				</div>
 			<?php endif; ?>
 		</div>
 		<?php
