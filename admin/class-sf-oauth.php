@@ -76,14 +76,9 @@ class SF_OAuth {
 	 * @return string|false Platform slug or false.
 	 */
 	private function get_platform_from_state( $state ) {
-		$platforms = array( 'instagram', 'youtube', 'facebook' );
-
-		foreach ( $platforms as $platform ) {
-			if ( wp_verify_nonce( $state, 'sf_oauth_' . $platform ) ) {
-				return $platform;
-			}
+		if ( wp_verify_nonce( $state, 'sf_oauth_instagram' ) ) {
+			return 'instagram';
 		}
-
 		return false;
 	}
 
@@ -95,22 +90,12 @@ class SF_OAuth {
 	 * @return array|WP_Error Token data or error.
 	 */
 	private function exchange_code( $platform, $code ) {
+		if ( 'instagram' !== $platform ) {
+			return new WP_Error( 'invalid_platform', __( 'Only Instagram is supported.', 'social-feed' ) );
+		}
 		$settings     = get_option( 'sf_settings', array() );
 		$redirect_uri = admin_url( 'admin.php?page=social-feed-accounts&sf_oauth_callback=1' );
-
-		switch ( $platform ) {
-			case 'instagram':
-				return $this->exchange_instagram_code( $code, $settings, $redirect_uri );
-
-			case 'youtube':
-				return $this->exchange_youtube_code( $code, $settings, $redirect_uri );
-
-			case 'facebook':
-				return $this->exchange_facebook_code( $code, $settings, $redirect_uri );
-
-			default:
-				return new WP_Error( 'invalid_platform', __( 'Invalid platform.', 'social-feed' ) );
-		}
+		return $this->exchange_instagram_code( $code, $settings, $redirect_uri );
 	}
 
 	/**

@@ -218,40 +218,29 @@ class SF_Customizer {
 	 * @param array $accounts Connected accounts.
 	 */
 	private static function render_tab_feed( $settings, $accounts ) {
-		$platforms = SF_Helpers::get_platforms();
 		?>
 		<div class="sf-tab-content active" data-tab="feed">
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></div>
+			<input type="hidden" id="sf_platform" name="platform" value="instagram">
 			<div class="sf-field">
 				<label for="sf_name"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></label>
 				<input type="text" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>">
 			</div>
 
 			<div class="sf-field">
-				<label for="sf_platform"><?php esc_html_e( 'Platform', 'social-feed' ); ?></label>
-				<select id="sf_platform" name="platform">
-					<?php foreach ( $platforms as $slug => $label ) : ?>
-						<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $settings['platform'], $slug ); ?>>
-							<?php echo esc_html( $label ); ?>
-						</option>
-					<?php endforeach; ?>
-				</select>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_account_id"><?php esc_html_e( 'Connected Account', 'social-feed' ); ?></label>
+				<label for="sf_account_id"><?php esc_html_e( 'Connected Instagram Account', 'social-feed' ); ?></label>
 				<div class="sf-field-control sf-field-control-stack">
 					<select id="sf_account_id" name="account_id">
 						<option value=""><?php esc_html_e( 'Select an account...', 'social-feed' ); ?></option>
 						<?php foreach ( $accounts as $account ) : ?>
 							<option value="<?php echo esc_attr( $account['id'] ); ?>" data-platform="<?php echo esc_attr( $account['platform'] ); ?>" <?php selected( $settings['account_id'], $account['id'] ); ?>>
-								<?php echo esc_html( $account['account_name'] ); ?> (<?php echo esc_html( ucfirst( $account['platform'] ) ); ?>)
+								<?php echo esc_html( $account['account_name'] ); ?>
 							</option>
 						<?php endforeach; ?>
 					</select>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-accounts' ) ); ?>" class="sf-link-small">
-						<?php esc_html_e( '+ Connect new account', 'social-feed' ); ?>
+						<?php esc_html_e( '+ Connect new Instagram account', 'social-feed' ); ?>
 					</a>
 				</div>
 			</div>
@@ -259,21 +248,9 @@ class SF_Customizer {
 			<div class="sf-field">
 				<label for="sf_feed_type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></label>
 				<select id="sf_feed_type" name="feed_type">
-					<optgroup label="<?php esc_attr_e( 'Instagram', 'social-feed' ); ?>" class="sf-feed-type-instagram">
-						<option value="user" <?php selected( $settings['feed_type'], 'user' ); ?>><?php esc_html_e( 'User Timeline', 'social-feed' ); ?></option>
-						<option value="hashtag" <?php selected( $settings['feed_type'], 'hashtag' ); ?>><?php esc_html_e( 'Hashtag', 'social-feed' ); ?></option>
-						<option value="tagged" <?php selected( $settings['feed_type'], 'tagged' ); ?>><?php esc_html_e( 'Tagged Posts', 'social-feed' ); ?></option>
-					</optgroup>
-					<optgroup label="<?php esc_attr_e( 'YouTube', 'social-feed' ); ?>" class="sf-feed-type-youtube">
-						<option value="channel" <?php selected( $settings['feed_type'], 'channel' ); ?>><?php esc_html_e( 'Channel Videos', 'social-feed' ); ?></option>
-						<option value="playlist" <?php selected( $settings['feed_type'], 'playlist' ); ?>><?php esc_html_e( 'Playlist', 'social-feed' ); ?></option>
-						<option value="search" <?php selected( $settings['feed_type'], 'search' ); ?>><?php esc_html_e( 'Search Results', 'social-feed' ); ?></option>
-					</optgroup>
-					<optgroup label="<?php esc_attr_e( 'Facebook', 'social-feed' ); ?>" class="sf-feed-type-facebook">
-						<option value="page" <?php selected( $settings['feed_type'], 'page' ); ?>><?php esc_html_e( 'Page Posts', 'social-feed' ); ?></option>
-						<option value="album" <?php selected( $settings['feed_type'], 'album' ); ?>><?php esc_html_e( 'Photo Album', 'social-feed' ); ?></option>
-						<option value="events" <?php selected( $settings['feed_type'], 'events' ); ?>><?php esc_html_e( 'Events', 'social-feed' ); ?></option>
-					</optgroup>
+					<option value="user" <?php selected( $settings['feed_type'], 'user' ); ?>><?php esc_html_e( 'User Timeline', 'social-feed' ); ?></option>
+					<option value="hashtag" <?php selected( $settings['feed_type'], 'hashtag' ); ?>><?php esc_html_e( 'Hashtag', 'social-feed' ); ?></option>
+					<option value="tagged" <?php selected( $settings['feed_type'], 'tagged' ); ?>><?php esc_html_e( 'Tagged Posts', 'social-feed' ); ?></option>
 				</select>
 			</div>
 

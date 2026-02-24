@@ -498,21 +498,10 @@ class SF_Renderer {
 	 */
 	private static function get_profile_url( $platform, $username ) {
 		$username = ltrim( $username, '@' );
-
-		switch ( $platform ) {
-			case 'instagram':
-				return 'https://www.instagram.com/' . $username . '/';
-			case 'youtube':
-				return 'https://www.youtube.com/@' . $username;
-			case 'facebook':
-				return 'https://www.facebook.com/' . $username;
-			case 'tiktok':
-				return 'https://www.tiktok.com/@' . $username;
-			case 'twitter':
-				return 'https://twitter.com/' . $username;
-			default:
-				return '#';
+		if ( 'instagram' === $platform ) {
+			return 'https://www.instagram.com/' . $username . '/';
 		}
+		return '#';
 	}
 
 	/**

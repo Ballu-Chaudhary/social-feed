@@ -954,22 +954,10 @@ class SF_Ajax {
 			wp_send_json_error( array( 'message' => __( 'Invalid platform.', 'social-feed' ) ) );
 		}
 
-		switch ( $platform ) {
-			case 'instagram':
-				$result = $this->test_instagram_connection( $settings );
-				break;
-
-			case 'youtube':
-				$result = $this->test_youtube_connection( $settings );
-				break;
-
-			case 'facebook':
-				$result = $this->test_facebook_connection( $settings );
-				break;
-
-			default:
-				wp_send_json_error( array( 'message' => __( 'Unknown platform.', 'social-feed' ) ) );
+		if ( 'instagram' !== $platform ) {
+			wp_send_json_error( array( 'message' => __( 'Only Instagram is supported.', 'social-feed' ) ) );
 		}
+		$result = $this->test_instagram_connection( $settings );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );

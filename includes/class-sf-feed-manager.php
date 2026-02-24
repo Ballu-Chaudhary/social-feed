@@ -59,21 +59,10 @@ class SF_Feed_Manager {
 
 		$result = null;
 
-		switch ( $feed['platform'] ) {
-			case 'instagram':
-				$result = self::fetch_instagram( $account, $access_token, $settings, $limit );
-				break;
-
-			case 'youtube':
-				$result = self::fetch_youtube( $account, $settings, $limit );
-				break;
-
-			case 'facebook':
-				$result = self::fetch_facebook( $account, $access_token, $settings, $limit );
-				break;
-
-			default:
-				$result = new WP_Error( 'unknown_platform', __( 'Unknown platform.', 'social-feed' ) );
+		if ( 'instagram' !== $feed['platform'] ) {
+			$result = new WP_Error( 'unknown_platform', __( 'This plugin supports Instagram feeds only.', 'social-feed' ) );
+		} else {
+			$result = self::fetch_instagram( $account, $access_token, $settings, $limit );
 		}
 
 		if ( is_wp_error( $result ) ) {

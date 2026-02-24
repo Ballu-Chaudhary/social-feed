@@ -97,9 +97,7 @@
 			this.selectedPlatform = platform;
 
 			var platformNames = {
-				instagram: 'Instagram',
-				youtube: 'YouTube',
-				facebook: 'Facebook'
+				instagram: 'Instagram'
 			};
 
 			this.$modal.find('.sf-selected-platform-icon').html(

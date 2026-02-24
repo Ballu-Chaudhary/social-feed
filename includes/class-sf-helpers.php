@@ -549,10 +549,6 @@ class SF_Helpers {
 	public static function get_platforms() {
 		return array(
 			'instagram' => __( 'Instagram', 'social-feed' ),
-			'youtube'   => __( 'YouTube', 'social-feed' ),
-			'facebook'  => __( 'Facebook', 'social-feed' ),
-			'tiktok'    => __( 'TikTok', 'social-feed' ),
-			'twitter'   => __( 'Twitter/X', 'social-feed' ),
 		);
 	}
 

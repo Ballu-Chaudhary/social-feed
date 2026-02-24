@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Social Feed
  * Plugin URI: https://example.com/social-feed
- * Description: Display social media feeds from Instagram, YouTube, and Facebook.
+ * Description: Display Instagram feed on your website. Connect your Instagram account and show posts in grid, list, masonry or carousel layout.
  * Version: 1.0.0
  * Author: Baldev Chaudhary
  * Author URI: 

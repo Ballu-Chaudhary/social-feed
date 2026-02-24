@@ -52,8 +52,8 @@ class SF_License {
 	private static $plan_features = array(
 		'free'     => array( 'instagram_basic', 'grid_layout' ),
 		'personal' => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'popup', 'custom_css' ),
-		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'youtube', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics' ),
-		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'youtube', 'facebook', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics', 'white_label', 'priority_support' ),
+		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics' ),
+		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics', 'white_label', 'priority_support' ),
 		'bundle'   => array( 'all' ),
 	);
 
@@ -729,8 +729,8 @@ function sf_pro_feature( $feature, $show_notice = false ) {
 	$plan_features = array(
 		'free'     => array( 'instagram_basic', 'grid_layout' ),
 		'personal' => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'popup', 'custom_css' ),
-		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'youtube', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics' ),
-		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'youtube', 'facebook', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics', 'white_label', 'priority_support' ),
+		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics' ),
+		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics', 'white_label', 'priority_support' ),
 		'bundle'   => array( 'all' ),
 	);
 
@@ -755,8 +755,6 @@ function sf_pro_feature( $feature, $show_notice = false ) {
 function sf_show_upgrade_notice( $feature ) {
 	$feature_names = array(
 		'instagram_hashtag' => __( 'Instagram Hashtag Feeds', 'social-feed' ),
-		'youtube'           => __( 'YouTube Integration', 'social-feed' ),
-		'facebook'          => __( 'Facebook Integration', 'social-feed' ),
 		'masonry_layout'    => __( 'Masonry Layout', 'social-feed' ),
 		'carousel_layout'   => __( 'Carousel Layout', 'social-feed' ),
 		'lightbox'          => __( 'Lightbox Popup', 'social-feed' ),
