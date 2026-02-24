@@ -40,14 +40,6 @@
 				self.closeModal();
 			});
 
-			this.$modal.find('.sf-platform-card').on('click', function () {
-				self.selectPlatform($(this).data('platform'));
-			});
-
-			this.$modal.find('.sf-back-btn').on('click', function () {
-				self.goToStep(1);
-			});
-
 			this.$modal.find('.sf-oauth-connect-btn').on('click', function () {
 				self.startOAuth();
 			});
@@ -72,7 +64,7 @@
 		},
 
 		openModal: function () {
-			this.selectedPlatform = null;
+			this.selectedPlatform = 'instagram';
 			this.reconnectAccountId = null;
 			this.goToStep(1);
 			this.$modal.addClass('active');
@@ -93,29 +85,10 @@
 			this.$modal.find('.sf-connect-step[data-step="' + step + '"]').addClass('active');
 		},
 
-		selectPlatform: function (platform) {
-			this.selectedPlatform = platform;
-
-			var platformNames = {
-				instagram: 'Instagram'
-			};
-
-			this.$modal.find('.sf-selected-platform-icon').html(
-				this.$modal.find('.sf-platform-card[data-platform="' + platform + '"] .sf-platform-icon-large').clone()
-			);
-			this.$modal.find('.sf-selected-platform-name').text(platformNames[platform] || platform);
-			this.$modal.find('.sf-platform-text').text(platformNames[platform] || platform);
-
-			this.$modal.find('.sf-connect-instructions > div').hide();
-			this.$modal.find('.sf-instructions-' + platform).show();
-
-			this.goToStep(2);
-		},
-
 		startOAuth: function () {
 			var self = this;
 
-			this.goToStep(3);
+			this.goToStep(2);
 
 			$.ajax({
 				url: sfAdmin.ajaxUrl,
@@ -130,12 +103,12 @@
 					if (response.success && response.data.url) {
 						self.openOAuthPopup(response.data.url);
 					} else {
-						self.goToStep(2);
+						self.goToStep(1);
 						alert(response.data.message || sfAdmin.i18n.error);
 					}
 				},
 				error: function () {
-					self.goToStep(2);
+					self.goToStep(1);
 					alert(sfAdmin.i18n.error);
 				}
 			});
@@ -155,7 +128,7 @@
 
 			if (!this.oauthWindow) {
 				alert(sfAdmin.i18n.popup_blocked || 'Please allow popups for this site.');
-				this.goToStep(2);
+				this.goToStep(1);
 			}
 		},
 
@@ -196,15 +169,15 @@
 				success: function (response) {
 					if (response.success) {
 						self.$modal.find('.sf-connected-account-name').text('@' + (response.data.account_name || data.account_name));
-						self.goToStep(4);
+						self.goToStep(3);
 					} else {
 						alert(response.data.message || sfAdmin.i18n.error);
-						self.goToStep(2);
+						self.goToStep(1);
 					}
 				},
 				error: function () {
 					alert(sfAdmin.i18n.error);
-					self.goToStep(2);
+					self.goToStep(1);
 				}
 			});
 		},
@@ -215,12 +188,13 @@
 			}
 
 			alert(data.message || sfAdmin.i18n.error);
-			this.goToStep(2);
+			this.goToStep(1);
 		},
 
 		reconnectAccount: function (accountId, platform) {
 			this.reconnectAccountId = accountId;
-			this.selectPlatform(platform);
+			this.selectedPlatform = platform || 'instagram';
+			this.goToStep(1);
 			this.$modal.addClass('active');
 			$('body').addClass('sf-modal-open');
 		},

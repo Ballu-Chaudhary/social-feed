@@ -30,21 +30,16 @@ class SF_Accounts {
 			</div>
 
 			<?php if ( empty( $accounts ) ) : ?>
-				<!-- Empty State -->
-				<div class="sf-empty-state-large sf-accounts-empty">
-					<div class="sf-empty-illustration">
-						<svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-							<circle cx="60" cy="60" r="50" fill="#f0f0f1"/>
-							<circle cx="60" cy="45" r="18" fill="#c3c4c7"/>
-							<path d="M35 85c0-13.8 11.2-25 25-25s25 11.2 25 25" stroke="#c3c4c7" stroke-width="8" fill="none"/>
-							<circle cx="90" cy="85" r="18" fill="#2271b1"/>
-							<path d="M90 77v16M82 85h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-						</svg>
+				<!-- Empty State - Instagram branded -->
+				<div class="sf-empty-state-large sf-accounts-empty sf-instagram-empty">
+					<div class="sf-empty-instagram-logo">
+						<?php echo self::get_instagram_logo_svg( 80 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
-					<h2><?php esc_html_e( 'No accounts connected', 'social-feed' ); ?></h2>
-					<p><?php esc_html_e( 'Connect your Instagram account to start displaying your feed on your website.', 'social-feed' ); ?></p>
+					<h2><?php esc_html_e( 'Connect your Instagram account', 'social-feed' ); ?></h2>
+					<p><?php esc_html_e( 'Link your Instagram Business or Creator account to display your posts, reels, and profile on your website. You\'ll authorize once through Facebook — then your feed updates automatically.', 'social-feed' ); ?></p>
 					<button type="button" class="button button-primary button-hero sf-connect-account-btn">
-						<?php esc_html_e( 'Connect Instagram Account', 'social-feed' ); ?>
+						<?php echo self::get_instagram_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span><?php esc_html_e( 'Connect Instagram Account', 'social-feed' ); ?></span>
 					</button>
 				</div>
 			<?php else : ?>
@@ -186,6 +181,17 @@ class SF_Accounts {
 	}
 
 	/**
+	 * Get Instagram logo SVG (official-style icon).
+	 *
+	 * @param int $size Width and height in pixels.
+	 * @return string SVG HTML.
+	 */
+	private static function get_instagram_logo_svg( $size = 24 ) {
+		$size = max( 16, min( 120, (int) $size ) );
+		return '<svg class="sf-icon-instagram" viewBox="0 0 24 24" width="' . (int) $size . '" height="' . (int) $size . '" aria-hidden="true"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>';
+	}
+
+	/**
 	 * Get platform icon HTML.
 	 *
 	 * @param string $platform Platform slug.
@@ -195,78 +201,60 @@ class SF_Accounts {
 		if ( 'instagram' !== $platform ) {
 			return '';
 		}
-		return '<div class="sf-platform-icon-large sf-icon-instagram"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>';
+		return '<div class="sf-platform-icon-large sf-icon-instagram">' . self::get_instagram_logo_svg( 32 ) . '</div>';
 	}
 
 	/**
 	 * Render the connect account modal.
+	 * Single step: Instagram connect (no platform selection). Steps: 1=connect, 2=loading, 3=success.
 	 */
 	private static function render_connect_modal() {
 		?>
 		<div class="sf-modal sf-connect-modal" id="sf-connect-modal">
 			<div class="sf-modal-overlay"></div>
 			<div class="sf-modal-container">
-				<div class="sf-modal-header">
+				<div class="sf-modal-header sf-connect-modal-header">
 					<h2><?php esc_html_e( 'Connect Instagram Account', 'social-feed' ); ?></h2>
-					<button type="button" class="sf-modal-close">&times;</button>
+					<button type="button" class="sf-modal-close" aria-label="<?php esc_attr_e( 'Close', 'social-feed' ); ?>">&times;</button>
 				</div>
 
-				<div class="sf-modal-body">
-					<!-- Step 1: Instagram connect (no platform selection) -->
-					<div class="sf-connect-step sf-step-platforms active" data-step="1">
-						<p class="sf-step-desc"><?php esc_html_e( 'Connect your Instagram account to display your feed on your website.', 'social-feed' ); ?></p>
-
-						<div class="sf-platform-grid sf-platform-single">
-							<button type="button" class="sf-platform-card" data-platform="instagram">
-								<div class="sf-platform-icon-large sf-icon-instagram">
-									<svg viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-								</div>
-								<span class="sf-platform-name"><?php esc_html_e( 'Instagram', 'social-feed' ); ?></span>
-							</button>
-						</div>
-					</div>
-
-					<!-- Step 2: Connection Instructions -->
-					<div class="sf-connect-step sf-step-connect" data-step="2">
-						<button type="button" class="sf-back-btn">&larr; <?php esc_html_e( 'Back', 'social-feed' ); ?></button>
-
-						<div class="sf-connect-platform-header">
-							<div class="sf-selected-platform-icon"></div>
-							<h3 class="sf-selected-platform-name"></h3>
-						</div>
-
-						<div class="sf-connect-instructions">
-							<div class="sf-instructions-instagram">
-								<p><?php esc_html_e( 'Connect your Instagram account to display your feed. You\'ll need to authorize access through Facebook (Instagram\'s parent company).', 'social-feed' ); ?></p>
-								<ul>
-									<li><?php esc_html_e( 'Works with Business and Creator accounts', 'social-feed' ); ?></li>
-									<li><?php esc_html_e( 'Displays posts, reels, and stories', 'social-feed' ); ?></li>
-									<li><?php esc_html_e( 'Auto-refreshes every hour', 'social-feed' ); ?></li>
-								</ul>
+				<div class="sf-modal-body sf-connect-modal-body">
+					<!-- Step 1: Connect Instagram (only step before loading) -->
+					<div class="sf-connect-step sf-step-connect active" data-step="1">
+						<div class="sf-connect-instagram-hero">
+							<div class="sf-connect-instagram-logo">
+								<?php echo self::get_instagram_logo_svg( 56 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 							</div>
+							<p class="sf-connect-intro"><?php esc_html_e( 'Authorize your Instagram Business or Creator account to display your feed on your website. You\'ll sign in through Facebook (Instagram\'s parent company).', 'social-feed' ); ?></p>
 						</div>
 
-						<button type="button" class="button button-primary button-hero sf-oauth-connect-btn">
-							<span class="sf-btn-icon"></span>
-							<span class="sf-btn-text"><?php esc_html_e( 'Connect with', 'social-feed' ); ?> <span class="sf-platform-text"></span></span>
+						<ul class="sf-connect-benefits">
+							<li><?php esc_html_e( 'Works with Business and Creator accounts', 'social-feed' ); ?></li>
+							<li><?php esc_html_e( 'Displays posts, reels, and profile', 'social-feed' ); ?></li>
+							<li><?php esc_html_e( 'Auto-refreshes every hour', 'social-feed' ); ?></li>
+						</ul>
+
+						<button type="button" class="button button-primary sf-oauth-connect-btn sf-connect-instagram-btn">
+							<?php echo self::get_instagram_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<span><?php esc_html_e( 'Connect with Instagram', 'social-feed' ); ?></span>
 						</button>
 
 						<p class="sf-connect-note">
-							<?php esc_html_e( 'A popup window will open for authentication. Please allow popups for this site.', 'social-feed' ); ?>
+							<?php esc_html_e( 'A popup will open for sign-in. Please allow popups for this site.', 'social-feed' ); ?>
 						</p>
 					</div>
 
-					<!-- Step 3: Connecting... -->
-					<div class="sf-connect-step sf-step-loading" data-step="3">
+					<!-- Step 2: Connecting... -->
+					<div class="sf-connect-step sf-step-loading" data-step="2">
 						<div class="sf-connecting-animation">
 							<span class="spinner is-active"></span>
 						</div>
 						<h3><?php esc_html_e( 'Connecting...', 'social-feed' ); ?></h3>
-						<p><?php esc_html_e( 'Please complete the authorization in the popup window.', 'social-feed' ); ?></p>
+						<p><?php esc_html_e( 'Complete the authorization in the popup window.', 'social-feed' ); ?></p>
 					</div>
 
-					<!-- Step 4: Success -->
-					<div class="sf-connect-step sf-step-success" data-step="4">
+					<!-- Step 3: Success -->
+					<div class="sf-connect-step sf-step-success" data-step="3">
 						<div class="sf-success-icon">
 							<span class="dashicons dashicons-yes-alt"></span>
 						</div>

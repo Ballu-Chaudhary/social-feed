@@ -2028,6 +2028,260 @@ body.folded .sf-customizer-wrap .sf-customizer-footer {
 }
 
 /* ==========================================================================
+   Connect Account Modal (Instagram)
+   ========================================================================== */
+
+/* Connect modal uses .active on the wrapper; overlay and container are siblings */
+.sf-connect-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity var(--sf-transition), visibility var(--sf-transition);
+}
+
+.sf-connect-modal.active {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.sf-connect-modal .sf-modal-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	pointer-events: auto;
+}
+
+.sf-connect-modal .sf-modal-container {
+	position: relative;
+	z-index: 1;
+	background: var(--sf-white);
+	max-width: 440px;
+	width: 90%;
+	max-height: 90vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	border-radius: var(--sf-radius);
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+	transform: scale(0.95) translateY(-20px);
+	transition: transform var(--sf-transition);
+}
+
+.sf-connect-modal.active .sf-modal-container {
+	transform: scale(1) translateY(0);
+}
+
+.sf-connect-modal .sf-modal-header.sf-connect-modal-header {
+	padding: 18px 22px;
+	border-bottom: 1px solid var(--sf-border);
+}
+
+.sf-connect-modal .sf-modal-header h2 {
+	font-size: 18px;
+	font-weight: 600;
+	margin: 0;
+}
+
+.sf-connect-modal .sf-modal-body.sf-connect-modal-body {
+	padding: 24px 22px;
+	max-height: none;
+	overflow: visible;
+}
+
+.sf-connect-modal .sf-connect-step {
+	display: none;
+}
+
+.sf-connect-modal .sf-connect-step.active {
+	display: block;
+}
+
+.sf-connect-instagram-hero {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.sf-connect-instagram-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 14px;
+}
+
+.sf-connect-instagram-logo .sf-icon-instagram {
+	color: var(--sf-instagram);
+}
+
+.sf-connect-intro {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--sf-text-muted);
+}
+
+.sf-connect-benefits {
+	list-style: none;
+	margin: 0 0 22px;
+	padding: 0;
+	font-size: 13px;
+	color: var(--sf-text);
+}
+
+.sf-connect-benefits li {
+	position: relative;
+	padding-left: 22px;
+	margin-bottom: 8px;
+}
+
+.sf-connect-benefits li:last-child {
+	margin-bottom: 0;
+}
+
+.sf-connect-benefits li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 5px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--sf-instagram);
+}
+
+.sf-connect-instagram-btn.sf-oauth-connect-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	padding: 12px 20px;
+	font-size: 15px;
+	font-weight: 600;
+	background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+	color: var(--sf-white) !important;
+	border: none;
+	border-radius: var(--sf-radius);
+	box-shadow: 0 2px 8px rgba(228, 64, 95, 0.35);
+	transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.sf-connect-instagram-btn.sf-oauth-connect-btn:hover {
+	box-shadow: 0 4px 14px rgba(228, 64, 95, 0.45);
+	color: var(--sf-white) !important;
+}
+
+.sf-connect-instagram-btn .sf-icon-instagram {
+	color: var(--sf-white);
+	flex-shrink: 0;
+}
+
+.sf-connect-note {
+	margin: 14px 0 0;
+	font-size: 12px;
+	color: var(--sf-text-muted);
+	text-align: center;
+}
+
+.sf-connect-step.sf-step-loading,
+.sf-connect-step.sf-step-success {
+	text-align: center;
+	padding: 20px 0;
+}
+
+.sf-connecting-animation {
+	margin-bottom: 16px;
+}
+
+.sf-connecting-animation .spinner {
+	float: none;
+	display: inline-block;
+}
+
+.sf-connect-step.sf-step-success .sf-success-icon {
+	color: var(--sf-success);
+	margin-bottom: 12px;
+}
+
+.sf-connect-step.sf-step-success .sf-success-icon .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+}
+
+.sf-connected-account-name {
+	font-size: 16px;
+	font-weight: 600;
+	margin: 0 0 18px;
+	color: var(--sf-dark);
+}
+
+/* ==========================================================================
+   Instagram empty state (Accounts page)
+   ========================================================================== */
+
+.sf-instagram-empty.sf-empty-state-large {
+	padding: 48px 24px;
+}
+
+.sf-instagram-empty .sf-empty-instagram-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
+.sf-instagram-empty .sf-empty-instagram-logo .sf-icon-instagram {
+	color: var(--sf-instagram);
+}
+
+.sf-instagram-empty h2 {
+	font-size: 22px;
+	font-weight: 600;
+	margin: 0 0 12px;
+	color: var(--sf-dark);
+}
+
+.sf-instagram-empty p {
+	max-width: 420px;
+	margin: 0 auto 24px;
+	font-size: 15px;
+	line-height: 1.5;
+	color: var(--sf-text-muted);
+}
+
+.sf-instagram-empty .sf-connect-account-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 12px 24px;
+	font-size: 15px;
+	font-weight: 600;
+	background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+	color: var(--sf-white) !important;
+	border: none;
+	border-radius: var(--sf-radius);
+	box-shadow: 0 2px 8px rgba(228, 64, 95, 0.35);
+	transition: box-shadow 0.2s ease;
+}
+
+.sf-instagram-empty .sf-connect-account-btn:hover {
+	box-shadow: 0 4px 14px rgba(228, 64, 95, 0.45);
+	color: var(--sf-white) !important;
+}
+
+.sf-instagram-empty .sf-connect-account-btn .sf-icon-instagram {
+	color: var(--sf-white);
+}
+
+/* ==========================================================================
    Device Switcher
    ========================================================================== */
 
