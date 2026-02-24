@@ -23,10 +23,12 @@ class SF_Accounts {
 		<div class="wrap sf-admin-wrap sf-accounts-wrap">
 			<div class="sf-accounts-header">
 				<h1 class="sf-admin-title"><?php esc_html_e( 'Instagram Accounts', 'social-feed' ); ?></h1>
-				<button type="button" class="button button-primary sf-connect-account-btn">
-					<span class="dashicons dashicons-plus-alt2"></span>
-					<?php esc_html_e( 'Connect New Account', 'social-feed' ); ?>
-				</button>
+				<?php if ( ! empty( $accounts ) ) : ?>
+					<button type="button" class="button button-primary sf-connect-account-btn">
+						<span class="dashicons dashicons-plus-alt2"></span>
+						<?php esc_html_e( 'Connect New Account', 'social-feed' ); ?>
+					</button>
+				<?php endif; ?>
 			</div>
 
 			<?php if ( empty( $accounts ) ) : ?>
