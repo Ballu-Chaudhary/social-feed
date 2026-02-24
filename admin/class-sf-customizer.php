@@ -220,44 +220,41 @@ class SF_Customizer {
 	private static function render_tab_feed( $settings, $accounts ) {
 		?>
 		<div class="sf-tab-content active" data-tab="feed">
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></div>
 			<input type="hidden" id="sf_platform" name="platform" value="instagram">
-			<div class="sf-field">
-				<label for="sf_name"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></label>
-				<input type="text" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>">
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_account_id"><?php esc_html_e( 'Connected Instagram Account', 'social-feed' ); ?></label>
-				<div class="sf-field-control sf-field-control-stack">
-					<select id="sf_account_id" name="account_id">
-						<option value=""><?php esc_html_e( 'Select an account...', 'social-feed' ); ?></option>
-						<?php foreach ( $accounts as $account ) : ?>
-							<option value="<?php echo esc_attr( $account['id'] ); ?>" data-platform="<?php echo esc_attr( $account['platform'] ); ?>" <?php selected( $settings['account_id'], $account['id'] ); ?>>
-								<?php echo esc_html( $account['account_name'] ); ?>
-							</option>
-						<?php endforeach; ?>
-					</select>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-accounts' ) ); ?>" class="sf-link-small">
-						<?php esc_html_e( '+ Connect new Instagram account', 'social-feed' ); ?>
-					</a>
+			<div class="sf-section sf-section-feed-source">
+				<div class="sf-section-title"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></div>
+				<div class="sf-field">
+					<label for="sf_name"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></label>
+					<input type="text" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>">
 				</div>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_feed_type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></label>
-				<select id="sf_feed_type" name="feed_type">
-					<option value="user" <?php selected( $settings['feed_type'], 'user' ); ?>><?php esc_html_e( 'User Timeline', 'social-feed' ); ?></option>
-					<option value="hashtag" <?php selected( $settings['feed_type'], 'hashtag' ); ?>><?php esc_html_e( 'Hashtag', 'social-feed' ); ?></option>
-					<option value="tagged" <?php selected( $settings['feed_type'], 'tagged' ); ?>><?php esc_html_e( 'Tagged Posts', 'social-feed' ); ?></option>
-				</select>
-			</div>
-
-			<div class="sf-field">
-				<label for="sf_post_count"><?php esc_html_e( 'Number of Posts', 'social-feed' ); ?></label>
-				<input type="number" id="sf_post_count" name="post_count" value="<?php echo esc_attr( $settings['post_count'] ); ?>" min="1" max="50">
-			</div>
+				<div class="sf-field">
+					<label for="sf_account_id"><?php esc_html_e( 'Instagram Account', 'social-feed' ); ?></label>
+					<div class="sf-field-control sf-field-control-stack">
+						<select id="sf_account_id" name="account_id">
+							<option value=""><?php esc_html_e( 'Select an account...', 'social-feed' ); ?></option>
+							<?php foreach ( $accounts as $account ) : ?>
+								<option value="<?php echo esc_attr( $account['id'] ); ?>" data-platform="<?php echo esc_attr( $account['platform'] ); ?>" <?php selected( $settings['account_id'], $account['id'] ); ?>>
+									<?php echo esc_html( $account['account_name'] ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-accounts' ) ); ?>" class="sf-link-small">
+							<?php esc_html_e( '+ Connect new account', 'social-feed' ); ?>
+						</a>
+					</div>
+				</div>
+				<div class="sf-field">
+					<label for="sf_feed_type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></label>
+					<select id="sf_feed_type" name="feed_type">
+						<option value="user" <?php selected( $settings['feed_type'], 'user' ); ?>><?php esc_html_e( 'User Timeline', 'social-feed' ); ?></option>
+						<option value="hashtag" <?php selected( $settings['feed_type'], 'hashtag' ); ?>><?php esc_html_e( 'Hashtag', 'social-feed' ); ?></option>
+						<option value="tagged" <?php selected( $settings['feed_type'], 'tagged' ); ?>><?php esc_html_e( 'Tagged Posts', 'social-feed' ); ?></option>
+					</select>
+				</div>
+				<div class="sf-field">
+					<label for="sf_post_count"><?php esc_html_e( 'Number of Posts', 'social-feed' ); ?></label>
+					<input type="number" id="sf_post_count" name="post_count" value="<?php echo esc_attr( $settings['post_count'] ); ?>" min="1" max="50">
+				</div>
 			</div>
 		</div>
 		<?php
