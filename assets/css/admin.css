@@ -774,21 +774,31 @@ body.sf-admin-page.sf-customizer-page {
 }
 
 body.sf-admin-page.sf-customizer-page .wrap { margin: 0; padding: 0; max-width: none; }
-body.sf-admin-page.sf-customizer-page #wpbody-content { padding-bottom: 0; }
-body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap { margin-left: -20px; margin-right: -20px; }
+body.sf-admin-page.sf-customizer-page #wpbody-content { padding-bottom: 0; overflow: hidden; }
+body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
+	margin: 0 -20px;
+	padding: 0;
+	height: calc(100vh - 32px);
+	max-height: calc(100vh - 32px);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
 
 body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	background: var(--sf-customizer-surface);
 	border-bottom: 1px solid var(--sf-customizer-border);
 	padding: var(--sf-customizer-space-md) 20px;
-	margin-bottom: 0;
+	margin: 0;
+	flex-shrink: 0;
 }
 
 .sf-customizer-wrap {
 	display: flex;
 	flex-direction: column;
+	flex: 1;
+	min-height: 0;
 	width: 100%;
-	min-height: calc(100vh - 32px);
 	background: var(--sf-customizer-surface-alt);
 	overflow: hidden;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -817,7 +827,7 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	color: #e0e7ff;
 }
 
-/* Top bar - full width */
+/* Top bar - aligns with sidebar + preview below */
 .sf-customizer-topbar {
 	display: flex;
 	align-items: center;
@@ -829,8 +839,11 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+/* Match sidebar width so Back aligns with sidebar edge */
 .sf-topbar-left {
-	flex: 0 0 180px;
+	width: 340px;
+	min-width: 340px;
+	flex-shrink: 0;
 }
 
 .sf-topbar-back {
@@ -902,8 +915,9 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	flex: 0 0 220px;
+	flex: 1;
 	justify-content: flex-end;
+	min-width: 0;
 }
 
 .sf-topbar-btn {
@@ -937,7 +951,7 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	font-size: 14px;
 }
 
-/* Body: sidebar + preview */
+/* Body: sidebar + preview - fills remaining height */
 .sf-customizer-body {
 	display: flex;
 	flex: 1;
@@ -945,15 +959,16 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	overflow: hidden;
 }
 
-/* Left sidebar - narrow nav + panels */
+/* Left sidebar - more visual weight, primary navigation */
 .sf-customizer-sidebar.sf-customizer-settings {
-	width: 280px;
-	min-width: 280px;
+	width: 340px;
+	min-width: 340px;
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
 	background: var(--sf-customizer-surface);
 	border-right: 1px solid var(--sf-customizer-border);
+	box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
 	overflow: hidden;
 }
 
@@ -1679,10 +1694,11 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	background: var(--sf-warning);
 }
 
-/* Right Panel - Preview: full height, white canvas with shadow */
+/* Right Panel - Preview: secondary, contained, does not dominate */
 .sf-customizer-panel.sf-customizer-preview {
 	flex: 1;
-	min-width: 420px;
+	min-width: 380px;
+	max-width: 680px;
 	display: flex;
 	flex-direction: column;
 	background: #eef2f6;
