@@ -461,6 +461,7 @@ class SF_Ajax {
 				'message'   => __( 'Feed saved successfully!', 'social-feed' ),
 				'feed_id'   => $feed_id,
 				'shortcode' => '[social_feed id="' . $feed_id . '"]',
+				'name'      => isset( $feed_data['name'] ) ? $feed_data['name'] : '',
 				'redirect'  => admin_url( 'admin.php?page=social-feed-create&feed_id=' . $feed_id ),
 			)
 		);

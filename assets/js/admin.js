@@ -615,39 +615,50 @@
 		},
 
 		/**
-		 * Initialize tab visibility and persistence.
+		 * Initialize sidebar: show nav by default.
 		 */
 		initTabs: function () {
 			var $wrap = $('.sf-customizer-wrap');
 			if (!$wrap.length) return;
 
-			var savedTab = null;
-			try {
-				savedTab = sessionStorage.getItem('sf_customizer_tab');
-			} catch (e) {}
-			var validTabs = ['feed', 'layout', 'design', 'header', 'posts', 'loadmore', 'advanced'];
-			var tab = (savedTab && validTabs.indexOf(savedTab) !== -1) ? savedTab : 'feed';
-
-			this.switchToTab($wrap, tab);
+			$wrap.find('.sf-sidebar-nav').addClass('sf-sidebar-view-active');
+			$wrap.find('.sf-sidebar-panels').removeClass('sf-sidebar-panels-active');
+			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').hide();
 		},
 
 		/**
-		 * Switch to a tab and update visibility.
+		 * Switch to a section (show its panel in sidebar).
+		 *
+		 * @param {jQuery} $wrap    Customizer wrap element.
+		 * @param {string} section Section identifier (feed, layout, design, header, posts, loadmore, advanced).
+		 */
+		switchToTab: function ($wrap, section) {
+			if (!$wrap || !$wrap.length || !section) return;
+
+			$wrap.find('.sf-sidebar-nav').removeClass('sf-sidebar-view-active');
+			$wrap.find('.sf-sidebar-panels').addClass('sf-sidebar-panels-active');
+			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').hide();
+			$wrap.find('.sf-sidebar-panel[data-section="' + section + '"]').addClass('sf-panel-visible').show();
+
+			$wrap.find('.sf-sidebar-panel-body .sf-tab-content').removeClass('active');
+			$wrap.find('.sf-sidebar-panel[data-section="' + section + '"] .sf-tab-content').addClass('active');
+
+			try {
+				sessionStorage.setItem('sf_customizer_tab', section);
+			} catch (e) {}
+		},
+
+		/**
+		 * Show sidebar nav (back from panel).
 		 *
 		 * @param {jQuery} $wrap Customizer wrap element.
-		 * @param {string} tab   Tab identifier.
 		 */
-		switchToTab: function ($wrap, tab) {
-			if (!$wrap || !$wrap.length || !tab) return;
+		showSidebarNav: function ($wrap) {
+			if (!$wrap || !$wrap.length) return;
 
-			var $contents = $wrap.find('.sf-customizer-content .sf-tab-content');
-			var $target = $wrap.find('.sf-customizer-content .sf-tab-content[data-tab="' + tab + '"]');
-
-			$wrap.find('.sf-tab-btn').removeClass('active');
-			$wrap.find('.sf-tab-btn[data-tab="' + tab + '"]').addClass('active');
-
-			$contents.removeClass('active');
-			$target.addClass('active');
+			$wrap.find('.sf-sidebar-panels').removeClass('sf-sidebar-panels-active');
+			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').hide();
+			$wrap.find('.sf-sidebar-nav').addClass('sf-sidebar-view-active');
 		},
 
 		/**
@@ -656,10 +667,47 @@
 		bindEvents: function () {
 			var self = this;
 
-			$(document).on('click', '.sf-tab-btn', this.handleTabClick);
+			$(document).on('click', '.sf-sidebar-item', this.handleSidebarItemClick);
+			$(document).on('click', '.sf-sidebar-back', this.handleSidebarBack);
 			$(document).on('click', '.sf-device-btn', this.handleDeviceSwitch.bind(this));
 			$(document).on('click', '.sf-refresh-preview', this.loadPreview.bind(this));
 			$(document).on('click', '.sf-save-feed', this.handleSave.bind(this));
+
+			$(document).on('click', '.sf-feed-name-edit', this.handleFeedNameEdit);
+			$(document).on('blur', '.sf-feed-name-input', this.handleFeedNameBlur);
+			$(document).on('keydown', '.sf-feed-name-input', function (e) {
+				if (e.key === 'Enter') {
+					$(this).blur();
+				}
+			});
+
+			$(document).on('click', '.sf-help-btn', this.handleHelpClick);
+			$(document).on('click', '.sf-embed-btn', this.handleEmbedClick);
+			$(document).on('click', '.sf-embed-modal-close, .sf-embed-modal-overlay', function () {
+				$('#sf-embed-modal').hide();
+			});
+			$(document).on('click', '#sf-embed-modal .sf-copy-btn', function () {
+				var copy = $(this).data('copy');
+				if (copy) {
+					try {
+						var decoded = $('<textarea>').html(copy).text();
+						if (navigator.clipboard && navigator.clipboard.writeText) {
+							navigator.clipboard.writeText(decoded);
+						} else {
+							var $t = $('<input>').val(decoded).appendTo('body').select();
+							document.execCommand('copy');
+							$t.remove();
+						}
+						var $icon = $(this).find('.dashicons');
+						if ($icon.hasClass('dashicons-clipboard')) {
+							$icon.removeClass('dashicons-clipboard').addClass('dashicons-yes');
+							setTimeout(function () {
+								$icon.removeClass('dashicons-yes').addClass('dashicons-clipboard');
+							}, 2000);
+						}
+					} catch (err) {}
+				}
+			});
 
 			$(document).on('click', '.sf-layout-option', function (e) {
 				e.preventDefault();
@@ -673,7 +721,7 @@
 				}
 			});
 
-			$(document).on('input change', '.sf-customizer-settings input, .sf-customizer-settings select, .sf-customizer-settings textarea', function () {
+			$(document).on('input change', '.sf-customizer-wrap input, .sf-customizer-wrap select, .sf-customizer-wrap textarea', function () {
 				self.debouncePreview();
 			});
 
@@ -710,21 +758,50 @@
 			});
 		},
 
-		/**
-		 * Handle tab click.
-		 */
-		handleTabClick: function (e) {
+		handleSidebarItemClick: function (e) {
 			e.preventDefault();
-			e.stopPropagation();
-			var tab = $(this).data('tab');
+			var section = $(this).data('section');
 			var $wrap = $(this).closest('.sf-customizer-wrap');
-			if (!$wrap.length || !tab) return;
+			if (!$wrap.length || !section) return;
+			SF_Customizer.switchToTab($wrap, section);
+		},
 
-			SF_Customizer.switchToTab($wrap, tab);
+		handleSidebarBack: function (e) {
+			e.preventDefault();
+			var $wrap = $(this).closest('.sf-customizer-wrap');
+			SF_Customizer.showSidebarNav($wrap);
+		},
 
-			try {
-				sessionStorage.setItem('sf_customizer_tab', tab);
-			} catch (e) {}
+		handleFeedNameEdit: function (e) {
+			e.preventDefault();
+			var $wrap = $(this).closest('.sf-customizer-topbar');
+			$wrap.find('.sf-feed-name-display').hide();
+			$wrap.find('.sf-feed-name-edit').hide();
+			var $input = $wrap.find('.sf-feed-name-input');
+			$input.show().val($wrap.find('.sf-feed-name-display').text()).focus();
+		},
+
+		handleFeedNameBlur: function () {
+			var $wrap = $(this).closest('.sf-customizer-topbar');
+			var val = $(this).val().trim();
+			var display = val || ($(this).attr('placeholder') || '');
+			$wrap.find('.sf-feed-name-display').text(display).show();
+			$wrap.find('.sf-feed-name-edit').show();
+			$(this).hide();
+		},
+
+		handleHelpClick: function (e) {
+			e.preventDefault();
+			window.open(sfAdmin.helpUrl || 'https://wordpress.org/support/plugin/social-feed/', '_blank');
+		},
+
+		handleEmbedClick: function (e) {
+			e.preventDefault();
+			var feedId = $('.sf-customizer-wrap').data('feed-id');
+			var shortcode = '[social_feed id="' + feedId + '"]';
+			$('#sf-embed-modal .sf-generated-shortcode').text(shortcode);
+			$('#sf-embed-modal .sf-copy-btn').attr('data-copy', shortcode.replace(/"/g, '&quot;'));
+			$('#sf-embed-modal').show();
 		},
 
 		/**
@@ -857,7 +934,7 @@
 		collectSettings: function () {
 			var settings = {};
 
-			$('.sf-customizer-settings input, .sf-customizer-settings select, .sf-customizer-settings textarea').each(function () {
+			$('.sf-customizer-wrap input, .sf-customizer-wrap select, .sf-customizer-wrap textarea').each(function () {
 				var $el = $(this);
 				var name = $el.attr('name');
 
@@ -946,9 +1023,15 @@
 
 						if (!feedId && response.data.feed_id) {
 							$('.sf-customizer-wrap').data('feed-id', response.data.feed_id);
-							$('.sf-shortcode-display').show();
-							$('.sf-generated-shortcode').text(response.data.shortcode);
-							$('.sf-shortcode-display .sf-copy-btn').attr('data-copy', response.data.shortcode);
+							$('.sf-embed-btn').show();
+							if (response.data.shortcode) {
+								$('#sf-embed-modal .sf-generated-shortcode').text(response.data.shortcode);
+								$('#sf-embed-modal .sf-copy-btn').attr('data-copy', response.data.shortcode.replace(/"/g, '&quot;'));
+							}
+							if (response.data.name) {
+								$('.sf-feed-name-display').text(response.data.name);
+								$('.sf-feed-name-input').val(response.data.name);
+							}
 
 							window.history.replaceState(null, '', response.data.redirect);
 						}
@@ -1345,7 +1428,7 @@
 			var self = this;
 			var $indicator = $('.sf-unsaved-indicator');
 
-			$('.sf-customizer-settings input, .sf-customizer-settings select, .sf-customizer-settings textarea').on('change input', function () {
+			$('.sf-customizer-wrap input, .sf-customizer-wrap select, .sf-customizer-wrap textarea').on('change input', function () {
 				self.hasUnsavedChanges = true;
 				if ($indicator.length) {
 					$indicator.css('display', 'flex');

@@ -35,116 +35,221 @@ class SF_Customizer {
 			$settings['feed_type']  = $feed['feed_type'];
 			$settings['post_count'] = $feed['post_count'];
 		}
+		$feed_name_display = ! empty( $settings['name'] ) ? $settings['name'] : ( $feed_id ? __( 'Edit Feed', 'social-feed' ) : __( 'Create Feed', 'social-feed' ) );
+		$shortcode          = $feed_id ? '[social_feed id="' . (int) $feed_id . '"]' : '';
 		?>
 		<div class="sf-customizer-wrap" data-feed-id="<?php echo esc_attr( $feed_id ); ?>">
-			<!-- Left Panel - Settings -->
-			<div class="sf-customizer-panel sf-customizer-settings">
-				<div class="sf-customizer-header">
-					<h2><?php echo $feed_id ? esc_html__( 'Edit Feed', 'social-feed' ) : esc_html__( 'Create Feed', 'social-feed' ); ?></h2>
+			<?php if ( ! $is_pro ) : ?>
+				<div class="sf-customizer-upgrade-banner">
+					<span class="sf-upgrade-text"><?php esc_html_e( 'Unlock more features with Social Feed Pro.', 'social-feed' ); ?></span>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="sf-upgrade-link"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
 				</div>
+			<?php endif; ?>
 
-				<!-- Tabs Navigation -->
-				<div class="sf-customizer-tabs">
-					<button type="button" class="sf-tab-btn active" data-tab="feed">
-						<span class="dashicons dashicons-rss"></span>
-						<?php esc_html_e( 'Feed', 'social-feed' ); ?>
-					</button>
-					<button type="button" class="sf-tab-btn" data-tab="layout">
-						<span class="dashicons dashicons-grid-view"></span>
-						<?php esc_html_e( 'Layout', 'social-feed' ); ?>
-					</button>
-					<button type="button" class="sf-tab-btn" data-tab="design">
-						<span class="dashicons dashicons-art"></span>
-						<?php esc_html_e( 'Design', 'social-feed' ); ?>
-					</button>
-					<button type="button" class="sf-tab-btn" data-tab="header">
-						<span class="dashicons dashicons-admin-users"></span>
-						<?php esc_html_e( 'Header', 'social-feed' ); ?>
-					</button>
-					<button type="button" class="sf-tab-btn" data-tab="posts">
-						<span class="dashicons dashicons-format-image"></span>
-						<?php esc_html_e( 'Posts', 'social-feed' ); ?>
-					</button>
-					<button type="button" class="sf-tab-btn" data-tab="loadmore">
-						<span class="dashicons dashicons-download"></span>
-						<?php esc_html_e( 'Load More', 'social-feed' ); ?>
-					</button>
-					<button type="button" class="sf-tab-btn" data-tab="advanced">
-						<span class="dashicons dashicons-admin-tools"></span>
-						<?php esc_html_e( 'Advanced', 'social-feed' ); ?>
-					</button>
+			<!-- Top Bar -->
+			<div class="sf-customizer-topbar">
+				<div class="sf-topbar-left">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="sf-topbar-back sf-back-nav" data-back-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>">
+						<span class="dashicons dashicons-arrow-left-alt2"></span>
+						<?php esc_html_e( 'Back to all feeds', 'social-feed' ); ?>
+					</a>
 				</div>
-
-				<!-- Tab Content -->
-				<div class="sf-customizer-content">
-					<?php
-					self::render_tab_feed( $settings, $accounts );
-					self::render_tab_layout( $settings );
-					self::render_tab_design( $settings );
-					self::render_tab_header( $settings );
-					self::render_tab_posts( $settings );
-					self::render_tab_loadmore( $settings );
-					self::render_tab_advanced( $settings, $is_pro );
-					?>
-				</div>
-
-				<!-- Bottom Save Bar -->
-				<div class="sf-customizer-footer">
-					<div class="sf-footer-left">
-						<div class="sf-shortcode-display" <?php echo ! $feed_id ? 'style="display:none;"' : ''; ?>>
-							<label><?php esc_html_e( 'Shortcode:', 'social-feed' ); ?></label>
-							<code class="sf-generated-shortcode">[social_feed id="<?php echo esc_attr( $feed_id ); ?>"]</code>
-							<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed_id ); ?>&quot;]">
-								<span class="dashicons dashicons-clipboard"></span>
-							</button>
-						</div>
-					</div>
-					<div class="sf-footer-right">
-						<span class="sf-unsaved-indicator" style="display:none;">
-							<span class="sf-unsaved-dot"></span>
-							<?php esc_html_e( 'Unsaved changes', 'social-feed' ); ?>
-						</span>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="button sf-cancel-btn sf-back-nav" data-back-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>">
-							<?php esc_html_e( 'Cancel', 'social-feed' ); ?>
-						</a>
-						<button type="button" class="button button-primary sf-save-feed">
-							<span class="dashicons dashicons-saved"></span>
-							<?php esc_html_e( 'Save Feed', 'social-feed' ); ?>
+				<div class="sf-topbar-center">
+					<div class="sf-feed-name-wrap">
+						<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
+						<button type="button" class="sf-feed-name-edit" aria-label="<?php esc_attr_e( 'Edit feed name', 'social-feed' ); ?>">
+							<span class="dashicons dashicons-edit"></span>
 						</button>
+						<input type="text" class="sf-feed-name-input" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" style="display:none;">
 					</div>
+				</div>
+				<div class="sf-topbar-right">
+					<button type="button" class="sf-topbar-btn sf-help-btn" title="<?php esc_attr_e( 'Help', 'social-feed' ); ?>">
+						<span class="dashicons dashicons-editor-help"></span>
+						<?php esc_html_e( 'Help', 'social-feed' ); ?>
+					</button>
+					<button type="button" class="sf-topbar-btn sf-embed-btn" title="<?php esc_attr_e( 'Embed', 'social-feed' ); ?>" <?php echo ! $feed_id ? 'style="display:none;"' : ''; ?>>
+						<span class="dashicons dashicons-code"></span>
+						<?php esc_html_e( 'Embed', 'social-feed' ); ?>
+					</button>
+					<span class="sf-unsaved-indicator" style="display:none;">
+						<span class="sf-unsaved-dot"></span>
+						<?php esc_html_e( 'Unsaved changes', 'social-feed' ); ?>
+					</span>
+					<button type="button" class="button button-primary sf-save-feed">
+						<span class="dashicons dashicons-saved"></span>
+						<?php esc_html_e( 'Save', 'social-feed' ); ?>
+					</button>
 				</div>
 			</div>
 
-			<!-- Right Panel - Preview -->
-			<div class="sf-customizer-panel sf-customizer-preview">
-				<div class="sf-preview-header">
-					<span class="sf-preview-label"><?php esc_html_e( 'Live Preview', 'social-feed' ); ?></span>
-					<div class="sf-preview-header-right">
-						<div class="sf-device-switcher">
-							<button type="button" class="sf-device-btn active" data-device="desktop" title="<?php esc_attr_e( 'Desktop', 'social-feed' ); ?>">
-								<span class="dashicons dashicons-desktop"></span>
+			<!-- Body: Sidebar + Preview -->
+			<div class="sf-customizer-body">
+				<!-- Left Sidebar (Settings) -->
+				<div class="sf-customizer-sidebar sf-customizer-settings">
+					<!-- Main navigation list -->
+					<nav class="sf-sidebar-nav sf-sidebar-view-active">
+						<div class="sf-sidebar-group">
+							<button type="button" class="sf-sidebar-item" data-section="feed">
+								<span class="dashicons dashicons-rss"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 							</button>
-							<button type="button" class="sf-device-btn" data-device="tablet" title="<?php esc_attr_e( 'Tablet', 'social-feed' ); ?>">
-								<span class="dashicons dashicons-tablet"></span>
+							<button type="button" class="sf-sidebar-item" data-section="layout">
+								<span class="dashicons dashicons-grid-view"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Feed Layout', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 							</button>
-							<button type="button" class="sf-device-btn" data-device="mobile" title="<?php esc_attr_e( 'Mobile', 'social-feed' ); ?>">
-								<span class="dashicons dashicons-smartphone"></span>
+							<button type="button" class="sf-sidebar-item" data-section="design">
+								<span class="dashicons dashicons-art"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Color Scheme', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 							</button>
 						</div>
-						<button type="button" class="sf-refresh-preview" title="<?php esc_attr_e( 'Refresh Preview', 'social-feed' ); ?>">
-							<span class="dashicons dashicons-update"></span>
-						</button>
+						<div class="sf-sidebar-group">
+							<div class="sf-sidebar-group-title"><?php esc_html_e( 'SECTIONS', 'social-feed' ); ?></div>
+							<button type="button" class="sf-sidebar-item" data-section="header">
+								<span class="dashicons dashicons-admin-users"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Header', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+							</button>
+							<button type="button" class="sf-sidebar-item" data-section="posts">
+								<span class="dashicons dashicons-format-image"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Posts', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+							</button>
+							<button type="button" class="sf-sidebar-item" data-section="loadmore">
+								<span class="dashicons dashicons-download"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Load More Button', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+							</button>
+							<button type="button" class="sf-sidebar-item" data-section="header">
+								<span class="dashicons dashicons-admin-users"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Follow Button', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+							</button>
+							<button type="button" class="sf-sidebar-item" data-section="posts">
+								<span class="dashicons dashicons-editor-expand"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Lightbox', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+							</button>
+						</div>
+						<div class="sf-sidebar-group">
+							<button type="button" class="sf-sidebar-item" data-section="advanced">
+								<span class="dashicons dashicons-admin-tools"></span>
+								<span class="sf-sidebar-label"><?php esc_html_e( 'Advanced', 'social-feed' ); ?></span>
+								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+							</button>
+						</div>
+					</nav>
+
+					<!-- Panel view: back + section content -->
+					<div class="sf-sidebar-panels">
+						<?php
+						$panel_titles = array(
+							'feed'    => __( 'Feed Source', 'social-feed' ),
+							'layout'  => __( 'Feed Layout', 'social-feed' ),
+							'design'  => __( 'Color Scheme', 'social-feed' ),
+							'header'  => __( 'Header', 'social-feed' ),
+							'posts'   => __( 'Posts', 'social-feed' ),
+							'loadmore' => __( 'Load More Button', 'social-feed' ),
+							'advanced' => __( 'Advanced', 'social-feed' ),
+						);
+						foreach ( $panel_titles as $section => $title ) :
+							?>
+							<div class="sf-sidebar-panel" data-section="<?php echo esc_attr( $section ); ?>" style="display:none;">
+								<div class="sf-sidebar-panel-header">
+									<button type="button" class="sf-sidebar-back">
+										<span class="dashicons dashicons-arrow-left-alt2"></span>
+									</button>
+									<h3 class="sf-sidebar-panel-title"><?php echo esc_html( $title ); ?></h3>
+								</div>
+								<div class="sf-sidebar-panel-body">
+									<div class="sf-customizer-content">
+										<?php
+										switch ( $section ) {
+											case 'feed':
+												self::render_tab_feed( $settings, $accounts );
+												break;
+											case 'layout':
+												self::render_tab_layout( $settings );
+												break;
+											case 'design':
+												self::render_tab_design( $settings );
+												break;
+											case 'header':
+												self::render_tab_header( $settings );
+												break;
+											case 'posts':
+												self::render_tab_posts( $settings );
+												break;
+											case 'loadmore':
+												self::render_tab_loadmore( $settings );
+												break;
+											case 'advanced':
+												self::render_tab_advanced( $settings, $is_pro );
+												break;
+										}
+										?>
+									</div>
+								</div>
+							</div>
+						<?php endforeach; ?>
 					</div>
 				</div>
-				<div class="sf-preview-container" data-device="desktop">
-					<div class="sf-preview-loading">
-						<div class="sf-skeleton-grid">
-							<?php for ( $i = 0; $i < 9; $i++ ) : ?>
-								<div class="sf-skeleton-item"></div>
-							<?php endfor; ?>
+
+				<!-- Right Panel - Preview -->
+				<div class="sf-customizer-panel sf-customizer-preview">
+					<div class="sf-preview-header">
+						<span class="sf-preview-label"><?php esc_html_e( 'PREVIEW', 'social-feed' ); ?></span>
+						<div class="sf-preview-header-right">
+							<div class="sf-device-switcher">
+								<button type="button" class="sf-device-btn active" data-device="desktop" title="<?php esc_attr_e( 'Desktop', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-desktop"></span>
+								</button>
+								<button type="button" class="sf-device-btn" data-device="tablet" title="<?php esc_attr_e( 'Tablet', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-tablet"></span>
+								</button>
+								<button type="button" class="sf-device-btn" data-device="mobile" title="<?php esc_attr_e( 'Mobile', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-smartphone"></span>
+								</button>
+							</div>
+							<button type="button" class="sf-refresh-preview" title="<?php esc_attr_e( 'Refresh Preview', 'social-feed' ); ?>">
+								<span class="dashicons dashicons-update"></span>
+							</button>
 						</div>
 					</div>
-					<div class="sf-preview-content"></div>
+					<div class="sf-preview-container" data-device="desktop">
+						<div class="sf-preview-loading">
+							<div class="sf-skeleton-grid">
+								<?php for ( $i = 0; $i < 9; $i++ ) : ?>
+									<div class="sf-skeleton-item"></div>
+								<?php endfor; ?>
+							</div>
+						</div>
+						<div class="sf-preview-content"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Embed modal (shortcode) -->
+		<div class="sf-embed-modal" id="sf-embed-modal" style="display:none;">
+			<div class="sf-embed-modal-overlay"></div>
+			<div class="sf-embed-modal-content">
+				<div class="sf-embed-modal-header">
+					<h3><?php esc_html_e( 'Embed Feed', 'social-feed' ); ?></h3>
+					<button type="button" class="sf-embed-modal-close">&times;</button>
+				</div>
+				<div class="sf-embed-modal-body">
+					<label><?php esc_html_e( 'Shortcode:', 'social-feed' ); ?></label>
+					<div class="sf-embed-shortcode-row">
+						<code class="sf-generated-shortcode"><?php echo esc_html( $shortcode ); ?></code>
+						<button type="button" class="sf-copy-btn" data-copy="<?php echo esc_attr( str_replace( '"', '&quot;', $shortcode ) ); ?>">
+							<span class="dashicons dashicons-clipboard"></span>
+							<?php esc_html_e( 'Copy', 'social-feed' ); ?>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -223,10 +328,6 @@ class SF_Customizer {
 			<input type="hidden" id="sf_platform" name="platform" value="instagram">
 			<div class="sf-section sf-section-feed-source">
 				<div class="sf-section-title"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></div>
-				<div class="sf-field">
-					<label for="sf_name"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></label>
-					<input type="text" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>">
-				</div>
 				<div class="sf-field">
 					<label for="sf_account_id"><?php esc_html_e( 'Instagram Account', 'social-feed' ); ?></label>
 					<div class="sf-field-control sf-field-control-stack">
