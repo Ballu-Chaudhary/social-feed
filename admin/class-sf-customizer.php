@@ -54,15 +54,7 @@ class SF_Customizer {
 						<?php esc_html_e( 'Back to all feeds', 'social-feed' ); ?>
 					</a>
 				</div>
-				<div class="sf-topbar-center">
-					<div class="sf-feed-name-wrap">
-						<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
-						<button type="button" class="sf-feed-name-edit" aria-label="<?php esc_attr_e( 'Edit feed name', 'social-feed' ); ?>">
-							<span class="dashicons dashicons-edit"></span>
-						</button>
-						<input type="text" class="sf-feed-name-input" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" style="display:none;">
-					</div>
-				</div>
+				<div class="sf-topbar-center"></div>
 				<div class="sf-topbar-right">
 					<button type="button" class="sf-topbar-btn sf-help-btn" title="<?php esc_attr_e( 'Help', 'social-feed' ); ?>">
 						<span class="dashicons dashicons-editor-help"></span>
@@ -89,57 +81,81 @@ class SF_Customizer {
 				<div class="sf-customizer-sidebar sf-customizer-settings">
 					<!-- Main navigation list -->
 					<nav class="sf-sidebar-nav sf-sidebar-view-active">
-						<div class="sf-sidebar-group">
-							<button type="button" class="sf-sidebar-item" data-section="feed">
-								<span class="dashicons dashicons-rss"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
-							<button type="button" class="sf-sidebar-item" data-section="layout">
-								<span class="dashicons dashicons-grid-view"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Feed Layout', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
-							<button type="button" class="sf-sidebar-item" data-section="design">
-								<span class="dashicons dashicons-art"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Color Scheme', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
+						<!-- Feed name at top -->
+						<div class="sf-sidebar-feed-name">
+							<div class="sf-feed-name-wrap">
+								<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
+								<button type="button" class="sf-feed-name-edit" aria-label="<?php esc_attr_e( 'Edit feed name', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-edit"></span>
+								</button>
+								<input type="text" class="sf-feed-name-input" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" style="display:none;">
+							</div>
 						</div>
-						<div class="sf-sidebar-group">
-							<div class="sf-sidebar-group-title"><?php esc_html_e( 'SECTIONS', 'social-feed' ); ?></div>
-							<button type="button" class="sf-sidebar-item" data-section="header">
-								<span class="dashicons dashicons-admin-users"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Header', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
-							<button type="button" class="sf-sidebar-item" data-section="posts">
-								<span class="dashicons dashicons-format-image"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Posts', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
-							<button type="button" class="sf-sidebar-item" data-section="loadmore">
-								<span class="dashicons dashicons-download"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Load More Button', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
-							<button type="button" class="sf-sidebar-item" data-section="header">
-								<span class="dashicons dashicons-admin-users"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Follow Button', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
-							<button type="button" class="sf-sidebar-item" data-section="posts">
-								<span class="dashicons dashicons-editor-expand"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Lightbox', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
+
+						<!-- Top-level: Custom / Settings -->
+						<div class="sf-sidebar-toplevel">
+							<button type="button" class="sf-sidebar-toplevel-btn active" data-mode="custom"><?php esc_html_e( 'Custom', 'social-feed' ); ?></button>
+							<button type="button" class="sf-sidebar-toplevel-btn" data-mode="settings"><?php esc_html_e( 'Settings', 'social-feed' ); ?></button>
 						</div>
-						<div class="sf-sidebar-group">
-							<button type="button" class="sf-sidebar-item" data-section="advanced">
-								<span class="dashicons dashicons-admin-tools"></span>
-								<span class="sf-sidebar-label"><?php esc_html_e( 'Advanced', 'social-feed' ); ?></span>
-								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-							</button>
+
+						<!-- Custom sub-list (visible when Custom active) -->
+						<div class="sf-sidebar-sublist sf-sidebar-sublist-custom">
+							<div class="sf-sidebar-group">
+								<button type="button" class="sf-sidebar-item" data-section="layout">
+									<span class="dashicons dashicons-grid-view"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Feed Layout', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+								<button type="button" class="sf-sidebar-item" data-section="design">
+									<span class="dashicons dashicons-art"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Color Scheme', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+							</div>
+							<div class="sf-sidebar-group">
+								<div class="sf-sidebar-group-title"><?php esc_html_e( 'SECTIONS', 'social-feed' ); ?></div>
+								<button type="button" class="sf-sidebar-item" data-section="header">
+									<span class="dashicons dashicons-admin-users"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Header', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+								<button type="button" class="sf-sidebar-item" data-section="posts">
+									<span class="dashicons dashicons-format-image"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Posts', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+								<button type="button" class="sf-sidebar-item" data-section="loadmore">
+									<span class="dashicons dashicons-download"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Load More Button', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+								<button type="button" class="sf-sidebar-item" data-section="header">
+									<span class="dashicons dashicons-admin-users"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Follow Button', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+								<button type="button" class="sf-sidebar-item" data-section="posts">
+									<span class="dashicons dashicons-editor-expand"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Lightbox', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+								<button type="button" class="sf-sidebar-item" data-section="advanced">
+									<span class="dashicons dashicons-admin-tools"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Advanced', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+							</div>
+						</div>
+
+						<!-- Settings sub-list (visible when Settings active) -->
+						<div class="sf-sidebar-sublist sf-sidebar-sublist-settings" style="display:none;">
+							<div class="sf-sidebar-group">
+								<button type="button" class="sf-sidebar-item" data-section="feed">
+									<span class="dashicons dashicons-rss"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Feed Source', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
+							</div>
 						</div>
 					</nav>
 

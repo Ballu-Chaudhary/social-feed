@@ -659,6 +659,7 @@
 			$wrap.find('.sf-sidebar-panels').removeClass('sf-sidebar-panels-active');
 			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').hide();
 			$wrap.find('.sf-sidebar-nav').addClass('sf-sidebar-view-active');
+			/* Keep active state on the item we returned from - already set in handleSidebarItemClick */
 		},
 
 		/**
@@ -667,6 +668,7 @@
 		bindEvents: function () {
 			var self = this;
 
+			$(document).on('click', '.sf-sidebar-toplevel-btn', this.handleToplevelClick);
 			$(document).on('click', '.sf-sidebar-item', this.handleSidebarItemClick);
 			$(document).on('click', '.sf-sidebar-back', this.handleSidebarBack);
 			$(document).on('click', '.sf-device-btn', this.handleDeviceSwitch.bind(this));
@@ -758,11 +760,23 @@
 			});
 		},
 
+		handleToplevelClick: function (e) {
+			e.preventDefault();
+			var mode = $(this).data('mode');
+			var $sidebar = $(this).closest('.sf-customizer-sidebar');
+			$sidebar.find('.sf-sidebar-toplevel-btn').removeClass('active');
+			$(this).addClass('active');
+			$sidebar.find('.sf-sidebar-sublist').hide();
+			$sidebar.find('.sf-sidebar-sublist-' + mode).show();
+		},
+
 		handleSidebarItemClick: function (e) {
 			e.preventDefault();
 			var section = $(this).data('section');
 			var $wrap = $(this).closest('.sf-customizer-wrap');
 			if (!$wrap.length || !section) return;
+			$wrap.find('.sf-sidebar-item').removeClass('active');
+			$(this).addClass('active');
 			SF_Customizer.switchToTab($wrap, section);
 		},
 
@@ -774,7 +788,8 @@
 
 		handleFeedNameEdit: function (e) {
 			e.preventDefault();
-			var $wrap = $(this).closest('.sf-customizer-topbar');
+			var $wrap = $(this).closest('.sf-feed-name-wrap');
+			if (!$wrap.length) $wrap = $(this).closest('.sf-customizer-topbar');
 			$wrap.find('.sf-feed-name-display').hide();
 			$wrap.find('.sf-feed-name-edit').hide();
 			var $input = $wrap.find('.sf-feed-name-input');
@@ -782,7 +797,8 @@
 		},
 
 		handleFeedNameBlur: function () {
-			var $wrap = $(this).closest('.sf-customizer-topbar');
+			var $wrap = $(this).closest('.sf-feed-name-wrap');
+			if (!$wrap.length) $wrap = $(this).closest('.sf-customizer-topbar');
 			var val = $(this).val().trim();
 			var display = val || ($(this).attr('placeholder') || '');
 			$wrap.find('.sf-feed-name-display').text(display).show();
