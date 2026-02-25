@@ -661,22 +661,15 @@ class SF_Admin {
 	 */
 	public function render_create_feed() {
 		$feed_id = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
-		$feed    = $feed_id ? SF_Database::get_feed( $feed_id ) : null;
-		$current_label = $feed_id
-			? sprintf( /* translators: %s: Feed name */ __( 'Edit: %s', 'social-feed' ), $feed ? $feed['name'] : '' )
-			: __( 'Create New Feed', 'social-feed' );
 		?>
 		<div class="wrap sf-admin-wrap sf-create-feed-wrap">
+			<div class="sf-breadcrumb-bar sf-create-feed-top-bar">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" class="sf-back-link sf-back-nav" data-back-url="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" title="<?php esc_attr_e( 'Alt + ←', 'social-feed' ); ?>">
+					<span class="dashicons dashicons-arrow-left-alt2"></span>
+					<span class="sf-back-link-text"><?php esc_html_e( 'Back to All Feeds', 'social-feed' ); ?></span>
+				</a>
+			</div>
 			<?php
-			sf_render_breadcrumb(
-				array(
-					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
-					array( 'label' => __( 'All Feeds', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ),
-					array( 'label' => $current_label, 'url' => '' ),
-				),
-				admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ),
-				__( 'Back to All Feeds', 'social-feed' )
-			);
 			require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
 			SF_Customizer::render( $feed_id );
 			?>

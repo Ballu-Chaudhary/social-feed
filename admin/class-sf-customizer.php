@@ -48,13 +48,15 @@ class SF_Customizer {
 
 			<!-- Top Bar -->
 			<div class="sf-customizer-topbar">
-				<div class="sf-topbar-left">
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="sf-topbar-back sf-back-nav" data-back-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>">
-						<span class="dashicons dashicons-arrow-left-alt2"></span>
-						<?php esc_html_e( 'Back to all feeds', 'social-feed' ); ?>
-					</a>
+				<div class="sf-topbar-center">
+					<div class="sf-feed-name-wrap">
+						<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
+						<button type="button" class="sf-feed-name-edit" aria-label="<?php esc_attr_e( 'Edit feed name', 'social-feed' ); ?>">
+							<span class="dashicons dashicons-edit"></span>
+						</button>
+						<input type="text" class="sf-feed-name-input" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" style="display:none;">
+					</div>
 				</div>
-				<div class="sf-topbar-center"></div>
 				<div class="sf-topbar-right">
 					<button type="button" class="sf-topbar-btn sf-help-btn" title="<?php esc_attr_e( 'Help', 'social-feed' ); ?>">
 						<span class="dashicons dashicons-editor-help"></span>
@@ -81,17 +83,6 @@ class SF_Customizer {
 				<div class="sf-customizer-sidebar sf-customizer-settings">
 					<!-- Main navigation list -->
 					<nav class="sf-sidebar-nav sf-sidebar-view-active">
-						<!-- Feed name at top -->
-						<div class="sf-sidebar-feed-name">
-							<div class="sf-feed-name-wrap">
-								<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
-								<button type="button" class="sf-feed-name-edit" aria-label="<?php esc_attr_e( 'Edit feed name', 'social-feed' ); ?>">
-									<span class="dashicons dashicons-edit"></span>
-								</button>
-								<input type="text" class="sf-feed-name-input" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" style="display:none;">
-							</div>
-						</div>
-
 						<!-- Top-level: Custom / Settings -->
 						<div class="sf-sidebar-toplevel">
 							<button type="button" class="sf-sidebar-toplevel-btn active" data-mode="custom"><?php esc_html_e( 'Custom', 'social-feed' ); ?></button>

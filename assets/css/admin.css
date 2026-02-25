@@ -839,13 +839,6 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-/* Match sidebar width so Back aligns with sidebar content */
-.sf-topbar-left {
-	width: 360px;
-	min-width: 360px;
-	flex-shrink: 0;
-	padding-left: 20px;
-}
 
 .sf-topbar-back {
 	display: inline-flex;
@@ -873,6 +866,44 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	justify-content: center;
 	align-items: center;
 	min-width: 0;
+}
+
+/* Feed name (editable) in top bar center */
+.sf-customizer-topbar .sf-topbar-center .sf-feed-name-wrap {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sf-customizer-topbar .sf-topbar-center .sf-feed-name-display {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--sf-customizer-text);
+}
+
+.sf-customizer-topbar .sf-topbar-center .sf-feed-name-edit {
+	display: inline-flex;
+	padding: 4px;
+	border: none;
+	background: none;
+	color: var(--sf-customizer-text-muted);
+	cursor: pointer;
+	border-radius: 4px;
+	transition: color 0.2s, background 0.2s;
+}
+
+.sf-customizer-topbar .sf-topbar-center .sf-feed-name-edit:hover {
+	color: var(--sf-customizer-accent);
+	background: var(--sf-customizer-surface-alt);
+}
+
+.sf-customizer-topbar .sf-topbar-center .sf-feed-name-input {
+	width: 220px;
+	padding: 6px 10px;
+	font-size: 14px;
+	font-weight: 600;
+	border: 1px solid var(--sf-customizer-border);
+	border-radius: var(--sf-customizer-radius-sm);
 }
 
 .sf-feed-name-wrap {
@@ -987,55 +1018,6 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 
 .sf-sidebar-nav.sf-sidebar-view-active {
 	display: flex;
-}
-
-/* Feed name at top of sidebar */
-.sf-sidebar-feed-name {
-	padding: 16px 16px 12px;
-	border-bottom: 1px solid var(--sf-customizer-border-subtle);
-	flex-shrink: 0;
-}
-
-.sf-sidebar-feed-name .sf-feed-name-wrap {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	max-width: 100%;
-}
-
-.sf-sidebar-feed-name .sf-feed-name-display {
-	font-size: 14px;
-	font-weight: 600;
-	color: var(--sf-customizer-text);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.sf-sidebar-feed-name .sf-feed-name-edit {
-	display: inline-flex;
-	padding: 4px;
-	border: none;
-	background: none;
-	color: var(--sf-customizer-text-muted);
-	cursor: pointer;
-	border-radius: 4px;
-	flex-shrink: 0;
-	transition: color 0.2s, background 0.2s;
-}
-
-.sf-sidebar-feed-name .sf-feed-name-edit:hover {
-	color: var(--sf-customizer-accent);
-	background: var(--sf-customizer-surface-alt);
-}
-
-.sf-sidebar-feed-name .sf-feed-name-input {
-	width: 100%;
-	padding: 6px 8px;
-	font-size: 14px;
-	font-weight: 600;
-	border: 1px solid var(--sf-customizer-border);
-	border-radius: var(--sf-customizer-radius-sm);
 }
 
 /* Top-level Custom / Settings buttons */
