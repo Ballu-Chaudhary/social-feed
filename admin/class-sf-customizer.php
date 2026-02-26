@@ -115,11 +115,6 @@ class SF_Customizer {
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Follow Button', 'social-feed' ); ?></span>
 									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 								</button>
-								<button type="button" class="sf-sidebar-item" data-section="posts">
-									<span class="dashicons dashicons-editor-expand"></span>
-									<span class="sf-sidebar-label"><?php esc_html_e( 'Lightbox', 'social-feed' ); ?></span>
-									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-								</button>
 								<button type="button" class="sf-sidebar-item" data-section="advanced">
 									<span class="dashicons dashicons-admin-tools"></span>
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Advanced', 'social-feed' ); ?></span>
@@ -618,16 +613,15 @@ class SF_Customizer {
 	}
 
 	/**
-	 * Render Tab 5 - Posts (sub-panel with back arrow).
+	 * Render Tab 5 - Posts (sub-panel, same pattern as Feed Layout).
 	 *
 	 * @param array $settings Current settings.
 	 */
 	private static function render_tab_posts( $settings ) {
 		?>
-		<div class="sf-tab-content sf-tab-content-posts" data-tab="posts">
-			<!-- 1. POST STYLE -->
-			<div class="sf-posts-panel-section">
-				<div class="sf-posts-panel-section-title"><?php esc_html_e( 'POST STYLE', 'social-feed' ); ?></div>
+		<div class="sf-tab-content sf-tab-content-layout" data-tab="posts">
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Post Style', 'social-feed' ); ?></div>
 				<div class="sf-field sf-toggle-field">
 					<label for="sf_show_caption"><?php esc_html_e( 'Show Caption', 'social-feed' ); ?></label>
 					<label class="sf-toggle">
@@ -635,15 +629,17 @@ class SF_Customizer {
 						<span class="sf-toggle-slider"></span>
 					</label>
 				</div>
-				<div class="sf-caption-options sf-field" <?php echo ! $settings['show_caption'] ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-caption-options sf-field sf-field-number-px" <?php echo ! $settings['show_caption'] ? 'style="display:none;"' : ''; ?>>
 					<label for="sf_caption_length"><?php esc_html_e( 'Caption Length', 'social-feed' ); ?></label>
-					<input type="number" id="sf_caption_length" name="caption_length" value="<?php echo esc_attr( $settings['caption_length'] ); ?>" min="1" max="500" step="1" class="sf-number-input">
+					<div class="sf-number-px-wrap">
+						<input type="number" id="sf_caption_length" name="caption_length" value="<?php echo esc_attr( $settings['caption_length'] ); ?>" min="1" max="500" step="1">
+						<span class="sf-number-px-suffix">px</span>
+					</div>
 				</div>
 			</div>
 
-			<!-- 2. POST INFO -->
-			<div class="sf-posts-panel-section">
-				<div class="sf-posts-panel-section-title"><?php esc_html_e( 'POST INFO', 'social-feed' ); ?></div>
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Post Info', 'social-feed' ); ?></div>
 				<div class="sf-field sf-toggle-field">
 					<label for="sf_show_likes"><?php esc_html_e( 'Show Likes Count', 'social-feed' ); ?></label>
 					<label class="sf-toggle">
@@ -667,9 +663,8 @@ class SF_Customizer {
 				</div>
 			</div>
 
-			<!-- 3. POST INTERACTION -->
-			<div class="sf-posts-panel-section">
-				<div class="sf-posts-panel-section-title"><?php esc_html_e( 'POST INTERACTION', 'social-feed' ); ?></div>
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Post Interaction', 'social-feed' ); ?></div>
 				<div class="sf-field">
 					<label><?php esc_html_e( 'Click Action', 'social-feed' ); ?></label>
 					<div class="sf-radio-group">
