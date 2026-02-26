@@ -717,10 +717,14 @@
 				var $radio = $opt.find('input[type="radio"]');
 				if ($radio.length) {
 					$radio.prop('checked', true);
-					$('.sf-layout-option').removeClass('active');
+					$('.sf-radio-card').removeClass('active');
 					$opt.addClass('active');
 					self.debouncePreview();
 				}
+			});
+			$(document).on('change', '.sf-customizer-wrap input[name="layout"]', function () {
+				$('.sf-customizer-wrap .sf-radio-card').removeClass('active');
+				$('.sf-customizer-wrap input[name="layout"]:checked').closest('.sf-radio-card').addClass('active');
 			});
 
 			$(document).on('input change', '.sf-customizer-wrap input, .sf-customizer-wrap select, .sf-customizer-wrap textarea', function () {

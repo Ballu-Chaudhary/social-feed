@@ -274,10 +274,14 @@ class SF_Customizer {
 			'account_id'          => 0,
 			'feed_type'           => 'user',
 			'post_count'          => 9,
+			'post_count_desktop'   => 9,
+			'post_count_tablet'    => 9,
+			'post_count_mobile'    => 9,
 			'layout'              => 'grid',
 			'columns_desktop'     => 3,
 			'columns_tablet'      => 2,
 			'columns_mobile'      => 1,
+			'feed_height'         => '',
 			'image_padding'       => 10,
 			'bg_color'            => '#ffffff',
 			'text_color'          => '#333333',
@@ -368,64 +372,110 @@ class SF_Customizer {
 	}
 
 	/**
-	 * Render Tab 2 - Layout.
+	 * Render Tab 2 - Layout (sub-panel with back arrow).
 	 *
 	 * @param array $settings Current settings.
 	 */
 	private static function render_tab_layout( $settings ) {
+		$layout = isset( $settings['layout'] ) ? $settings['layout'] : 'grid';
+		if ( ! in_array( $layout, array( 'grid', 'carousel', 'masonry', 'highlight' ), true ) ) {
+			$layout = 'grid';
+		}
+		$layouts = array(
+			'grid'     => array( 'icon' => 'dashicons-grid-view', 'label' => __( 'Grid', 'social-feed' ), 'pro' => false ),
+			'carousel' => array( 'icon' => 'dashicons-slides', 'label' => __( 'Carousel', 'social-feed' ), 'pro' => true ),
+			'masonry'  => array( 'icon' => 'dashicons-layout', 'label' => __( 'Masonry', 'social-feed' ), 'pro' => true ),
+			'highlight'=> array( 'icon' => 'dashicons-star-filled', 'label' => __( 'Highlight', 'social-feed' ), 'pro' => true ),
+		);
+		$post_count_desktop = isset( $settings['post_count_desktop'] ) ? $settings['post_count_desktop'] : ( isset( $settings['post_count'] ) ? $settings['post_count'] : 9 );
+		$post_count_tablet  = isset( $settings['post_count_tablet'] ) ? $settings['post_count_tablet'] : $post_count_desktop;
+		$post_count_mobile  = isset( $settings['post_count_mobile'] ) ? $settings['post_count_mobile'] : $post_count_desktop;
 		?>
-		<div class="sf-tab-content" data-tab="layout">
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Layout Type', 'social-feed' ); ?></div>
-				<div class="sf-field">
-					<label><?php esc_html_e( 'Layout Type', 'social-feed' ); ?></label>
-					<div class="sf-layout-options">
-					<?php
-					$layouts = array(
-						'grid'     => array( 'icon' => 'dashicons-grid-view', 'label' => __( 'Grid', 'social-feed' ) ),
-						'list'     => array( 'icon' => 'dashicons-list-view', 'label' => __( 'List', 'social-feed' ) ),
-						'masonry'  => array( 'icon' => 'dashicons-layout', 'label' => __( 'Masonry', 'social-feed' ) ),
-						'carousel' => array( 'icon' => 'dashicons-slides', 'label' => __( 'Carousel', 'social-feed' ) ),
-					);
-					foreach ( $layouts as $value => $layout ) :
-						?>
-						<label class="sf-layout-option <?php echo $settings['layout'] === $value ? 'active' : ''; ?>">
-							<input type="radio" name="layout" value="<?php echo esc_attr( $value ); ?>" <?php checked( $settings['layout'], $value ); ?>>
-							<span class="dashicons <?php echo esc_attr( $layout['icon'] ); ?>"></span>
-							<span class="sf-layout-label"><?php echo esc_html( $layout['label'] ); ?></span>
+		<div class="sf-tab-content sf-tab-content-layout" data-tab="layout">
+			<!-- 1. Layout -->
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Layout', 'social-feed' ); ?></div>
+				<div class="sf-radio-cards">
+					<?php foreach ( $layouts as $value => $layout_data ) : ?>
+						<label class="sf-radio-card sf-layout-option <?php echo ( $layout === $value ) ? 'active' : ''; ?>">
+							<input type="radio" name="layout" value="<?php echo esc_attr( $value ); ?>" <?php checked( $layout, $value ); ?>>
+							<span class="sf-radio-card-radio"></span>
+							<span class="dashicons <?php echo esc_attr( $layout_data['icon'] ); ?>"></span>
+							<span class="sf-radio-card-label"><?php echo esc_html( $layout_data['label'] ); ?></span>
+							<?php if ( ! empty( $layout_data['pro'] ) ) : ?>
+								<span class="sf-pro-badge" title="<?php esc_attr_e( 'Pro', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-rocket"></span>
+								</span>
+							<?php endif; ?>
 						</label>
 					<?php endforeach; ?>
+				</div>
+			</div>
+
+			<!-- 2. Feed Height -->
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Feed Height', 'social-feed' ); ?></div>
+				<div class="sf-field sf-field-number-px">
+					<label for="sf_feed_height"><?php esc_html_e( 'Height', 'social-feed' ); ?></label>
+					<div class="sf-number-px-wrap">
+						<input type="number" id="sf_feed_height" name="feed_height" value="<?php echo esc_attr( $settings['feed_height'] ); ?>" min="0" step="1" placeholder="">
+						<span class="sf-number-px-suffix">px</span>
 					</div>
 				</div>
 			</div>
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Columns &amp; Spacing', 'social-feed' ); ?></div>
-				<div class="sf-field">
-					<label for="sf_columns_desktop"><?php esc_html_e( 'Columns (Desktop)', 'social-feed' ); ?></label>
-					<div class="sf-range-wrapper">
-						<input type="range" id="sf_columns_desktop" name="columns_desktop" value="<?php echo esc_attr( $settings['columns_desktop'] ); ?>" min="1" max="6">
-						<span class="sf-range-value"><?php echo esc_html( $settings['columns_desktop'] ); ?></span>
+
+			<!-- 3. Padding -->
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Padding', 'social-feed' ); ?></div>
+				<div class="sf-field sf-field-number-px">
+					<label for="sf_image_padding"><?php esc_html_e( 'Padding', 'social-feed' ); ?></label>
+					<div class="sf-number-px-wrap">
+						<input type="number" id="sf_image_padding" name="image_padding" value="<?php echo esc_attr( $settings['image_padding'] ); ?>" min="0" step="1">
+						<span class="sf-number-px-suffix">px</span>
 					</div>
 				</div>
-				<div class="sf-field">
-					<label for="sf_columns_tablet"><?php esc_html_e( 'Columns (Tablet)', 'social-feed' ); ?></label>
-					<div class="sf-range-wrapper">
-						<input type="range" id="sf_columns_tablet" name="columns_tablet" value="<?php echo esc_attr( $settings['columns_tablet'] ); ?>" min="1" max="4">
-						<span class="sf-range-value"><?php echo esc_html( $settings['columns_tablet'] ); ?></span>
+			</div>
+
+			<!-- 4. Number of Posts -->
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Number of Posts', 'social-feed' ); ?></div>
+				<div class="sf-device-rows">
+					<div class="sf-device-row">
+						<span class="dashicons dashicons-desktop"></span>
+						<label for="sf_post_count_desktop"><?php esc_html_e( 'Desktop', 'social-feed' ); ?></label>
+						<input type="number" id="sf_post_count_desktop" name="post_count_desktop" value="<?php echo esc_attr( $post_count_desktop ); ?>" min="1" max="50" step="1">
+					</div>
+					<div class="sf-device-row">
+						<span class="dashicons dashicons-tablet"></span>
+						<label for="sf_post_count_tablet"><?php esc_html_e( 'Tablet', 'social-feed' ); ?></label>
+						<input type="number" id="sf_post_count_tablet" name="post_count_tablet" value="<?php echo esc_attr( $post_count_tablet ); ?>" min="1" max="50" step="1">
+					</div>
+					<div class="sf-device-row">
+						<span class="dashicons dashicons-smartphone"></span>
+						<label for="sf_post_count_mobile"><?php esc_html_e( 'Mobile', 'social-feed' ); ?></label>
+						<input type="number" id="sf_post_count_mobile" name="post_count_mobile" value="<?php echo esc_attr( $post_count_mobile ); ?>" min="1" max="50" step="1">
 					</div>
 				</div>
-				<div class="sf-field">
-					<label for="sf_columns_mobile"><?php esc_html_e( 'Columns (Mobile)', 'social-feed' ); ?></label>
-					<div class="sf-range-wrapper">
-						<input type="range" id="sf_columns_mobile" name="columns_mobile" value="<?php echo esc_attr( $settings['columns_mobile'] ); ?>" min="1" max="2">
-						<span class="sf-range-value"><?php echo esc_html( $settings['columns_mobile'] ); ?></span>
+			</div>
+
+			<!-- 5. Columns -->
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Columns', 'social-feed' ); ?></div>
+				<div class="sf-device-rows">
+					<div class="sf-device-row">
+						<span class="dashicons dashicons-desktop"></span>
+						<label for="sf_columns_desktop"><?php esc_html_e( 'Desktop', 'social-feed' ); ?></label>
+						<input type="number" id="sf_columns_desktop" name="columns_desktop" value="<?php echo esc_attr( $settings['columns_desktop'] ); ?>" min="1" max="6" step="1">
 					</div>
-				</div>
-				<div class="sf-field">
-					<label for="sf_image_padding"><?php esc_html_e( 'Image Gap', 'social-feed' ); ?></label>
-					<div class="sf-range-wrapper">
-						<input type="range" id="sf_image_padding" name="image_padding" value="<?php echo esc_attr( $settings['image_padding'] ); ?>" min="0" max="20">
-						<span class="sf-range-value"><?php echo esc_html( $settings['image_padding'] ); ?>px</span>
+					<div class="sf-device-row">
+						<span class="dashicons dashicons-tablet"></span>
+						<label for="sf_columns_tablet"><?php esc_html_e( 'Tablet', 'social-feed' ); ?></label>
+						<input type="number" id="sf_columns_tablet" name="columns_tablet" value="<?php echo esc_attr( $settings['columns_tablet'] ); ?>" min="1" max="6" step="1">
+					</div>
+					<div class="sf-device-row">
+						<span class="dashicons dashicons-smartphone"></span>
+						<label for="sf_columns_mobile"><?php esc_html_e( 'Mobile', 'social-feed' ); ?></label>
+						<input type="number" id="sf_columns_mobile" name="columns_mobile" value="<?php echo esc_attr( $settings['columns_mobile'] ); ?>" min="1" max="6" step="1">
 					</div>
 				</div>
 			</div>

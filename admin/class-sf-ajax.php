@@ -413,12 +413,13 @@ class SF_Ajax {
 		$defaults = SF_Customizer::get_defaults();
 		$settings = wp_parse_args( $settings, $defaults );
 
+		$post_count = isset( $settings['post_count_desktop'] ) ? absint( $settings['post_count_desktop'] ) : absint( $settings['post_count'] );
 		$feed_data = array(
 			'name'       => ! empty( $settings['name'] ) ? $settings['name'] : __( 'Untitled Feed', 'social-feed' ),
 			'platform'   => $settings['platform'],
 			'account_id' => ! empty( $settings['account_id'] ) ? absint( $settings['account_id'] ) : null,
 			'feed_type'  => $settings['feed_type'],
-			'post_count' => absint( $settings['post_count'] ),
+			'post_count' => $post_count,
 			'status'     => 'active',
 		);
 
@@ -435,7 +436,8 @@ class SF_Ajax {
 		}
 
 		$meta_fields = array(
-			'layout', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding',
+			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding',
+			'post_count_desktop', 'post_count_tablet', 'post_count_mobile',
 			'bg_color', 'text_color', 'border_style', 'border_color', 'border_radius',
 			'hover_effect', 'dark_mode', 'show_header', 'show_profile_pic', 'show_username',
 			'show_followers', 'show_bio', 'show_follow_btn', 'follow_btn_color', 'follow_btn_text',
