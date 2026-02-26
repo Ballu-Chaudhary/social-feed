@@ -630,19 +630,29 @@
 		 * Switch to a section (show its panel in sidebar).
 		 *
 		 * @param {jQuery} $wrap    Customizer wrap element.
-		 * @param {string} section Section identifier (feed, layout, design, header, posts, loadmore, advanced).
+		 * @param {string} section Section identifier (feed, layout, design, header, posts, ballu, loadmore, advanced).
 		 */
 		switchToTab: function ($wrap, section) {
 			if (!$wrap || !$wrap.length || !section) return;
 
+			/* Hide nav, show panels */
 			$wrap.find('.sf-sidebar-nav').removeClass('sf-sidebar-view-active');
 			$wrap.find('.sf-sidebar-panels').addClass('sf-sidebar-panels-active');
-			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').hide();
-			$wrap.find('.sf-sidebar-panel[data-section="' + section + '"]').addClass('sf-panel-visible').show();
 
+			/* Hide all panels, remove active from tab content */
+			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').hide();
 			$wrap.find('.sf-sidebar-panel-body .sf-tab-content').removeClass('active');
-			$wrap.find('.sf-sidebar-panel[data-section="' + section + '"] .sf-tab-content').addClass('active');
-			$wrap.find('.sf-sidebar-panel[data-section="' + section + '"] .sf-sidebar-panel-body').show();
+
+			/* Find target panel by id or data-section */
+			var $targetPanel = $wrap.find('#sf-panel-' + section).length
+				? $wrap.find('#sf-panel-' + section)
+				: $wrap.find('.sf-sidebar-panel[data-section="' + section + '"]');
+
+			if ($targetPanel.length) {
+				$targetPanel.addClass('sf-panel-visible').show();
+				$targetPanel.find('.sf-sidebar-panel-body').show();
+				$targetPanel.find('.sf-tab-content').addClass('active');
+			}
 
 			try {
 				sessionStorage.setItem('sf_customizer_tab', section);
@@ -775,11 +785,15 @@
 
 		handleSidebarItemClick: function (e) {
 			e.preventDefault();
-			var section = $(this).data('section');
+			var section = $(this).attr('data-section') || $(this).data('section');
 			var $wrap = $(this).closest('.sf-customizer-wrap');
 			if (!$wrap.length || !section) return;
+
+			/* Remove active from all sidebar items */
 			$wrap.find('.sf-sidebar-item').removeClass('active');
+			/* Add active to clicked item */
 			$(this).addClass('active');
+
 			SF_Customizer.switchToTab($wrap, section);
 		},
 
