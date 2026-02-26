@@ -827,24 +827,17 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	color: #e0e7ff;
 }
 
-/* Top bar - aligns with sidebar + preview below */
+/* Top bar - right-aligned actions only */
 .sf-customizer-topbar {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-end;
 	padding: 12px 20px;
 	background: var(--sf-customizer-surface);
 	border-bottom: 1px solid var(--sf-customizer-border);
 	flex-shrink: 0;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
-
-/* Left spacer: equal weight to right so center content is truly centered */
-.sf-topbar-left-spacer {
-	flex: 1;
-	min-width: 0;
-}
-
 
 .sf-topbar-back {
 	display: inline-flex;
@@ -864,52 +857,6 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	font-size: 18px;
 	width: 18px;
 	height: 18px;
-}
-
-.sf-topbar-center {
-	flex: 0 0 auto;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 0 16px;
-}
-
-/* Feed name (editable) in top bar center */
-.sf-customizer-topbar .sf-topbar-center .sf-feed-name-wrap {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.sf-customizer-topbar .sf-topbar-center .sf-feed-name-display {
-	font-size: 15px;
-	font-weight: 600;
-	color: var(--sf-customizer-text);
-}
-
-.sf-customizer-topbar .sf-topbar-center .sf-feed-name-edit {
-	display: inline-flex;
-	padding: 4px;
-	border: none;
-	background: none;
-	color: var(--sf-customizer-text-muted);
-	cursor: pointer;
-	border-radius: 4px;
-	transition: color 0.2s, background 0.2s;
-}
-
-.sf-customizer-topbar .sf-topbar-center .sf-feed-name-edit:hover {
-	color: var(--sf-customizer-accent);
-	background: var(--sf-customizer-surface-alt);
-}
-
-.sf-customizer-topbar .sf-topbar-center .sf-feed-name-input {
-	width: 220px;
-	padding: 6px 10px;
-	font-size: 14px;
-	font-weight: 600;
-	border: 1px solid var(--sf-customizer-border);
-	border-radius: var(--sf-customizer-radius-sm);
 }
 
 .sf-feed-name-wrap {
@@ -953,8 +900,6 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	flex: 1;
-	justify-content: flex-end;
 	min-width: 0;
 }
 
@@ -1701,14 +1646,13 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	overflow: hidden;
 }
 
-/* Preview Header - Sticky at top when preview content scrolls */
+/* Preview Header - Sticky at top when preview content scrolls; left | center (feed name) | right (device switcher) */
 .sf-preview-header {
 	position: sticky;
 	top: 0;
 	z-index: 10;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	padding: var(--sf-customizer-space-lg) var(--sf-customizer-space-2xl);
 	background: var(--sf-customizer-surface);
 	border-bottom: 1px solid var(--sf-customizer-border);
@@ -1722,12 +1666,60 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	letter-spacing: 0.08em;
 	color: var(--sf-customizer-text-muted);
 	text-transform: uppercase;
+	flex-shrink: 0;
+}
+
+.sf-preview-header .sf-preview-header-center {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-width: 0;
+	padding: 0 var(--sf-customizer-space-md);
+}
+
+.sf-preview-header .sf-preview-header-center .sf-feed-name-wrap {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sf-preview-header .sf-preview-header-center .sf-feed-name-display {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--sf-customizer-text);
+}
+
+.sf-preview-header .sf-preview-header-center .sf-feed-name-edit {
+	display: inline-flex;
+	padding: 4px;
+	border: none;
+	background: none;
+	color: var(--sf-customizer-text-muted);
+	cursor: pointer;
+	border-radius: 4px;
+	transition: color 0.2s, background 0.2s;
+}
+
+.sf-preview-header .sf-preview-header-center .sf-feed-name-edit:hover {
+	color: var(--sf-customizer-accent);
+	background: var(--sf-customizer-surface-alt);
+}
+
+.sf-preview-header .sf-preview-header-center .sf-feed-name-input {
+	width: 200px;
+	padding: 6px 10px;
+	font-size: 14px;
+	font-weight: 600;
+	border: 1px solid var(--sf-customizer-border);
+	border-radius: var(--sf-customizer-radius-sm);
 }
 
 .sf-preview-header .sf-preview-header-right {
 	display: flex;
 	align-items: center;
 	gap: var(--sf-customizer-space-sm);
+	flex-shrink: 0;
 }
 
 .sf-customizer-panel.sf-customizer-preview .sf-device-switcher {

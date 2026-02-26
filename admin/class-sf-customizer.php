@@ -48,16 +48,6 @@ class SF_Customizer {
 
 			<!-- Top Bar -->
 			<div class="sf-customizer-topbar">
-				<div class="sf-topbar-left-spacer"></div>
-				<div class="sf-topbar-center">
-					<div class="sf-feed-name-wrap">
-						<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
-						<button type="button" class="sf-feed-name-edit" aria-label="<?php esc_attr_e( 'Edit feed name', 'social-feed' ); ?>">
-							<span class="dashicons dashicons-edit"></span>
-						</button>
-						<input type="text" class="sf-feed-name-input" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" style="display:none;">
-					</div>
-				</div>
 				<div class="sf-topbar-right">
 					<button type="button" class="sf-topbar-btn sf-help-btn" title="<?php esc_attr_e( 'Help', 'social-feed' ); ?>">
 						<span class="dashicons dashicons-editor-help"></span>
@@ -210,6 +200,15 @@ class SF_Customizer {
 				<div class="sf-customizer-panel sf-customizer-preview">
 					<div class="sf-preview-header">
 						<span class="sf-preview-label"><?php esc_html_e( 'PREVIEW', 'social-feed' ); ?></span>
+						<div class="sf-preview-header-center">
+							<div class="sf-feed-name-wrap">
+								<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
+								<button type="button" class="sf-feed-name-edit" aria-label="<?php esc_attr_e( 'Edit feed name', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-edit"></span>
+								</button>
+								<input type="text" class="sf-feed-name-input" id="sf_name" name="name" value="<?php echo esc_attr( $settings['name'] ); ?>" placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" style="display:none;">
+							</div>
+						</div>
 						<div class="sf-preview-header-right">
 							<div class="sf-device-switcher">
 								<button type="button" class="sf-device-btn active" data-device="desktop" title="<?php esc_attr_e( 'Desktop', 'social-feed' ); ?>">
