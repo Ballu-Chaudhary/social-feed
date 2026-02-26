@@ -642,6 +642,7 @@
 
 			$wrap.find('.sf-sidebar-panel-body .sf-tab-content').removeClass('active');
 			$wrap.find('.sf-sidebar-panel[data-section="' + section + '"] .sf-tab-content').addClass('active');
+			$wrap.find('.sf-sidebar-panel[data-section="' + section + '"] .sf-sidebar-panel-body').show();
 
 			try {
 				sessionStorage.setItem('sf_customizer_tab', section);
