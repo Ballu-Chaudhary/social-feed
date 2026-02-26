@@ -1183,11 +1183,12 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	color: var(--sf-customizer-accent);
 }
 
-/* Sidebar panels - second level */
+/* Sidebar panels - second level (mirrors .sf-sidebar-nav layout) */
 .sf-sidebar-panels {
 	display: none;
 	flex-direction: column;
-	height: 100%;
+	flex: 1;
+	min-height: 0;
 	overflow: hidden;
 }
 
