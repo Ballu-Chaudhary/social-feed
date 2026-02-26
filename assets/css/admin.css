@@ -839,6 +839,12 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+/* Left spacer: equal weight to right so center content is truly centered */
+.sf-topbar-left-spacer {
+	flex: 1;
+	min-width: 0;
+}
+
 
 .sf-topbar-back {
 	display: inline-flex;
@@ -861,11 +867,11 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 }
 
 .sf-topbar-center {
-	flex: 1;
+	flex: 0 0 auto;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	min-width: 0;
+	padding: 0 16px;
 }
 
 /* Feed name (editable) in top bar center */

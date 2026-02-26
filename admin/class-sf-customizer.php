@@ -48,6 +48,7 @@ class SF_Customizer {
 
 			<!-- Top Bar -->
 			<div class="sf-customizer-topbar">
+				<div class="sf-topbar-left-spacer"></div>
 				<div class="sf-topbar-center">
 					<div class="sf-feed-name-wrap">
 						<span class="sf-feed-name-display"><?php echo esc_html( $feed_name_display ); ?></span>
