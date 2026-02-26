@@ -804,27 +804,91 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
-/* Upgrade banner - above top bar, free users only */
+/* Upgrade banner - single top bar for free: upgrade text + Upgrade link left, Help + Save right */
 .sf-customizer-upgrade-banner {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	gap: 12px;
-	padding: 8px 16px;
+	justify-content: space-between;
+	padding: 8px 20px;
 	background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
 	color: #fff;
 	font-size: 13px;
 	flex-shrink: 0;
 }
 
+.sf-upgrade-banner-left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.sf-customizer-upgrade-banner .sf-upgrade-text {
+	line-height: 1.4;
+}
+
+/* Upgrade link: same height/size as Save button for visual balance */
 .sf-customizer-upgrade-banner .sf-upgrade-link {
-	color: #fff;
+	display: inline-flex;
+	align-items: center;
+	height: 36px;
+	padding: 0 20px;
+	font-size: 14px;
 	font-weight: 600;
-	text-decoration: underline;
+	line-height: 1;
+	color: #fff;
+	text-decoration: none;
+	background: rgba(255, 255, 255, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: var(--sf-customizer-radius-sm);
+	transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .sf-customizer-upgrade-banner .sf-upgrade-link:hover {
-	color: #e0e7ff;
+	color: #fff;
+	background: rgba(255, 255, 255, 0.3);
+	border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Help / Save (and Embed, unsaved) on the right - visible on purple */
+.sf-customizer-upgrade-banner .sf-topbar-right {
+	gap: 12px;
+}
+
+.sf-customizer-upgrade-banner .sf-topbar-btn {
+	color: #fff;
+	border-color: rgba(255, 255, 255, 0.5);
+	background: rgba(255, 255, 255, 0.15);
+}
+
+.sf-customizer-upgrade-banner .sf-topbar-btn:hover {
+	color: #fff;
+	border-color: rgba(255, 255, 255, 0.8);
+	background: rgba(255, 255, 255, 0.25);
+}
+
+.sf-customizer-upgrade-banner .sf-topbar-btn .dashicons {
+	color: inherit;
+}
+
+.sf-customizer-upgrade-banner .sf-unsaved-indicator {
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.sf-customizer-upgrade-banner .sf-save-feed {
+	padding: 8px 20px;
+	font-weight: 600;
+	font-size: 14px;
+	height: 36px;
+	line-height: 1;
+	color: #6366f1;
+	background: #fff;
+	border-color: #fff;
+}
+
+.sf-customizer-upgrade-banner .sf-save-feed:hover {
+	background: rgba(255, 255, 255, 0.95);
+	border-color: rgba(255, 255, 255, 0.95);
+	color: #5a5fd9;
 }
 
 /* Top bar - right-aligned actions only */
