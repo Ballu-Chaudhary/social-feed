@@ -49,6 +49,34 @@
 }
 
 /* ==========================================================================
+   Scrollbar & overflow - only show scrollbars when content overflows
+   ========================================================================== */
+
+/* Prevent horizontal scrollbar, reduce WP padding to avoid unnecessary vertical scrollbar */
+body.sf-admin-page {
+	overflow-x: hidden;
+}
+
+body.sf-admin-page #wpbody-content {
+	padding-bottom: 20px;
+}
+
+/* Create Feed: WP area should not add scroll */
+body.sf-admin-page.sf-customizer-page #wpbody-content {
+	padding-bottom: 0;
+}
+
+/* Layout sub-panel: single scroll region - panel body scrolls, content flows (no nested scroll) */
+.sf-sidebar-panel-body .sf-customizer-content {
+	overflow: visible;
+}
+
+/* Sidebar panel body: overflow-x hidden prevents horizontal scrollbar */
+.sf-sidebar-panel-body {
+	overflow-x: hidden;
+}
+
+/* ==========================================================================
    BACK NAVIGATION
    ========================================================================== */
 

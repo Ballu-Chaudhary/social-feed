@@ -156,9 +156,18 @@ class SF_Admin {
 			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 			if ( $page === self::PAGE_SLUG ) {
 				$classes .= ' sf-dashboard-page';
-			}
-			if ( $page === self::PAGE_SLUG . '-create' ) {
+			} elseif ( $page === self::PAGE_SLUG . '-feeds' ) {
+				$classes .= ' sf-feeds-page';
+			} elseif ( $page === self::PAGE_SLUG . '-create' ) {
 				$classes .= ' sf-customizer-page';
+			} elseif ( $page === self::PAGE_SLUG . '-accounts' ) {
+				$classes .= ' sf-accounts-page';
+			} elseif ( $page === self::PAGE_SLUG . '-settings' ) {
+				$classes .= ' sf-settings-page';
+			} elseif ( $page === self::PAGE_SLUG . '-license' ) {
+				$classes .= ' sf-license-page';
+			} elseif ( $page === self::PAGE_SLUG . '-help' ) {
+				$classes .= ' sf-help-page';
 			}
 		}
 
