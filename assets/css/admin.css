@@ -80,74 +80,8 @@ body.sf-admin-page.sf-customizer-page #wpbody-content {
 }
 
 /* ==========================================================================
-   BACK NAVIGATION
+   UNSAVED CHANGES INDICATOR
    ========================================================================== */
-
-.sf-breadcrumb-bar {
-	margin: 0 20px 16px 0;
-	padding: 0 0 12px;
-	border-bottom: 1px solid #e5e7eb;
-}
-
-.sf-create-feed-wrap .sf-breadcrumb-bar {
-	margin-left: 20px;
-	margin-right: 20px;
-}
-
-.sf-back-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 6px 0;
-	margin-bottom: 12px;
-	color: #6b7280;
-	font-size: 13px;
-	text-decoration: none;
-	transition: color 0.15s ease;
-}
-
-.sf-back-link:hover {
-	color: #3b82f6;
-}
-
-.sf-back-link:hover .dashicons {
-	transform: translateX(-3px);
-}
-
-.sf-back-link .dashicons {
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
-	transition: transform 0.15s ease;
-}
-
-.sf-breadcrumb {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-wrap: wrap;
-	font-size: 13px;
-	color: #9ca3af;
-}
-
-.sf-breadcrumb a {
-	color: #6b7280;
-	text-decoration: none;
-}
-
-.sf-breadcrumb a:hover {
-	color: #3b82f6;
-}
-
-.sf-breadcrumb__sep {
-	color: #d1d5db;
-	user-select: none;
-}
-
-.sf-breadcrumb__current {
-	color: #111827;
-	font-weight: 500;
-}
 
 .sf-unsaved-indicator {
 	display: none;
@@ -173,25 +107,6 @@ body.sf-admin-page.sf-customizer-page #wpbody-content {
 @keyframes sf-unsaved-pulse {
 	0%, 100% { opacity: 1; transform: scale(1); }
 	50% { opacity: 0.6; transform: scale(0.95); }
-}
-
-@media screen and (max-width: 782px) {
-	.sf-back-link .sf-back-link-text {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		border: 0;
-	}
-
-	.sf-breadcrumb .sf-breadcrumb__item--hide-mobile,
-	.sf-breadcrumb .sf-breadcrumb__sep.sf-breadcrumb__item--hide-mobile,
-	.sf-breadcrumb .sf-breadcrumb__current.sf-breadcrumb__item--hide-mobile {
-		display: none !important;
-	}
 }
 
 /* ==========================================================================
@@ -814,14 +729,6 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-}
-
-body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
-	background: var(--sf-customizer-surface);
-	border-bottom: 1px solid var(--sf-customizer-border);
-	padding: var(--sf-customizer-space-md) 20px;
-	margin: 0;
-	flex-shrink: 0;
 }
 
 .sf-customizer-wrap {

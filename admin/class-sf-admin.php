@@ -339,15 +339,6 @@ class SF_Admin {
 		$is_pro        = $this->is_pro();
 		?>
 		<div class="wrap sf-admin-wrap sf-dashboard-wrap">
-			<?php
-			sf_render_breadcrumb(
-				array(
-					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => '' ),
-				),
-				'',
-				''
-			);
-			?>
 			<div class="sf-dashboard-header">
 				<h1 class="sf-admin-title"><?php esc_html_e( 'Social Feed Dashboard', 'social-feed' ); ?></h1>
 				<?php if ( ! $is_pro ) : ?>
@@ -521,16 +512,6 @@ class SF_Admin {
 		}
 		?>
 		<div class="wrap sf-admin-wrap">
-			<?php
-			sf_render_breadcrumb(
-				array(
-					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
-					array( 'label' => __( 'All Feeds', 'social-feed' ), 'url' => '' ),
-				),
-				admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
-				__( 'Back to Dashboard', 'social-feed' )
-			);
-			?>
 			<h1 class="sf-admin-title">
 				<?php esc_html_e( 'All Feeds', 'social-feed' ); ?>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="page-title-action">
@@ -672,12 +653,6 @@ class SF_Admin {
 		$feed_id = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
 		?>
 		<div class="wrap sf-admin-wrap sf-create-feed-wrap">
-			<div class="sf-breadcrumb-bar sf-create-feed-top-bar">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" class="sf-back-link sf-back-nav" data-back-url="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" title="<?php esc_attr_e( 'Alt + ←', 'social-feed' ); ?>">
-					<span class="dashicons dashicons-arrow-left-alt2"></span>
-					<span class="sf-back-link-text"><?php esc_html_e( 'Back to All Feeds', 'social-feed' ); ?></span>
-				</a>
-			</div>
 			<?php
 			require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
 			SF_Customizer::render( $feed_id );
@@ -691,14 +666,6 @@ class SF_Admin {
 	 */
 	public function render_accounts() {
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
-		sf_render_breadcrumb(
-			array(
-				array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
-				array( 'label' => __( 'Instagram Accounts', 'social-feed' ), 'url' => '' ),
-			),
-			admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
-			__( 'Back to Dashboard', 'social-feed' )
-		);
 		SF_Accounts::render();
 	}
 
@@ -706,14 +673,6 @@ class SF_Admin {
 	 * Render settings page.
 	 */
 	public function render_settings() {
-		sf_render_breadcrumb(
-			array(
-				array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
-				array( 'label' => __( 'Settings', 'social-feed' ), 'url' => '' ),
-			),
-			admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
-			__( 'Back to Dashboard', 'social-feed' )
-		);
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-settings.php';
 		SF_Settings::render();
 	}
@@ -722,14 +681,6 @@ class SF_Admin {
 	 * Render license page.
 	 */
 	public function render_license() {
-		sf_render_breadcrumb(
-			array(
-				array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
-				array( 'label' => __( 'License', 'social-feed' ), 'url' => '' ),
-			),
-			admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
-			__( 'Back to Dashboard', 'social-feed' )
-		);
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-license-page.php';
 		SF_License_Page::render();
 	}
@@ -740,16 +691,6 @@ class SF_Admin {
 	public function render_help() {
 		?>
 		<div class="wrap sf-admin-wrap">
-			<?php
-			sf_render_breadcrumb(
-				array(
-					array( 'label' => __( 'Social Feed', 'social-feed' ), 'url' => admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ),
-					array( 'label' => __( 'Help & Support', 'social-feed' ), 'url' => '' ),
-				),
-				admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
-				__( 'Back to Dashboard', 'social-feed' )
-			);
-			?>
 			<h1 class="sf-admin-title"><?php esc_html_e( 'Help & Support', 'social-feed' ); ?></h1>
 
 			<div class="sf-help-grid">

@@ -1431,14 +1431,13 @@
 	};
 
 	/**
-	 * Back navigation and unsaved changes.
+	 * Unsaved changes handling for customizer.
 	 */
 	var SF_BackNav = {
 		hasUnsavedChanges: false,
 		beforeUnloadHandler: null,
 
 		init: function () {
-			this.bindKeyboardShortcut();
 			if ($('.sf-customizer-wrap').length) {
 				this.initUnsavedChanges();
 			}
@@ -1463,14 +1462,6 @@
 				}
 			};
 			window.addEventListener('beforeunload', this.beforeUnloadHandler);
-
-			$(document).on('click', '.sf-back-link, .sf-cancel-btn.sf-back-nav', function (e) {
-				if (!self.hasUnsavedChanges) return;
-				var msg = (sfAdmin.i18n && sfAdmin.i18n.unsaved_leave) || 'You have unsaved changes. Are you sure you want to leave?';
-				if (!confirm(msg)) {
-					e.preventDefault();
-				}
-			});
 		},
 
 		clearUnsaved: function () {
@@ -1480,25 +1471,6 @@
 				window.removeEventListener('beforeunload', this.beforeUnloadHandler);
 				this.beforeUnloadHandler = null;
 			}
-		},
-
-		bindKeyboardShortcut: function () {
-			$(document).on('keydown', function (e) {
-				if (e.altKey && (e.key === 'ArrowLeft' || e.keyCode === 37)) {
-					var $back = $('.sf-back-link');
-					if ($back.length) {
-						e.preventDefault();
-						if ($('.sf-customizer-wrap').length && SF_BackNav.hasUnsavedChanges) {
-							var msg = (sfAdmin.i18n && sfAdmin.i18n.unsaved_leave) || 'You have unsaved changes. Are you sure you want to leave?';
-							if (confirm(msg)) {
-								window.location.href = $back.attr('href');
-							}
-						} else {
-							window.location.href = $back.attr('href');
-						}
-					}
-				}
-			});
 		}
 	};
 
