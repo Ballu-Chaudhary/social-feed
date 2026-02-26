@@ -1619,26 +1619,41 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	color: var(--sf-customizer-text-muted);
 }
 
-/* Radio cards - full width rows */
+/* Layout selector: bordered container, compact horizontal rows, thin dividers */
 .sf-tab-content-layout .sf-radio-cards {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 0;
 	padding: 0 var(--sf-customizer-space-lg);
+	border: 1px solid var(--sf-customizer-border);
+	border-radius: var(--sf-customizer-radius-sm);
+	background: var(--sf-customizer-surface);
+	overflow: hidden;
 }
 
-.sf-tab-content-layout .sf-radio-card {
+/* Override any card-style .sf-layout-option rules: single horizontal row, compact */
+.sf-tab-content-layout .sf-radio-card.sf-layout-option {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	width: 100%;
-	padding: 12px 14px;
-	gap: 12px;
-	border: 1px solid transparent;
-	border-radius: var(--sf-customizer-radius-sm);
+	min-width: 0;
+	height: auto;
+	min-height: 44px;
+	padding: 10px 14px;
+	gap: 10px;
+	border: none;
+	border-radius: 0;
+	border-bottom: 1px solid var(--sf-customizer-border-subtle);
+	box-shadow: none;
 	cursor: pointer;
-	transition: background 0.15s, border-color 0.15s;
-	background: var(--sf-customizer-surface);
+	transition: background 0.15s;
+	background: #fff;
 	position: relative;
+}
+
+.sf-tab-content-layout .sf-radio-card.sf-layout-option:last-child {
+	border-bottom: none;
 }
 
 .sf-tab-content-layout .sf-radio-card input[type="radio"] {
@@ -1653,10 +1668,14 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	justify-content: center;
 	width: 18px;
 	height: 18px;
-	border: 2px solid var(--sf-customizer-border);
+	border: 2px solid #cbd5e1;
 	border-radius: 50%;
 	flex-shrink: 0;
 	transition: border-color 0.15s, background 0.15s;
+}
+
+.sf-tab-content-layout .sf-radio-card input[type="radio"]:checked + .sf-radio-card-radio {
+	border-color: var(--sf-customizer-accent);
 }
 
 .sf-tab-content-layout .sf-radio-card input[type="radio"]:checked + .sf-radio-card-radio::after {
@@ -1667,10 +1686,12 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	background: var(--sf-customizer-accent);
 }
 
+/* Small layout icon next to radio */
 .sf-tab-content-layout .sf-radio-card .dashicons:not(.dashicons-rocket) {
-	font-size: 20px;
-	width: 20px;
-	height: 20px;
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	margin: 0;
 	color: var(--sf-customizer-text-muted);
 	flex-shrink: 0;
 }
@@ -1681,26 +1702,27 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	font-weight: 500;
 	color: var(--sf-customizer-text);
 	text-align: left;
+	min-width: 0;
 }
 
-.sf-tab-content-layout .sf-radio-card:hover {
+.sf-tab-content-layout .sf-radio-card.sf-layout-option:hover {
 	background: var(--sf-customizer-surface-alt);
 }
 
-.sf-tab-content-layout .sf-radio-card.active {
+/* Selected row: light blue background, blue radio */
+.sf-tab-content-layout .sf-radio-card.sf-layout-option.active {
 	background: rgba(37, 99, 235, 0.08);
+}
+
+.sf-tab-content-layout .sf-radio-card.sf-layout-option.active .sf-radio-card-radio {
 	border-color: var(--sf-customizer-accent);
 }
 
-.sf-tab-content-layout .sf-radio-card.active .sf-radio-card-radio {
-	border-color: var(--sf-customizer-accent);
-}
-
-.sf-tab-content-layout .sf-radio-card.active .dashicons:not(.dashicons-rocket) {
+.sf-tab-content-layout .sf-radio-card.sf-layout-option.active .dashicons:not(.dashicons-rocket) {
 	color: var(--sf-customizer-accent);
 }
 
-.sf-tab-content-layout .sf-radio-card.active .sf-radio-card-label {
+.sf-tab-content-layout .sf-radio-card.sf-layout-option.active .sf-radio-card-label {
 	color: var(--sf-customizer-text);
 	font-weight: 600;
 }
