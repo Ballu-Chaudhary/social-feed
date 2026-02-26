@@ -1622,6 +1622,51 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 	font-weight: 600;
 }
 
+/* ========== Posts sub-panel - same section style as Layout ========== */
+.sf-tab-content-posts {
+	padding: 0;
+}
+
+.sf-tab-content-posts .sf-posts-panel-section {
+	border-bottom: 1px solid var(--sf-customizer-border-subtle);
+	padding: var(--sf-customizer-space-md) 0;
+}
+
+.sf-tab-content-posts .sf-posts-panel-section:last-child {
+	border-bottom: none;
+}
+
+.sf-tab-content-posts .sf-posts-panel-section-title {
+	display: block;
+	margin: 0 0 var(--sf-customizer-space-sm);
+	padding: 0 var(--sf-customizer-space-lg);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--sf-customizer-text-muted);
+}
+
+.sf-tab-content-posts .sf-field {
+	padding: 0 var(--sf-customizer-space-lg);
+	min-height: 44px;
+	border: none;
+}
+
+.sf-tab-content-posts .sf-field .sf-number-input {
+	width: 80px;
+	padding: 8px 10px;
+	font-size: 13px;
+	border: 1px solid var(--sf-customizer-border);
+	border-radius: var(--sf-customizer-radius-sm);
+}
+
+.sf-tab-content-posts .sf-field .sf-number-input:focus {
+	outline: none;
+	border-color: var(--sf-customizer-accent);
+	box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
 /* ========== Layout sub-panel (Feed Layout) - Smash Balloon style ========== */
 .sf-tab-content-layout {
 	padding: 0;

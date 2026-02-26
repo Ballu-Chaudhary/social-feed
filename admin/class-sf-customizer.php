@@ -618,88 +618,75 @@ class SF_Customizer {
 	}
 
 	/**
-	 * Render Tab 5 - Posts.
+	 * Render Tab 5 - Posts (sub-panel with back arrow).
 	 *
 	 * @param array $settings Current settings.
 	 */
 	private static function render_tab_posts( $settings ) {
 		?>
-		<div class="sf-tab-content" data-tab="posts">
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Post Content', 'social-feed' ); ?></div>
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_show_caption"><?php esc_html_e( 'Show Caption', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_show_caption" name="show_caption" value="1" <?php checked( $settings['show_caption'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
+		<div class="sf-tab-content sf-tab-content-posts" data-tab="posts">
+			<!-- 1. POST STYLE -->
+			<div class="sf-posts-panel-section">
+				<div class="sf-posts-panel-section-title"><?php esc_html_e( 'POST STYLE', 'social-feed' ); ?></div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_show_caption"><?php esc_html_e( 'Show Caption', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_show_caption" name="show_caption" value="1" <?php checked( $settings['show_caption'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+				<div class="sf-caption-options sf-field" <?php echo ! $settings['show_caption'] ? 'style="display:none;"' : ''; ?>>
+					<label for="sf_caption_length"><?php esc_html_e( 'Caption Length', 'social-feed' ); ?></label>
+					<input type="number" id="sf_caption_length" name="caption_length" value="<?php echo esc_attr( $settings['caption_length'] ); ?>" min="1" max="500" step="1" class="sf-number-input">
+				</div>
 			</div>
 
-			<div class="sf-caption-options" <?php echo ! $settings['show_caption'] ? 'style="display:none;"' : ''; ?>>
+			<!-- 2. POST INFO -->
+			<div class="sf-posts-panel-section">
+				<div class="sf-posts-panel-section-title"><?php esc_html_e( 'POST INFO', 'social-feed' ); ?></div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_show_likes"><?php esc_html_e( 'Show Likes Count', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_show_likes" name="show_likes" value="1" <?php checked( $settings['show_likes'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_show_comments"><?php esc_html_e( 'Show Comments Count', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_show_comments" name="show_comments" value="1" <?php checked( $settings['show_comments'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_show_date"><?php esc_html_e( 'Show Date', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_show_date" name="show_date" value="1" <?php checked( $settings['show_date'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+			</div>
+
+			<!-- 3. POST INTERACTION -->
+			<div class="sf-posts-panel-section">
+				<div class="sf-posts-panel-section-title"><?php esc_html_e( 'POST INTERACTION', 'social-feed' ); ?></div>
 				<div class="sf-field">
-					<label for="sf_caption_length"><?php esc_html_e( 'Caption Length', 'social-feed' ); ?></label>
-					<div class="sf-range-wrapper">
-						<input type="range" id="sf_caption_length" name="caption_length" value="<?php echo esc_attr( $settings['caption_length'] ); ?>" min="50" max="300">
-						<span class="sf-range-value"><?php echo esc_html( $settings['caption_length'] ); ?></span>
+					<label><?php esc_html_e( 'Click Action', 'social-feed' ); ?></label>
+					<div class="sf-radio-group">
+						<label class="sf-radio-option">
+							<input type="radio" name="click_action" value="link" <?php checked( $settings['click_action'], 'link' ); ?>>
+							<span><?php esc_html_e( 'Open Link', 'social-feed' ); ?></span>
+						</label>
+						<label class="sf-radio-option">
+							<input type="radio" name="click_action" value="popup" <?php checked( $settings['click_action'], 'popup' ); ?>>
+							<span><?php esc_html_e( 'Lightbox', 'social-feed' ); ?></span>
+						</label>
+						<label class="sf-radio-option">
+							<input type="radio" name="click_action" value="none" <?php checked( $settings['click_action'], 'none' ); ?>>
+							<span><?php esc_html_e( 'Nothing', 'social-feed' ); ?></span>
+						</label>
 					</div>
 				</div>
-			</div>
-
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_show_date"><?php esc_html_e( 'Show Date', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_show_date" name="show_date" value="1" <?php checked( $settings['show_date'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
-			</div>
-
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_show_likes"><?php esc_html_e( 'Show Likes Count', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_show_likes" name="show_likes" value="1" <?php checked( $settings['show_likes'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
-			</div>
-
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_show_comments"><?php esc_html_e( 'Show Comments Count', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_show_comments" name="show_comments" value="1" <?php checked( $settings['show_comments'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
-			</div>
-
-			</div>
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Interaction', 'social-feed' ); ?></div>
-			<div class="sf-field">
-				<label><?php esc_html_e( 'Click Action', 'social-feed' ); ?></label>
-				<div class="sf-radio-group">
-					<label class="sf-radio-option">
-						<input type="radio" name="click_action" value="link" <?php checked( $settings['click_action'], 'link' ); ?>>
-						<span><?php esc_html_e( 'Open Original Link', 'social-feed' ); ?></span>
-					</label>
-					<label class="sf-radio-option">
-						<input type="radio" name="click_action" value="popup" <?php checked( $settings['click_action'], 'popup' ); ?>>
-						<span><?php esc_html_e( 'Open Popup', 'social-feed' ); ?></span>
-					</label>
-					<label class="sf-radio-option">
-						<input type="radio" name="click_action" value="none" <?php checked( $settings['click_action'], 'none' ); ?>>
-						<span><?php esc_html_e( 'Nothing', 'social-feed' ); ?></span>
-					</label>
-				</div>
-			</div>
-
-			<div class="sf-popup-options" <?php echo 'popup' !== $settings['click_action'] ? 'style="display:none;"' : ''; ?>>
-				<div class="sf-field">
-					<label for="sf_popup_style"><?php esc_html_e( 'Popup Style', 'social-feed' ); ?></label>
-					<select id="sf_popup_style" name="popup_style">
-						<option value="minimal" <?php selected( $settings['popup_style'], 'minimal' ); ?>><?php esc_html_e( 'Minimal', 'social-feed' ); ?></option>
-						<option value="card" <?php selected( $settings['popup_style'], 'card' ); ?>><?php esc_html_e( 'Card', 'social-feed' ); ?></option>
-						<option value="full" <?php selected( $settings['popup_style'], 'full' ); ?>><?php esc_html_e( 'Full', 'social-feed' ); ?></option>
-					</select>
-				</div>
-			</div>
 			</div>
 		</div>
 		<?php
