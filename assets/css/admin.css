@@ -1253,12 +1253,16 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 }
 
 .sf-sidebar-panel-body {
+	display: flex;
+	flex-direction: column;
 	flex: 1;
-	overflow-y: auto;
 	min-height: 0;
+	overflow-y: auto;
 }
 
 .sf-sidebar-panel-body .sf-customizer-content {
+	flex: 1;
+	min-height: 0;
 	padding: var(--sf-customizer-space-lg);
 	padding-bottom: var(--sf-customizer-space-2xl);
 }
