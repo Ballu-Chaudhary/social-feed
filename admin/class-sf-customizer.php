@@ -403,9 +403,7 @@ class SF_Customizer {
 							<span class="dashicons <?php echo esc_attr( $layout_data['icon'] ); ?>"></span>
 							<span class="sf-radio-card-label"><?php echo esc_html( $layout_data['label'] ); ?></span>
 							<?php if ( ! empty( $layout_data['pro'] ) ) : ?>
-								<span class="sf-pro-badge" title="<?php esc_attr_e( 'Pro', 'social-feed' ); ?>">
-									<span class="dashicons dashicons-rocket"></span>
-								</span>
+								<span class="sf-pro-badge" title="<?php esc_attr_e( 'Pro', 'social-feed' ); ?>"><?php esc_html_e( 'PRO', 'social-feed' ); ?></span>
 							<?php endif; ?>
 						</label>
 					<?php endforeach; ?>
