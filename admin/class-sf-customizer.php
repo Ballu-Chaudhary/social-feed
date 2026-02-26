@@ -105,6 +105,11 @@ class SF_Customizer {
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Posts', 'social-feed' ); ?></span>
 									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 								</button>
+								<button type="button" class="sf-sidebar-item" data-section="ballu">
+									<span class="dashicons dashicons-admin-generic"></span>
+									<span class="sf-sidebar-label"><?php esc_html_e( 'Ballu', 'social-feed' ); ?></span>
+									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
+								</button>
 								<button type="button" class="sf-sidebar-item" data-section="loadmore">
 									<span class="dashicons dashicons-download"></span>
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Load More Button', 'social-feed' ); ?></span>
@@ -144,6 +149,7 @@ class SF_Customizer {
 							'design'   => __( 'Color Scheme', 'social-feed' ),
 							'header'   => __( 'Header', 'social-feed' ),
 							'posts'    => __( 'Posts', 'social-feed' ),
+							'ballu'    => __( 'Ballu', 'social-feed' ),
 							'loadmore' => __( 'Load More Button', 'social-feed' ),
 							'advanced' => __( 'Advanced', 'social-feed' ),
 						);
@@ -174,6 +180,9 @@ class SF_Customizer {
 												break;
 											case 'posts':
 												self::render_tab_posts( $settings );
+												break;
+											case 'ballu':
+												self::render_tab_ballu( $settings );
 												break;
 											case 'loadmore':
 												self::render_tab_loadmore( $settings );
@@ -681,6 +690,24 @@ class SF_Customizer {
 							<span><?php esc_html_e( 'Nothing', 'social-feed' ); ?></span>
 						</label>
 					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render Tab - Ballu.
+	 *
+	 * @param array $settings Current settings.
+	 */
+	private static function render_tab_ballu( $settings ) {
+		?>
+		<div class="sf-tab-content sf-tab-content-layout" data-tab="ballu">
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Ballu', 'social-feed' ); ?></div>
+				<div class="sf-field">
+					<p class="description"><?php esc_html_e( 'Settings coming soon.', 'social-feed' ); ?></p>
 				</div>
 			</div>
 		</div>
