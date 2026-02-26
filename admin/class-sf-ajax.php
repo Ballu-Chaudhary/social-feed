@@ -114,11 +114,20 @@ class SF_Ajax {
 			$columns = $settings['columns_mobile'];
 		}
 
-		$items = $this->get_preview_items( $settings );
+		$items = $this->get_preview_items( $settings, $device );
+
+		$feed_height_style = '';
+		if ( ! empty( $settings['feed_height'] ) && is_numeric( $settings['feed_height'] ) ) {
+			$height_px = max( 0, intval( $settings['feed_height'] ) );
+			$feed_height_style = '.sf-preview-frame { height: ' . $height_px . 'px; overflow: auto; }';
+		}
 
 		ob_start();
 		?>
 		<style>
+			<?php if ( $feed_height_style ) : ?>
+			<?php echo $feed_height_style; ?>
+			<?php endif; ?>
 			.sf-preview-feed {
 				background: <?php echo esc_attr( $settings['bg_color'] ); ?>;
 				color: <?php echo esc_attr( $settings['text_color'] ); ?>;
@@ -365,11 +374,21 @@ class SF_Ajax {
 	/**
 	 * Get preview items.
 	 *
-	 * @param array $settings Settings.
+	 * @param array  $settings Settings.
+	 * @param string $device   Current device (desktop, tablet, mobile).
 	 * @return array
 	 */
-	private function get_preview_items( $settings ) {
-		$count = min( intval( $settings['post_count'] ), 12 );
+	private function get_preview_items( $settings, $device = 'desktop' ) {
+		$count_key = 'post_count_' . $device;
+		if ( isset( $settings[ $count_key ] ) && is_numeric( $settings[ $count_key ] ) ) {
+			$count = min( max( 1, intval( $settings[ $count_key ] ) ), 50 );
+		} elseif ( isset( $settings['post_count_desktop'] ) && is_numeric( $settings['post_count_desktop'] ) ) {
+			$count = min( max( 1, intval( $settings['post_count_desktop'] ) ), 50 );
+		} elseif ( isset( $settings['post_count'] ) && is_numeric( $settings['post_count'] ) ) {
+			$count = min( max( 1, intval( $settings['post_count'] ) ), 12 );
+		} else {
+			$count = 9;
+		}
 		$items = array();
 
 		$captions = array(
