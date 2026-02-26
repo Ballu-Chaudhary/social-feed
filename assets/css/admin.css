@@ -66,15 +66,17 @@ body.sf-admin-page.sf-customizer-page #wpbody-content {
 	padding-bottom: 0;
 }
 
-/* Panel content: ensure visible and scrollable when content overflows */
+/* Panel content: flow naturally so content is visible; panel body scrolls */
 .sf-sidebar-panel-body .sf-customizer-content {
-	overflow-y: auto;
-	overflow-x: hidden;
+	flex: 0 0 auto;
+	min-height: 0;
+	overflow: visible;
 }
 
-/* Sidebar panel body: overflow-x hidden prevents horizontal scrollbar */
+/* Sidebar panel body: scroll when content overflows */
 .sf-sidebar-panel-body {
 	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 /* ==========================================================================
@@ -1261,8 +1263,7 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 }
 
 .sf-sidebar-panel-body .sf-customizer-content {
-	flex: 1;
-	min-height: 0;
+	flex: 0 0 auto;
 	padding: var(--sf-customizer-space-lg);
 	padding-bottom: var(--sf-customizer-space-2xl);
 }
@@ -1629,7 +1630,10 @@ body.sf-admin-page.sf-customizer-page .sf-breadcrumb-bar {
 
 /* ========== Posts sub-panel - same section style as Layout ========== */
 .sf-tab-content-posts {
+	display: block !important;
 	padding: 0;
+	visibility: visible;
+	min-height: 200px;
 }
 
 .sf-tab-content-posts .sf-posts-panel-section {
