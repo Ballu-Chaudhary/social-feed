@@ -39,15 +39,14 @@ class SF_Customizer {
 		$shortcode          = $feed_id ? '[social_feed id="' . (int) $feed_id . '"]' : '';
 		?>
 		<div class="sf-customizer-wrap" data-feed-id="<?php echo esc_attr( $feed_id ); ?>">
-			<?php if ( ! $is_pro ) : ?>
-				<div class="sf-customizer-upgrade-banner">
-					<span class="sf-upgrade-text"><?php esc_html_e( 'Unlock more features with Social Feed Pro.', 'social-feed' ); ?></span>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="sf-upgrade-link"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
-				</div>
-			<?php endif; ?>
-
-			<!-- Top Bar -->
-			<div class="sf-customizer-topbar">
+				<!-- Single top bar: upgrade banner (free) or actions-only bar (pro) -->
+			<div class="<?php echo $is_pro ? 'sf-customizer-topbar' : 'sf-customizer-upgrade-banner'; ?>">
+				<?php if ( ! $is_pro ) : ?>
+					<div class="sf-upgrade-banner-left">
+						<span class="sf-upgrade-text"><?php esc_html_e( 'Unlock more features with Social Feed Pro.', 'social-feed' ); ?></span>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="sf-upgrade-link"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
+					</div>
+				<?php endif; ?>
 				<div class="sf-topbar-right">
 					<button type="button" class="sf-topbar-btn sf-help-btn" title="<?php esc_attr_e( 'Help', 'social-feed' ); ?>">
 						<span class="dashicons dashicons-editor-help"></span>
