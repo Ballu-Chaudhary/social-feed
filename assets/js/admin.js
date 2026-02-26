@@ -630,7 +630,7 @@
 		 * Switch to a section (show its panel in sidebar).
 		 *
 		 * @param {jQuery} $wrap    Customizer wrap element.
-		 * @param {string} section Section identifier (feed, layout, design, header, posts, loadmore, advanced).
+		 * @param {string} section Section identifier (feed, layout, design, header, loadmore, advanced).
 		 */
 		switchToTab: function ($wrap, section) {
 			if (!$wrap || !$wrap.length || !section) return;
@@ -735,7 +735,6 @@
 				var $input = $(this);
 				var val = $input.val();
 				var suffix = $input.attr('name').indexOf('columns') === -1 ? 'px' : '';
-				if ($input.attr('name') === 'caption_length') suffix = '';
 				$input.siblings('.sf-range-value').text(val + suffix);
 			});
 
@@ -743,8 +742,6 @@
 			$(document).on('change', '#sf_border_style', this.handleBorderStyleChange);
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
 			$(document).on('change', '#sf_show_follow_btn', this.handleFollowBtnToggle);
-			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
-			$(document).on('change', 'input[name="click_action"]', this.handleClickActionChange);
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
 		},
 
@@ -890,28 +887,6 @@
 				$('.sf-follow-btn-section').slideDown(200);
 			} else {
 				$('.sf-follow-btn-section').slideUp(200);
-			}
-		},
-
-		/**
-		 * Handle caption toggle.
-		 */
-		handleCaptionToggle: function () {
-			if ($(this).is(':checked')) {
-				$('.sf-caption-options').slideDown(200);
-			} else {
-				$('.sf-caption-options').slideUp(200);
-			}
-		},
-
-		/**
-		 * Handle click action change.
-		 */
-		handleClickActionChange: function () {
-			if ($('input[name="click_action"]:checked').val() === 'popup') {
-				$('.sf-popup-options').slideDown(200);
-			} else {
-				$('.sf-popup-options').slideUp(200);
 			}
 		},
 

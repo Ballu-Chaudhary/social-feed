@@ -1867,15 +1867,11 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 /* Sub-options - nested indent for conditional fields */
 .sf-customizer-content .sf-header-options .sf-field,
-.sf-customizer-content .sf-caption-options .sf-field,
-.sf-customizer-content .sf-popup-options .sf-field,
 .sf-customizer-content .sf-border-options .sf-field {
 	padding-left: calc(var(--sf-customizer-space-xl) + 12px);
 }
 
 .sf-customizer-content .sf-header-options .sf-field > label:first-child,
-.sf-customizer-content .sf-caption-options .sf-field > label:first-child,
-.sf-customizer-content .sf-popup-options .sf-field > label:first-child,
 .sf-customizer-content .sf-border-options .sf-field > label:first-child {
 	width: 120px;
 	min-width: 120px;
