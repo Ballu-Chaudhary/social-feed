@@ -66,9 +66,10 @@ body.sf-admin-page.sf-customizer-page #wpbody-content {
 	padding-bottom: 0;
 }
 
-/* Layout sub-panel: single scroll region - panel body scrolls, content flows (no nested scroll) */
+/* Panel content: ensure visible and scrollable when content overflows */
 .sf-sidebar-panel-body .sf-customizer-content {
-	overflow: visible;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 /* Sidebar panel body: overflow-x hidden prevents horizontal scrollbar */
