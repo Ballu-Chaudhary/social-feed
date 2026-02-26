@@ -705,9 +705,20 @@ class SF_Customizer {
 		?>
 		<div class="sf-tab-content sf-tab-content-layout" data-tab="ballu">
 			<div class="sf-layout-panel-section">
-				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Ballu', 'social-feed' ); ?></div>
-				<div class="sf-field">
-					<p class="description"><?php esc_html_e( 'Settings coming soon.', 'social-feed' ); ?></p>
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Post Style', 'social-feed' ); ?></div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_ballu_show_caption"><?php esc_html_e( 'Show Caption', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_ballu_show_caption" name="show_caption" value="1" <?php checked( $settings['show_caption'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+				<div class="sf-ballu-caption-options sf-field sf-field-number-px" <?php echo ! $settings['show_caption'] ? 'style="display:none;"' : ''; ?>>
+					<label for="sf_ballu_caption_length"><?php esc_html_e( 'Caption Length', 'social-feed' ); ?></label>
+					<div class="sf-number-px-wrap">
+						<input type="number" id="sf_ballu_caption_length" name="caption_length" value="<?php echo esc_attr( $settings['caption_length'] ); ?>" min="1" max="500" step="1">
+						<span class="sf-number-px-suffix">px</span>
+					</div>
 				</div>
 			</div>
 		</div>

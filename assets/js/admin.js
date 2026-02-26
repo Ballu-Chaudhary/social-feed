@@ -742,7 +742,7 @@
 			$(document).on('change', '#sf_border_style', this.handleBorderStyleChange);
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
 			$(document).on('change', '#sf_show_follow_btn', this.handleFollowBtnToggle);
-			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
+			$(document).on('change', '#sf_show_caption, #sf_ballu_show_caption', this.handleCaptionToggle);
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
 		},
 
@@ -895,10 +895,12 @@
 		 * Handle caption toggle.
 		 */
 		handleCaptionToggle: function () {
+			var $panel = $(this).closest('.sf-tab-content');
+			var $opts = $panel.find('.sf-caption-options, .sf-ballu-caption-options');
 			if ($(this).is(':checked')) {
-				$('.sf-caption-options').slideDown(200);
+				$opts.slideDown(200);
 			} else {
-				$('.sf-caption-options').slideUp(200);
+				$opts.slideUp(200);
 			}
 		},
 
