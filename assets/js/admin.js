@@ -768,7 +768,6 @@
 			$(document).on('change', '#sf_platform', this.handlePlatformChange);
 			$(document).on('change', '#sf_border_style', this.handleBorderStyleChange);
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
-			$(document).on('change', '#sf_show_follow_btn', this.handleFollowBtnToggle);
 			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
 		},
@@ -911,16 +910,6 @@
 			}
 		},
 
-		/**
-		 * Handle follow button toggle.
-		 */
-		handleFollowBtnToggle: function () {
-			if ($(this).is(':checked')) {
-				$('.sf-follow-btn-section').slideDown(200);
-			} else {
-				$('.sf-follow-btn-section').slideUp(200);
-			}
-		},
 
 		/**
 		 * Handle caption toggle.

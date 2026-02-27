@@ -110,11 +110,6 @@ class SF_Customizer {
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Load More Button', 'social-feed' ); ?></span>
 									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 								</button>
-								<button type="button" class="sf-sidebar-item" data-section="header">
-									<span class="dashicons dashicons-admin-users"></span>
-									<span class="sf-sidebar-label"><?php esc_html_e( 'Follow Button', 'social-feed' ); ?></span>
-									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-								</button>
 								<button type="button" class="sf-sidebar-item" data-section="advanced">
 									<span class="dashicons dashicons-admin-tools"></span>
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Advanced', 'social-feed' ); ?></span>
@@ -291,7 +286,7 @@ class SF_Customizer {
 			'show_username'       => true,
 			'show_followers'      => true,
 			'show_bio'            => false,
-			'show_follow_btn'     => true,
+			'show_follow_btn'     => false,
 			'follow_btn_color'    => '#0095f6',
 			'follow_btn_text'     => 'Follow',
 			'show_caption'        => true,
@@ -587,27 +582,6 @@ class SF_Customizer {
 						</label>
 					</div>
 
-				<div class="sf-field sf-toggle-field">
-					<label for="sf_show_follow_btn"><?php esc_html_e( 'Show Follow Button', 'social-feed' ); ?></label>
-					<label class="sf-toggle">
-						<input type="checkbox" id="sf_show_follow_btn" name="show_follow_btn" value="1" <?php checked( $settings['show_follow_btn'] ); ?>>
-						<span class="sf-toggle-slider"></span>
-					</label>
-				</div>
-			</div>
-			<div class="sf-section sf-follow-btn-section" <?php echo ! $settings['show_follow_btn'] ? 'style="display:none;"' : ''; ?>>
-				<div class="sf-section-title"><?php esc_html_e( 'Follow Button', 'social-feed' ); ?></div>
-				<div class="sf-follow-btn-options">
-					<div class="sf-field">
-						<label for="sf_follow_btn_color"><?php esc_html_e( 'Button Color', 'social-feed' ); ?></label>
-						<div class="sf-color-picker-wrap"><input type="text" id="sf_follow_btn_color" name="follow_btn_color" value="<?php echo esc_attr( $settings['follow_btn_color'] ); ?>" class="sf-color-picker"></div>
-					</div>
-
-					<div class="sf-field">
-						<label for="sf_follow_btn_text"><?php esc_html_e( 'Button Text', 'social-feed' ); ?></label>
-						<input type="text" id="sf_follow_btn_text" name="follow_btn_text" value="<?php echo esc_attr( $settings['follow_btn_text'] ); ?>">
-					</div>
-			</div>
 		</div>
 	</div>
 	</div>

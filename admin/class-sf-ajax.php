@@ -158,17 +158,6 @@ class SF_Ajax {
 			}
 			.sf-preview-username { font-weight: 700; font-size: 14px; margin: 0 0 2px; }
 			.sf-preview-followers { font-size: 12px; color: rgba(0,0,0,0.5); margin: 0; }
-			.sf-preview-follow-btn {
-				background: <?php echo esc_attr( $settings['follow_btn_color'] ); ?>;
-				color: #fff;
-				border: none;
-				padding: 8px 18px;
-				border-radius: 6px;
-				font-size: 13px;
-				font-weight: 600;
-				cursor: pointer;
-				flex-shrink: 0;
-			}
 			.sf-preview-grid {
 				display: grid;
 				grid-template-columns: repeat(<?php echo intval( $columns ); ?>, 1fr);
@@ -309,11 +298,8 @@ class SF_Ajax {
 					<?php if ( $settings['show_followers'] ) : ?>
 					<div class="sf-preview-followers">12.5K followers</div>
 					<?php endif; ?>
-				</div>
-				<?php if ( $settings['show_follow_btn'] ) : ?>
-				<button type="button" class="sf-preview-follow-btn"><?php echo esc_html( $settings['follow_btn_text'] ); ?></button>
-				<?php endif; ?>
 			</div>
+		</div>
 			<?php endif; ?>
 
 			<div class="sf-preview-<?php echo esc_attr( $layout ); ?>">
