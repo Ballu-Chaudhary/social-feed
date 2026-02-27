@@ -156,7 +156,7 @@ class SF_Customizer {
 						foreach ( $panel_titles as $section => $title ) :
 							$panel_id = 'sf-panel-' . sanitize_html_class( $section );
 							?>
-							<div id="<?php echo esc_attr( $panel_id ); ?>" class="sf-sidebar-panel" data-section="<?php echo esc_attr( $section ); ?>" style="display:none;">
+							<div id="<?php echo esc_attr( $panel_id ); ?>" class="sf-sidebar-panel" data-section="<?php echo esc_attr( $section ); ?>">
 								<div class="sf-sidebar-panel-header">
 									<button type="button" class="sf-sidebar-back">
 										<span class="dashicons dashicons-arrow-left-alt2"></span>

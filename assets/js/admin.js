@@ -621,11 +621,10 @@
 			var $wrap = $('.sf-customizer-wrap');
 			if (!$wrap.length) return;
 
+			/* Remove any inline styles from panels */
+			$wrap.find('.sf-sidebar-panel').removeAttr('style').removeClass('sf-panel-visible');
 			$wrap.find('.sf-sidebar-nav').addClass('sf-sidebar-view-active');
 			$wrap.find('.sf-sidebar-panels').removeClass('sf-sidebar-panels-active');
-			$wrap.find('.sf-sidebar-panel').each(function () {
-				$(this).removeClass('sf-panel-visible').css('display', 'none');
-			});
 		},
 
 		/**
@@ -641,11 +640,9 @@
 			$wrap.find('.sf-sidebar-nav').removeClass('sf-sidebar-view-active');
 			$wrap.find('.sf-sidebar-panels').addClass('sf-sidebar-panels-active');
 
-			/* Hide all panels and remove classes */
-			$wrap.find('.sf-sidebar-panel').each(function () {
-				$(this).removeClass('sf-panel-visible').css('display', 'none');
-				$(this).find('.sf-tab-content').removeClass('active').css('display', '');
-			});
+			/* Hide all panels - remove class and inline style */
+			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').removeAttr('style');
+			$wrap.find('.sf-tab-content').removeClass('active');
 
 			/* Find target panel by id first, fallback to data-section */
 			var $targetPanel = $wrap.find('#sf-panel-' + section);
@@ -654,17 +651,11 @@
 			}
 
 			if ($targetPanel.length) {
-				/* Show panel */
-				$targetPanel.addClass('sf-panel-visible').css('display', 'flex');
+				/* Show panel by adding class */
+				$targetPanel.addClass('sf-panel-visible');
 				
-				/* Ensure panel body is visible */
-				$targetPanel.find('.sf-sidebar-panel-body').css('display', 'flex');
-				
-				/* Show tab content - find and activate */
-				var $tabContent = $targetPanel.find('.sf-tab-content');
-				if ($tabContent.length) {
-					$tabContent.addClass('active').css('display', 'block');
-				}
+				/* Show tab content by adding active class */
+				$targetPanel.find('.sf-tab-content').addClass('active');
 			}
 
 			try {
@@ -681,10 +672,8 @@
 			if (!$wrap || !$wrap.length) return;
 
 			$wrap.find('.sf-sidebar-panels').removeClass('sf-sidebar-panels-active');
-			$wrap.find('.sf-sidebar-panel').each(function () {
-				$(this).removeClass('sf-panel-visible').css('display', 'none');
-				$(this).find('.sf-tab-content').removeClass('active').css('display', '');
-			});
+			$wrap.find('.sf-sidebar-panel').removeClass('sf-panel-visible').removeAttr('style');
+			$wrap.find('.sf-tab-content').removeClass('active');
 			$wrap.find('.sf-sidebar-nav').addClass('sf-sidebar-view-active');
 		},
 
