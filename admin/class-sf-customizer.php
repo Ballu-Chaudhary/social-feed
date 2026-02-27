@@ -616,10 +616,11 @@ class SF_Customizer {
 						<label for="sf_follow_btn_text"><?php esc_html_e( 'Button Text', 'social-feed' ); ?></label>
 						<input type="text" id="sf_follow_btn_text" name="follow_btn_text" value="<?php echo esc_attr( $settings['follow_btn_text'] ); ?>">
 					</div>
-				</div>
 			</div>
 		</div>
-		<?php
+	</div>
+	</div>
+	<?php
 	}
 
 	/**
