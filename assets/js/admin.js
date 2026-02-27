@@ -770,6 +770,22 @@
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
 			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
+
+			$(document).on('click', '.sf-info-icon', function (e) {
+				e.stopPropagation();
+				var $icon = $(this);
+				if ($icon.find('.sf-info-tooltip').length) {
+					$icon.find('.sf-info-tooltip').remove();
+					return;
+				}
+				$('.sf-info-tooltip').remove();
+				var text = $icon.data('info');
+				$icon.append('<div class="sf-info-tooltip">' + $('<span>').text(text).html() + '</div>');
+			});
+
+			$(document).on('click', function () {
+				$('.sf-info-tooltip').remove();
+			});
 		},
 
 		/**

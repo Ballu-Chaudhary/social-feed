@@ -664,8 +664,7 @@ class SF_Customizer {
 		<div class="sf-tab-content sf-tab-content-layout" data-tab="loadmore">
 
 			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Load Behavior', 'social-feed' ); ?></div>
-				<p class="sf-section-helper"><?php esc_html_e( 'Choose how more posts should load', 'social-feed' ); ?></p>
+				<div class="sf-section-title"><?php esc_html_e( 'Load Behavior', 'social-feed' ); ?> <span class="sf-info-icon" data-info="<?php esc_attr_e( 'Choose how more posts should load', 'social-feed' ); ?>">i</span></div>
 				<div class="sf-radio-cards">
 					<?php foreach ( $behavior_options as $value => $opt ) : ?>
 					<label class="sf-radio-card sf-layout-option<?php echo $type === $value ? ' active' : ''; ?>">
@@ -688,8 +687,7 @@ class SF_Customizer {
 			</div>
 
 			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'button' !== $type ? 'style="display:none;"' : ''; ?>>
-				<div class="sf-section-title"><?php esc_html_e( 'Button Style', 'social-feed' ); ?></div>
-				<p class="sf-section-helper"><?php esc_html_e( 'Customize button appearance', 'social-feed' ); ?></p>
+				<div class="sf-section-title"><?php esc_html_e( 'Button Style', 'social-feed' ); ?> <span class="sf-info-icon" data-info="<?php esc_attr_e( 'Customize button appearance', 'social-feed' ); ?>">i</span></div>
 				<div class="sf-field">
 					<label for="sf_loadmore_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_bg_color" name="loadmore_bg_color" value="<?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>" class="sf-color-picker"></div>
@@ -746,12 +744,11 @@ class SF_Customizer {
 			</div>
 
 			<div class="sf-field sf-toggle-field">
-				<label for="sf_gdpr_mode"><?php esc_html_e( 'GDPR Mode', 'social-feed' ); ?></label>
+				<label for="sf_gdpr_mode"><?php esc_html_e( 'GDPR Mode', 'social-feed' ); ?> <span class="sf-info-icon" data-info="<?php esc_attr_e( 'Loads images only after user consent.', 'social-feed' ); ?>">i</span></label>
 				<label class="sf-toggle">
 					<input type="checkbox" id="sf_gdpr_mode" name="gdpr_mode" value="1" <?php checked( $settings['gdpr_mode'] ); ?>>
 					<span class="sf-toggle-slider"></span>
 				</label>
-				<p class="sf-field-desc"><?php esc_html_e( 'Loads images only after user consent.', 'social-feed' ); ?></p>
 			</div>
 
 			<div class="sf-field sf-toggle-field <?php echo ! $is_pro ? 'sf-pro-locked' : ''; ?>">
