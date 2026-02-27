@@ -719,13 +719,17 @@ body.sf-admin-page.sf-customizer-page {
 	--sf-customizer-radius-sm: 6px;
 }
 
-body.sf-admin-page.sf-customizer-page .wrap { margin: 0; padding: 0; max-width: none; }
-body.sf-admin-page.sf-customizer-page #wpbody-content { padding-bottom: 0; overflow: hidden; }
+body.sf-admin-page.sf-customizer-page { overflow: hidden; }
+body.sf-admin-page.sf-customizer-page #wpwrap { height: 100vh; min-height: 0; overflow: hidden; }
+body.sf-admin-page.sf-customizer-page #wpcontent { min-height: 0; height: calc(100vh - 32px); overflow: hidden; }
+body.sf-admin-page.sf-customizer-page #wpbody { min-height: 0; height: 100%; }
+body.sf-admin-page.sf-customizer-page #wpbody-content { padding-bottom: 0; min-height: 0; height: 100%; overflow: hidden; }
+body.sf-admin-page.sf-customizer-page .wrap { margin: 0; padding: 0; max-width: none; height: 100%; }
 body.sf-admin-page.sf-customizer-page #wpfooter { display: none; }
 body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	margin: 0;
 	padding: 0;
-	height: calc(100vh - 32px);
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -3766,7 +3770,7 @@ tr:hover .sf-row-actions {
 	}
 
 	/* Adjust for 46px admin bar on mobile */
-	body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
+	body.sf-admin-page.sf-customizer-page #wpcontent {
 		height: calc(100vh - 46px);
 	}
 
