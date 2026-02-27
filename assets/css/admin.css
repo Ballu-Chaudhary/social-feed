@@ -2080,7 +2080,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
-.sf-preview-content {
+.sf-preview-container > .sf-preview-content {
 	flex: 1;
 	width: 100%;
 	display: flex;
