@@ -51,9 +51,9 @@ class SF_License {
 	 */
 	private static $plan_features = array(
 		'free'     => array( 'instagram_basic', 'grid_layout' ),
-		'personal' => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'popup', 'custom_css' ),
-		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics' ),
-		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics', 'white_label', 'priority_support' ),
+		'personal' => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'popup' ),
+		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'moderation', 'analytics' ),
+		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'moderation', 'analytics', 'white_label', 'priority_support' ),
 		'bundle'   => array( 'all' ),
 	);
 
@@ -728,9 +728,9 @@ function sf_pro_feature( $feature, $show_notice = false ) {
 
 	$plan_features = array(
 		'free'     => array( 'instagram_basic', 'grid_layout' ),
-		'personal' => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'popup', 'custom_css' ),
-		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics' ),
-		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'custom_css', 'moderation', 'analytics', 'white_label', 'priority_support' ),
+		'personal' => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'popup' ),
+		'plus'     => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'moderation', 'analytics' ),
+		'agency'   => array( 'instagram_basic', 'instagram_hashtag', 'grid_layout', 'list_layout', 'masonry_layout', 'carousel_layout', 'popup', 'lightbox', 'moderation', 'analytics', 'white_label', 'priority_support' ),
 		'bundle'   => array( 'all' ),
 	);
 

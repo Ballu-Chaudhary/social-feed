@@ -302,7 +302,6 @@ class SF_Customizer {
 			'loadmore_text_color' => '#ffffff',
 			'loadmore_radius'     => 8,
 			'posts_per_load'      => 9,
-			'custom_css'          => '',
 			'lazy_load'           => true,
 			'gdpr_mode'           => false,
 			'show_credit'         => true,
@@ -726,28 +725,6 @@ class SF_Customizer {
 	private static function render_tab_advanced( $settings, $is_pro ) {
 		?>
 		<div class="sf-tab-content sf-tab-content-advanced" data-tab="advanced">
-
-			<div class="sf-section sf-section-advanced">
-				<div class="sf-section-title">
-					<span class="sf-section-icon" aria-hidden="true">&#x1f3a8;</span>
-					<?php esc_html_e( 'Customization', 'social-feed' ); ?>
-				</div>
-				<div class="sf-field sf-field-textarea sf-field-code">
-					<label for="sf_custom_css">
-						<?php esc_html_e( 'Custom CSS', 'social-feed' ); ?>
-						<span class="sf-info-icon" data-info="<?php esc_attr_e( 'Add your own CSS to override default feed styles.', 'social-feed' ); ?>">i</span>
-					</label>
-					<div class="sf-code-editor-wrap">
-						<div class="sf-code-editor-header">
-							<span class="sf-code-dot sf-code-dot--red"></span>
-							<span class="sf-code-dot sf-code-dot--yellow"></span>
-							<span class="sf-code-dot sf-code-dot--green"></span>
-							<span class="sf-code-editor-label">style.css</span>
-						</div>
-						<textarea id="sf_custom_css" name="custom_css" rows="10" class="sf-code-textarea" spellcheck="false" placeholder="<?php esc_attr_e( '/* Write custom CSS here... */', 'social-feed' ); ?>"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea>
-					</div>
-				</div>
-			</div>
 
 			<div class="sf-section sf-section-advanced">
 				<div class="sf-section-title">

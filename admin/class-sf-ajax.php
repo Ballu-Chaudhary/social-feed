@@ -333,7 +333,6 @@ class SF_Ajax {
 			.sf-preview-feed { background: #1a1a1a; color: #ffffff; }
 			.sf-preview-followers, .sf-preview-meta { color: rgba(255,255,255,0.6); }
 			<?php endif; ?>
-			<?php echo wp_strip_all_tags( $settings['custom_css'] ); ?>
 		</style>
 
 		<div class="sf-preview-frame">
@@ -658,7 +657,7 @@ class SF_Ajax {
 			'show_followers', 'show_bio', 'show_follow_btn', 'follow_btn_color', 'follow_btn_text',
 			'show_caption', 'caption_length', 'show_date', 'show_likes', 'show_comments',
 			'click_action', 'popup_style', 'loadmore_type', 'loadmore_text', 'loadmore_bg_color', 'loadmore_text_color', 'loadmore_radius',
-			'posts_per_load', 'custom_css', 'lazy_load', 'gdpr_mode', 'show_credit',
+			'posts_per_load', 'lazy_load', 'gdpr_mode', 'show_credit',
 		);
 
 		foreach ( $meta_fields as $key ) {
