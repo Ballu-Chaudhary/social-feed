@@ -939,6 +939,8 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 /* Body: sidebar + preview - fills remaining height, no outer scrollbar */
 .sf-customizer-body {
 	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
 	flex: 1;
 	min-height: 0;
 	overflow: hidden;
@@ -1896,8 +1898,8 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 /* Right Panel - Preview: uses all remaining width */
 .sf-customizer-panel.sf-customizer-preview {
-	flex: 1;
-	min-width: 400px;
+	flex: 1 1 0%;
+	min-width: 0;
 	display: flex;
 	flex-direction: column;
 	background: #eef2f6;
@@ -3623,12 +3625,12 @@ tr:hover .sf-row-actions {
 	}
 	
 	/* Stack layout only on tablets/small screens - preview goes below */
-	.sf-customizer-wrap {
-		flex-wrap: wrap;
+	.sf-customizer-body {
 		flex-direction: column;
+		flex-wrap: nowrap;
 	}
 	
-	.sf-customizer-panel.sf-customizer-settings {
+	.sf-customizer-sidebar.sf-customizer-settings {
 		width: 100%;
 		min-width: 0;
 		border-right: none;
@@ -3636,7 +3638,7 @@ tr:hover .sf-row-actions {
 	}
 	
 	.sf-customizer-panel.sf-customizer-preview {
-		flex: none;
+		flex: 1 1 auto;
 		min-height: 500px;
 		width: 100%;
 	}
