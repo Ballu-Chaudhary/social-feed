@@ -100,11 +100,6 @@ class SF_Customizer {
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Header', 'social-feed' ); ?></span>
 									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 								</button>
-								<button type="button" class="sf-sidebar-item" data-section="posts">
-									<span class="dashicons dashicons-format-image"></span>
-									<span class="sf-sidebar-label"><?php esc_html_e( 'Posts', 'social-feed' ); ?></span>
-									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-								</button>
 								<button type="button" class="sf-sidebar-item" data-section="ballu">
 									<span class="dashicons dashicons-admin-generic"></span>
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Ballu', 'social-feed' ); ?></span>
