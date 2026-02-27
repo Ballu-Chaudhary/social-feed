@@ -743,6 +743,18 @@
 			});
 
 			$(document).on('input change', '.sf-customizer-wrap input, .sf-customizer-wrap select, .sf-customizer-wrap textarea', function () {
+				var $el = $(this);
+				var name = $el.attr('name');
+				if (name) {
+					var $duplicates = $('.sf-customizer-wrap [name="' + name + '"]').not(this);
+					if ($duplicates.length) {
+						if ($el.is(':checkbox')) {
+							$duplicates.prop('checked', $el.is(':checked'));
+						} else if (!$el.is(':radio')) {
+							$duplicates.val($el.val());
+						}
+					}
+				}
 				self.debouncePreview();
 			});
 
@@ -914,12 +926,12 @@
 		 * Handle caption toggle.
 		 */
 		handleCaptionToggle: function () {
-			var $panel = $(this).closest('.sf-tab-content');
-			var $opts = $panel.find('.sf-caption-options, .sf-ballu-caption-options');
-			if ($(this).is(':checked')) {
-				$opts.slideDown(200);
+			var isChecked = $(this).is(':checked');
+			var $allOpts = $('.sf-caption-options, .sf-ballu-caption-options');
+			if (isChecked) {
+				$allOpts.slideDown(200);
 			} else {
-				$opts.slideUp(200);
+				$allOpts.slideUp(200);
 			}
 		},
 
