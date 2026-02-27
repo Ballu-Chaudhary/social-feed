@@ -173,13 +173,14 @@ $has_items   = ! empty( $posts );
 	</div>
 
 	<?php
-	$load_more_type = $settings['load_more_type'] ?? 'button';
+	$load_more_type = $settings['loadmore_type'] ?? ( $settings['load_more_type'] ?? 'button' );
+	$load_more_text = $settings['loadmore_text'] ?? ( $settings['load_more_text'] ?? __( 'Load More', 'social-feed' ) );
 	if ( 'none' !== $load_more_type && $next_cursor ) :
 		?>
 		<?php if ( 'button' === $load_more_type ) : ?>
 			<div class="sf-feed__load-more">
 				<button type="button" class="sf-feed__load-more-btn" data-cursor="<?php echo esc_attr( $next_cursor ); ?>">
-					<?php echo esc_html( $settings['load_more_text'] ?? __( 'Load More', 'social-feed' ) ); ?>
+					<?php echo esc_html( $load_more_text ); ?>
 				</button>
 			</div>
 		<?php else : ?>

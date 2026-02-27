@@ -106,7 +106,8 @@ class SF_Renderer {
 			$data_attrs['data-lightbox'] = 'true';
 		}
 
-		if ( ! empty( $settings['load_more_type'] ) && 'infinite' === $settings['load_more_type'] ) {
+		$lm_type = $settings['loadmore_type'] ?? ( $settings['load_more_type'] ?? 'button' );
+		if ( 'infinite' === $lm_type || 'scroll' === $lm_type ) {
 			$data_attrs['data-infinite'] = 'true';
 		}
 
@@ -512,7 +513,8 @@ class SF_Renderer {
 	 * @return string HTML.
 	 */
 	public static function render_load_more( $settings, $next_cursor = '' ) {
-		$load_more_type = $settings['load_more_type'] ?? 'button';
+		$load_more_type = $settings['loadmore_type'] ?? ( $settings['load_more_type'] ?? 'button' );
+		$load_more_text = $settings['loadmore_text'] ?? ( $settings['load_more_text'] ?? __( 'Load More', 'social-feed' ) );
 
 		if ( 'none' === $load_more_type || empty( $next_cursor ) ) {
 			return '';
@@ -524,7 +526,7 @@ class SF_Renderer {
 			?>
 			<div class="sf-feed__load-more">
 				<button type="button" class="sf-feed__load-more-btn" data-cursor="<?php echo esc_attr( $next_cursor ); ?>">
-					<?php echo esc_html( $settings['load_more_text'] ?? __( 'Load More', 'social-feed' ) ); ?>
+					<?php echo esc_html( $load_more_text ); ?>
 				</button>
 			</div>
 			<?php

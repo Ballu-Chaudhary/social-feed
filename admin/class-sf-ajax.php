@@ -45,6 +45,7 @@ class SF_Ajax {
 			'sf_clear_all_cache',
 			'sf_clear_all_logs',
 			'sf_load_more',
+			'sf_preview_load_more',
 			'sf_activate_license',
 			'sf_deactivate_license',
 			'sf_check_license',
@@ -375,7 +376,7 @@ class SF_Ajax {
 			<?php if ( 'none' !== $settings['loadmore_type'] ) : ?>
 			<div class="sf-preview-loadmore">
 				<?php if ( 'button' === $settings['loadmore_type'] ) : ?>
-				<button type="button" class="sf-preview-loadmore-btn"><?php echo esc_html( $settings['loadmore_text'] ); ?></button>
+				<button type="button" class="sf-preview-loadmore-btn" data-offset="<?php echo count( $items ); ?>"><?php echo esc_html( $settings['loadmore_text'] ); ?></button>
 				<?php elseif ( 'pagination' === $settings['loadmore_type'] ) : ?>
 				<span style="opacity:0.7;">1 2 3 ...</span>
 				<?php endif; ?>
@@ -427,6 +428,101 @@ class SF_Ajax {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Handle preview load more (admin customizer).
+	 */
+	public function handle_preview_load_more() {
+		$this->verify_request();
+
+		$settings = isset( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : array();
+		$offset   = isset( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;
+
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+		$settings = SF_Helpers::sf_sanitize_array( $settings );
+
+		require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
+		$defaults = SF_Customizer::get_defaults();
+		$settings = wp_parse_args( $settings, $defaults );
+
+		$per_load = max( 1, absint( $settings['posts_per_load'] ) );
+		$max      = $offset + $per_load * 3;
+
+		if ( $offset >= $max ) {
+			wp_send_json_success( array(
+				'html'     => '',
+				'has_more' => false,
+			) );
+		}
+
+		$captions = array(
+			'Beautiful sunset at the beach today!',
+			'Coffee time — morning vibes',
+			'Exploring new places and making memories',
+			'Just living my best life',
+			'Nature photography is my passion',
+			'City lights and late nights',
+		);
+
+		ob_start();
+		for ( $i = $offset; $i < $offset + $per_load && $i < $max; $i++ ) {
+			$item = array(
+				'image'    => 'https://picsum.photos/seed/more' . $i . '/400/400',
+				'caption'  => $captions[ $i % count( $captions ) ],
+				'likes'    => wp_rand( 100, 50000 ),
+				'comments' => wp_rand( 5, 500 ),
+				'date'     => wp_rand( 1, 7 ) . 'd ago',
+			);
+			?>
+			<div class="sf-preview-item">
+				<div class="sf-preview-item-inner">
+					<img src="<?php echo esc_url( $item['image'] ); ?>" alt="">
+					<?php if ( $settings['show_likes'] || $settings['show_comments'] ) : ?>
+					<div class="sf-preview-overlay">
+						<?php if ( $settings['show_likes'] ) : ?>
+						<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
+						<?php endif; ?>
+						<?php if ( $settings['show_comments'] ) : ?>
+						<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
+						<?php endif; ?>
+					</div>
+					<?php endif; ?>
+				</div>
+				<?php if ( $settings['show_caption'] || $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
+				<div class="sf-preview-content">
+					<?php if ( $settings['show_caption'] ) : ?>
+					<div class="sf-preview-caption"><?php echo esc_html( SF_Helpers::sf_truncate_text( $item['caption'], intval( $settings['caption_length'] ) ) ); ?></div>
+					<?php endif; ?>
+					<?php if ( $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
+					<div class="sf-preview-meta">
+						<?php if ( $settings['show_likes'] ) : ?>
+						<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
+						<?php endif; ?>
+						<?php if ( $settings['show_comments'] ) : ?>
+						<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
+						<?php endif; ?>
+						<?php if ( $settings['show_date'] ) : ?>
+						<span><?php echo esc_html( $item['date'] ); ?></span>
+						<?php endif; ?>
+					</div>
+					<?php endif; ?>
+				</div>
+				<?php endif; ?>
+			</div>
+			<?php
+		}
+		$html = ob_get_clean();
+
+		$new_offset = $offset + $per_load;
+
+		wp_send_json_success( array(
+			'html'     => $html,
+			'has_more' => $new_offset < $max,
+			'offset'   => $new_offset,
+		) );
 	}
 
 	/**

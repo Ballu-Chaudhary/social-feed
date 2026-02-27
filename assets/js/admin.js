@@ -787,6 +787,11 @@
 			$(document).on('click', function () {
 				$('.sf-info-tooltip').remove();
 			});
+
+			$(document).on('click', '.sf-preview-loadmore-btn', function (e) {
+				e.preventDefault();
+				self.handlePreviewLoadMore($(this));
+			});
 		},
 
 		/**
@@ -960,6 +965,46 @@
 				$('.sf-loadmore-button-section').slideUp(200);
 				$('.sf-loadmore-general-section').slideDown(200);
 			}
+		},
+
+		/**
+		 * Handle preview Load More button click.
+		 */
+		handlePreviewLoadMore: function ($btn) {
+			if ($btn.hasClass('sf-loading')) return;
+
+			var offset = parseInt($btn.data('offset'), 10) || 0;
+			var originalText = $btn.text();
+
+			$btn.addClass('sf-loading').prop('disabled', true).text('Loading...');
+
+			var settings = this.collectSettings();
+
+			$.post(sfAdmin.ajaxUrl, {
+				action: 'sf_preview_load_more',
+				nonce: sfAdmin.nonce,
+				settings: settings,
+				offset: offset
+			}, function (response) {
+				$btn.removeClass('sf-loading').prop('disabled', false);
+
+				if (response.success && response.data.html) {
+					var $feed = $btn.closest('.sf-preview-feed');
+					var $grid = $feed.find('.sf-preview-grid, .sf-preview-masonry, .sf-preview-list, .sf-preview-carousel');
+					$grid.append(response.data.html);
+					$btn.data('offset', response.data.offset);
+
+					if (!response.data.has_more) {
+						$btn.parent().html('<span style="opacity:0.6;font-size:13px;">No more posts</span>');
+					} else {
+						$btn.text(originalText);
+					}
+				} else {
+					$btn.text(originalText);
+				}
+			}).fail(function () {
+				$btn.removeClass('sf-loading').prop('disabled', false).text(originalText);
+			});
 		},
 
 		/**
