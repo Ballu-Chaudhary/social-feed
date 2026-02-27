@@ -136,28 +136,51 @@ class SF_Ajax {
 				box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 				overflow: hidden;
 			}
-			.sf-preview-header {
-				display: flex;
-				align-items: center;
-				gap: 16px;
-				margin-bottom: 16px;
-				padding-bottom: 16px;
-				border-bottom: 1px solid rgba(0,0,0,0.08);
-			}
-			.sf-preview-avatar {
-				width: 48px;
-				height: 48px;
-				min-width: 48px;
-				border-radius: 50%;
-				background: #e5e7eb;
-				object-fit: cover;
-			}
-			.sf-preview-header-info {
-				flex: 1;
-				min-width: 0;
-			}
-			.sf-preview-username { font-weight: 700; font-size: 14px; margin: 0 0 2px; }
-			.sf-preview-followers { font-size: 12px; color: rgba(0,0,0,0.5); margin: 0; }
+		.sf-preview-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 16px;
+			margin-bottom: 16px;
+			padding-bottom: 16px;
+			border-bottom: 1px solid rgba(0,0,0,0.08);
+		}
+		.sf-preview-header-left {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			min-width: 0;
+			flex: 1;
+		}
+		.sf-preview-header-right {
+			flex-shrink: 0;
+			margin-left: auto;
+		}
+		.sf-preview-avatar {
+			width: 48px;
+			height: 48px;
+			min-width: 48px;
+			border-radius: 50%;
+			background: #e5e7eb;
+			object-fit: cover;
+		}
+		.sf-preview-header-info {
+			flex: 1;
+			min-width: 0;
+		}
+		.sf-preview-username { font-weight: 700; font-size: 14px; margin: 0 0 2px; }
+		.sf-preview-followers { font-size: 12px; color: rgba(0,0,0,0.5); margin: 0; }
+		.sf-preview-follow-btn {
+			background: <?php echo esc_attr( $settings['follow_btn_color'] ); ?>;
+			color: #fff;
+			border: none;
+			padding: 8px 20px;
+			border-radius: 8px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			white-space: nowrap;
+		}
 			.sf-preview-grid {
 				display: grid;
 				grid-template-columns: repeat(<?php echo intval( $columns ); ?>, 1fr);
@@ -288,18 +311,25 @@ class SF_Ajax {
 		<div class="sf-preview-feed">
 			<?php if ( $settings['show_header'] ) : ?>
 			<div class="sf-preview-header">
-				<?php if ( $settings['show_profile_pic'] ) : ?>
-				<div class="sf-preview-avatar"></div>
+				<div class="sf-preview-header-left">
+					<?php if ( $settings['show_profile_pic'] ) : ?>
+					<div class="sf-preview-avatar"></div>
+					<?php endif; ?>
+					<div class="sf-preview-header-info">
+						<?php if ( $settings['show_username'] ) : ?>
+						<div class="sf-preview-username">@username</div>
+						<?php endif; ?>
+						<?php if ( $settings['show_followers'] ) : ?>
+						<div class="sf-preview-followers">12.5K followers</div>
+						<?php endif; ?>
+					</div>
+				</div>
+				<?php if ( $settings['show_follow_btn'] ) : ?>
+				<div class="sf-preview-header-right">
+					<button type="button" class="sf-preview-follow-btn"><?php echo esc_html( $settings['follow_btn_text'] ); ?></button>
+				</div>
 				<?php endif; ?>
-				<div class="sf-preview-header-info">
-					<?php if ( $settings['show_username'] ) : ?>
-					<div class="sf-preview-username">@username</div>
-					<?php endif; ?>
-					<?php if ( $settings['show_followers'] ) : ?>
-					<div class="sf-preview-followers">12.5K followers</div>
-					<?php endif; ?>
 			</div>
-		</div>
 			<?php endif; ?>
 
 			<div class="sf-preview-<?php echo esc_attr( $layout ); ?>">

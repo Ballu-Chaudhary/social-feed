@@ -286,7 +286,7 @@ class SF_Customizer {
 			'show_username'       => true,
 			'show_followers'      => true,
 			'show_bio'            => false,
-			'show_follow_btn'     => false,
+			'show_follow_btn'     => true,
 			'follow_btn_color'    => '#0095f6',
 			'follow_btn_text'     => 'Follow',
 			'show_caption'        => true,
@@ -574,16 +574,22 @@ class SF_Customizer {
 							<span class="sf-toggle-slider"></span>
 						</label>
 					</div>
-					<div class="sf-field sf-toggle-field">
-						<label for="sf_show_bio"><?php esc_html_e( 'Show Bio', 'social-feed' ); ?></label>
-						<label class="sf-toggle">
-							<input type="checkbox" id="sf_show_bio" name="show_bio" value="1" <?php checked( $settings['show_bio'] ); ?>>
-							<span class="sf-toggle-slider"></span>
-						</label>
-					</div>
-
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_show_bio"><?php esc_html_e( 'Show Bio', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_show_bio" name="show_bio" value="1" <?php checked( $settings['show_bio'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_show_follow_btn"><?php esc_html_e( 'Show Follow Button', 'social-feed' ); ?></label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_show_follow_btn" name="show_follow_btn" value="1" <?php checked( $settings['show_follow_btn'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+			</div>
 		</div>
-	</div>
 	</div>
 	<?php
 	}
