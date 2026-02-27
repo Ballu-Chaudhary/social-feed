@@ -3624,23 +3624,11 @@ tr:hover .sf-row-actions {
 		grid-template-columns: repeat(2, 1fr);
 	}
 	
-	/* Stack layout only on tablets/small screens - preview goes below */
-	.sf-customizer-body {
-		flex-direction: column;
-		flex-wrap: nowrap;
-	}
-	
+	/* Shrink sidebar on smaller screens but keep side-by-side layout */
 	.sf-customizer-sidebar.sf-customizer-settings {
-		width: 100%;
-		min-width: 0;
-		border-right: none;
-		border-bottom: 1px solid #e5e7eb;
-	}
-	
-	.sf-customizer-panel.sf-customizer-preview {
-		flex: 1 1 auto;
-		min-height: 500px;
-		width: 100%;
+		width: 280px;
+		min-width: 280px;
+		padding-left: 10px;
 	}
 }
 
@@ -3711,9 +3699,23 @@ tr:hover .sf-row-actions {
 		white-space: nowrap;
 	}
 
-	/* Admin bar is taller on mobile */
+	/* Stack customizer layout vertically on mobile */
+	.sf-customizer-body {
+		flex-direction: column;
+	}
+
+	.sf-customizer-sidebar.sf-customizer-settings {
+		width: 100%;
+		min-width: 0;
+		border-right: none;
+		border-bottom: 1px solid #e5e7eb;
+		padding-left: 0;
+	}
+
 	.sf-customizer-panel.sf-customizer-preview {
+		flex: 1 1 auto;
 		min-height: calc(100vh - 46px);
+		width: 100%;
 	}
 }
 
