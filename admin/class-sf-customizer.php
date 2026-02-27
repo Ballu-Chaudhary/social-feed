@@ -667,13 +667,13 @@ class SF_Customizer {
 				<div class="sf-section-title"><?php esc_html_e( 'Load Behavior', 'social-feed' ); ?> <span class="sf-info-icon" data-info="<?php esc_attr_e( 'Choose how more posts should load', 'social-feed' ); ?>">i</span></div>
 				<div class="sf-radio-cards">
 					<?php foreach ( $behavior_options as $value => $opt ) : ?>
-					<label class="sf-radio-card sf-layout-option<?php echo $type === $value ? ' active' : ''; ?>">
-						<input type="radio" name="loadmore_type" value="<?php echo esc_attr( $value ); ?>" <?php checked( $type, $value ); ?>>
-						<span class="sf-radio-card-radio"></span>
-						<span class="dashicons <?php echo esc_attr( $opt['icon'] ); ?>"></span>
-						<span class="sf-radio-card-label"><?php echo esc_html( $opt['label'] ); ?></span>
-						<span class="sf-radio-card-desc"><?php echo esc_html( $opt['desc'] ); ?></span>
-					</label>
+				<label class="sf-radio-card sf-layout-option<?php echo $type === $value ? ' active' : ''; ?>">
+					<input type="radio" name="loadmore_type" value="<?php echo esc_attr( $value ); ?>" <?php checked( $type, $value ); ?>>
+					<span class="sf-radio-card-radio"></span>
+					<span class="dashicons <?php echo esc_attr( $opt['icon'] ); ?>"></span>
+					<span class="sf-radio-card-label"><?php echo esc_html( $opt['label'] ); ?></span>
+					<span class="sf-info-icon" data-info="<?php echo esc_attr( $opt['desc'] ); ?>">i</span>
+				</label>
 					<?php endforeach; ?>
 				</div>
 			</div>

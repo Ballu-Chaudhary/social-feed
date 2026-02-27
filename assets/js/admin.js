@@ -773,6 +773,7 @@
 
 			$(document).on('click', '.sf-info-icon', function (e) {
 				e.stopPropagation();
+				e.preventDefault();
 				var $icon = $(this);
 				if ($icon.find('.sf-info-tooltip').length) {
 					$icon.find('.sf-info-tooltip').remove();
