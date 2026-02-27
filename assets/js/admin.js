@@ -930,15 +930,18 @@
 		handleLoadmoreChange: function () {
 			var type = $('input[name="loadmore_type"]:checked').val();
 
+			$('input[name="loadmore_type"]').closest('.sf-radio-card').removeClass('active');
+			$('input[name="loadmore_type"]:checked').closest('.sf-radio-card').addClass('active');
+
 			if (type === 'none') {
-				$('.sf-loadmore-options').slideUp(200);
+				$('.sf-loadmore-button-section').slideUp(200);
+				$('.sf-loadmore-general-section').slideUp(200);
+			} else if (type === 'button') {
+				$('.sf-loadmore-button-section').slideDown(200);
+				$('.sf-loadmore-general-section').slideDown(200);
 			} else {
-				$('.sf-loadmore-options').not('.sf-loadmore-button-section').slideDown(200);
-				if (type === 'button') {
-					$('.sf-loadmore-button-section').slideDown(200);
-				} else {
-					$('.sf-loadmore-button-section').slideUp(200);
-				}
+				$('.sf-loadmore-button-section').slideUp(200);
+				$('.sf-loadmore-general-section').slideDown(200);
 			}
 		},
 

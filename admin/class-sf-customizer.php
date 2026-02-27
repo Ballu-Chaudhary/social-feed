@@ -299,6 +299,8 @@ class SF_Customizer {
 			'loadmore_type'       => 'button',
 			'loadmore_text'       => 'Load More',
 			'loadmore_bg_color'   => '#2271b1',
+			'loadmore_text_color' => '#ffffff',
+			'loadmore_radius'     => 8,
 			'posts_per_load'      => 9,
 			'custom_css'          => '',
 			'lazy_load'           => true,
@@ -651,50 +653,68 @@ class SF_Customizer {
 	 * @param array $settings Current settings.
 	 */
 	private static function render_tab_loadmore( $settings ) {
+		$type = $settings['loadmore_type'];
+		$behavior_options = array(
+			'button'     => array( 'icon' => 'dashicons-button',       'label' => __( 'Button', 'social-feed' ),          'desc' => __( 'Show a button to load more posts', 'social-feed' ) ),
+			'scroll'     => array( 'icon' => 'dashicons-arrow-down',   'label' => __( 'Infinite Scroll', 'social-feed' ), 'desc' => __( 'Automatically load posts on scroll', 'social-feed' ) ),
+			'pagination' => array( 'icon' => 'dashicons-admin-page',   'label' => __( 'Pagination', 'social-feed' ),      'desc' => __( 'Navigate posts with page numbers', 'social-feed' ) ),
+			'none'       => array( 'icon' => 'dashicons-no-alt',       'label' => __( 'None', 'social-feed' ),            'desc' => __( 'Show only the initial posts', 'social-feed' ) ),
+		);
 		?>
-		<div class="sf-tab-content" data-tab="loadmore">
+		<div class="sf-tab-content sf-tab-content-layout" data-tab="loadmore">
+
 			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Load More Type', 'social-feed' ); ?></div>
-				<div class="sf-field">
-					<label><?php esc_html_e( 'Load More Type', 'social-feed' ); ?></label>
-					<div class="sf-radio-group">
-					<label class="sf-radio-option">
-						<input type="radio" name="loadmore_type" value="button" <?php checked( $settings['loadmore_type'], 'button' ); ?>>
-						<span><?php esc_html_e( 'Button', 'social-feed' ); ?></span>
+				<div class="sf-section-title"><?php esc_html_e( 'Load Behavior', 'social-feed' ); ?></div>
+				<p class="sf-section-helper"><?php esc_html_e( 'Choose how more posts should load', 'social-feed' ); ?></p>
+				<div class="sf-radio-cards">
+					<?php foreach ( $behavior_options as $value => $opt ) : ?>
+					<label class="sf-radio-card sf-layout-option<?php echo $type === $value ? ' active' : ''; ?>">
+						<input type="radio" name="loadmore_type" value="<?php echo esc_attr( $value ); ?>" <?php checked( $type, $value ); ?>>
+						<span class="sf-radio-card-radio"></span>
+						<span class="dashicons <?php echo esc_attr( $opt['icon'] ); ?>"></span>
+						<span class="sf-radio-card-label"><?php echo esc_html( $opt['label'] ); ?></span>
+						<span class="sf-radio-card-desc"><?php echo esc_html( $opt['desc'] ); ?></span>
 					</label>
-					<label class="sf-radio-option">
-						<input type="radio" name="loadmore_type" value="scroll" <?php checked( $settings['loadmore_type'], 'scroll' ); ?>>
-						<span><?php esc_html_e( 'Infinite Scroll', 'social-feed' ); ?></span>
-					</label>
-					<label class="sf-radio-option">
-						<input type="radio" name="loadmore_type" value="pagination" <?php checked( $settings['loadmore_type'], 'pagination' ); ?>>
-						<span><?php esc_html_e( 'Pagination', 'social-feed' ); ?></span>
-					</label>
-					<label class="sf-radio-option">
-						<input type="radio" name="loadmore_type" value="none" <?php checked( $settings['loadmore_type'], 'none' ); ?>>
-						<span><?php esc_html_e( 'None', 'social-feed' ); ?></span>
-					</label>
-					</div>
-					</div>
+					<?php endforeach; ?>
 				</div>
-			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'none' === $settings['loadmore_type'] || 'button' !== $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
-				<div class="sf-section-title"><?php esc_html_e( 'Button Appearance', 'social-feed' ); ?></div>
+			</div>
+
+			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'button' !== $type ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-section-title"><?php esc_html_e( 'Button Content', 'social-feed' ); ?></div>
 				<div class="sf-field">
 					<label for="sf_loadmore_text"><?php esc_html_e( 'Button Text', 'social-feed' ); ?></label>
 					<input type="text" id="sf_loadmore_text" name="loadmore_text" value="<?php echo esc_attr( $settings['loadmore_text'] ); ?>">
 				</div>
+			</div>
+
+			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'button' !== $type ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-section-title"><?php esc_html_e( 'Button Style', 'social-feed' ); ?></div>
+				<p class="sf-section-helper"><?php esc_html_e( 'Customize button appearance', 'social-feed' ); ?></p>
 				<div class="sf-field">
-					<label for="sf_loadmore_bg_color"><?php esc_html_e( 'Button Background', 'social-feed' ); ?></label>
+					<label for="sf_loadmore_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_bg_color" name="loadmore_bg_color" value="<?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
+				<div class="sf-field">
+					<label for="sf_loadmore_text_color"><?php esc_html_e( 'Text Color', 'social-feed' ); ?></label>
+					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_text_color" name="loadmore_text_color" value="<?php echo esc_attr( $settings['loadmore_text_color'] ); ?>" class="sf-color-picker"></div>
+				</div>
+				<div class="sf-field sf-field-number-px">
+					<label for="sf_loadmore_radius"><?php esc_html_e( 'Border Radius', 'social-feed' ); ?></label>
+					<div class="sf-number-px-wrap">
+						<input type="number" id="sf_loadmore_radius" name="loadmore_radius" value="<?php echo esc_attr( $settings['loadmore_radius'] ); ?>" min="0" max="50" step="1">
+						<span class="sf-number-px-suffix">px</span>
+					</div>
+				</div>
 			</div>
-			<div class="sf-section sf-loadmore-options" <?php echo 'none' === $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
+
+			<div class="sf-section sf-loadmore-options sf-loadmore-general-section" <?php echo 'none' === $type ? 'style="display:none;"' : ''; ?>>
 				<div class="sf-section-title"><?php esc_html_e( 'Loading', 'social-feed' ); ?></div>
 				<div class="sf-field">
-					<label for="sf_posts_per_load"><?php esc_html_e( 'Posts to Load', 'social-feed' ); ?></label>
+					<label for="sf_posts_per_load"><?php esc_html_e( 'Posts per Load', 'social-feed' ); ?></label>
 					<input type="number" id="sf_posts_per_load" name="posts_per_load" value="<?php echo esc_attr( $settings['posts_per_load'] ); ?>" min="1" max="50">
 				</div>
 			</div>
+
 		</div>
 		<?php
 	}

@@ -290,15 +290,15 @@ class SF_Ajax {
 				text-align: center;
 				margin-top: 20px;
 			}
-			.sf-preview-loadmore-btn {
-				background: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>;
-				color: #fff;
-				border: none;
-				padding: 12px 24px;
-				border-radius: 6px;
-				cursor: pointer;
-				font-size: 14px;
-				font-weight: 500;
+		.sf-preview-loadmore-btn {
+			background: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>;
+			color: <?php echo esc_attr( $settings['loadmore_text_color'] ); ?>;
+			border: none;
+			padding: 12px 24px;
+			border-radius: <?php echo intval( $settings['loadmore_radius'] ); ?>px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
 			}
 			<?php if ( $settings['dark_mode'] ) : ?>
 			.sf-preview-feed { background: #1a1a1a; color: #ffffff; }
@@ -477,7 +477,7 @@ class SF_Ajax {
 			'hover_effect', 'dark_mode', 'show_header', 'show_profile_pic', 'show_username',
 			'show_followers', 'show_bio', 'show_follow_btn', 'follow_btn_color', 'follow_btn_text',
 			'show_caption', 'caption_length', 'show_date', 'show_likes', 'show_comments',
-			'click_action', 'popup_style', 'loadmore_type', 'loadmore_text', 'loadmore_bg_color',
+			'click_action', 'popup_style', 'loadmore_type', 'loadmore_text', 'loadmore_bg_color', 'loadmore_text_color', 'loadmore_radius',
 			'posts_per_load', 'custom_css', 'lazy_load', 'gdpr_mode', 'show_credit',
 		);
 
