@@ -725,43 +725,70 @@ class SF_Customizer {
 	 */
 	private static function render_tab_advanced( $settings, $is_pro ) {
 		?>
-		<div class="sf-tab-content" data-tab="advanced">
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Customization', 'social-feed' ); ?></div>
-			<div class="sf-field sf-field-textarea">
-				<label for="sf_custom_css"><?php esc_html_e( 'Custom CSS', 'social-feed' ); ?></label>
-				<textarea id="sf_custom_css" name="custom_css" rows="8" class="sf-code-textarea" placeholder="<?php esc_attr_e( '.sf-feed { /* your styles */ }', 'social-feed' ); ?>"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea>
-			</div>
-			</div>
-			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Performance &amp; Privacy', 'social-feed' ); ?></div>
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_lazy_load"><?php esc_html_e( 'Enable Lazy Loading', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_lazy_load" name="lazy_load" value="1" <?php checked( $settings['lazy_load'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
+		<div class="sf-tab-content sf-tab-content-advanced" data-tab="advanced">
+
+			<div class="sf-section sf-section-advanced">
+				<div class="sf-section-title">
+					<span class="sf-section-icon" aria-hidden="true">&#x1f3a8;</span>
+					<?php esc_html_e( 'Customization', 'social-feed' ); ?>
+				</div>
+				<div class="sf-field sf-field-textarea sf-field-code">
+					<label for="sf_custom_css">
+						<?php esc_html_e( 'Custom CSS', 'social-feed' ); ?>
+						<span class="sf-info-icon" data-info="<?php esc_attr_e( 'Add your own CSS to override default feed styles.', 'social-feed' ); ?>">i</span>
+					</label>
+					<div class="sf-code-editor-wrap">
+						<div class="sf-code-editor-header">
+							<span class="sf-code-dot sf-code-dot--red"></span>
+							<span class="sf-code-dot sf-code-dot--yellow"></span>
+							<span class="sf-code-dot sf-code-dot--green"></span>
+							<span class="sf-code-editor-label">style.css</span>
+						</div>
+						<textarea id="sf_custom_css" name="custom_css" rows="10" class="sf-code-textarea" spellcheck="false" placeholder="<?php esc_attr_e( '/* Write custom CSS here... */', 'social-feed' ); ?>"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea>
+					</div>
+				</div>
 			</div>
 
-			<div class="sf-field sf-toggle-field">
-				<label for="sf_gdpr_mode"><?php esc_html_e( 'GDPR Mode', 'social-feed' ); ?> <span class="sf-info-icon" data-info="<?php esc_attr_e( 'Loads images only after user consent.', 'social-feed' ); ?>">i</span></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_gdpr_mode" name="gdpr_mode" value="1" <?php checked( $settings['gdpr_mode'] ); ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
-			</div>
-
-			<div class="sf-field sf-toggle-field <?php echo ! $is_pro ? 'sf-pro-locked' : ''; ?>">
-				<label for="sf_show_credit"><?php esc_html_e( 'Show Credit Link', 'social-feed' ); ?></label>
-				<label class="sf-toggle">
-					<input type="checkbox" id="sf_show_credit" name="show_credit" value="1" <?php checked( $settings['show_credit'] ); ?> <?php echo ! $is_pro ? 'disabled' : ''; ?>>
-					<span class="sf-toggle-slider"></span>
-				</label>
-				<?php if ( ! $is_pro ) : ?>
+			<div class="sf-section sf-section-advanced">
+				<div class="sf-section-title">
+					<span class="sf-section-icon" aria-hidden="true">&#x26a1;</span>
+					<?php esc_html_e( 'Performance & Privacy', 'social-feed' ); ?>
+				</div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_lazy_load">
+						<?php esc_html_e( 'Lazy Loading', 'social-feed' ); ?>
+						<span class="sf-info-icon" data-info="<?php esc_attr_e( 'Defers loading images until they enter the viewport, improving page speed.', 'social-feed' ); ?>">i</span>
+					</label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_lazy_load" name="lazy_load" value="1" <?php checked( $settings['lazy_load'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+				<div class="sf-field sf-toggle-field">
+					<label for="sf_gdpr_mode">
+						<?php esc_html_e( 'GDPR Mode', 'social-feed' ); ?>
+						<span class="sf-info-icon" data-info="<?php esc_attr_e( 'Loads images only after user consent. Helps comply with EU privacy regulations.', 'social-feed' ); ?>">i</span>
+					</label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_gdpr_mode" name="gdpr_mode" value="1" <?php checked( $settings['gdpr_mode'] ); ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+				</div>
+				<div class="sf-field sf-toggle-field <?php echo ! $is_pro ? 'sf-pro-locked' : ''; ?>">
+					<label for="sf_show_credit">
+						<?php esc_html_e( 'Show Credit Link', 'social-feed' ); ?>
+						<span class="sf-info-icon" data-info="<?php esc_attr_e( 'Display a small powered-by link below your feed.', 'social-feed' ); ?>">i</span>
+					</label>
+					<label class="sf-toggle">
+						<input type="checkbox" id="sf_show_credit" name="show_credit" value="1" <?php checked( $settings['show_credit'] ); ?> <?php echo ! $is_pro ? 'disabled' : ''; ?>>
+						<span class="sf-toggle-slider"></span>
+					</label>
+					<?php if ( ! $is_pro ) : ?>
 					<span class="sf-pro-badge"><?php esc_html_e( 'Pro', 'social-feed' ); ?></span>
-				<?php endif; ?>
+					<?php endif; ?>
+				</div>
 			</div>
-			</div>
+
 		</div>
 		<?php
 	}
