@@ -334,6 +334,47 @@
 }
 
 /* =========================================================================
+   Pagination
+   ========================================================================= */
+
+.sf-feed__pagination {
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-top: 30px;
+}
+
+.sf-feed__page-btn {
+	min-width: 40px;
+	height: 40px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #fff;
+	color: #374151;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.sf-feed__page-btn:hover {
+	border-color: var(--sf-button-bg, #1d2327);
+	color: var(--sf-button-bg, #1d2327);
+}
+
+.sf-feed__page-btn.active {
+	background: var(--sf-button-bg, #1d2327);
+	color: var(--sf-button-text, #fff);
+	border-color: var(--sf-button-bg, #1d2327);
+}
+
+.sf-feed__page-btn:disabled {
+	opacity: 0.5;
+	cursor: wait;
+}
+
+/* =========================================================================
    Infinite Scroll Trigger
    ========================================================================= */
 

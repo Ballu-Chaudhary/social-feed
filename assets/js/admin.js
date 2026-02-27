@@ -790,7 +790,15 @@
 
 			$(document).on('click', '.sf-preview-loadmore-btn', function (e) {
 				e.preventDefault();
-				self.handlePreviewLoadMore($(this));
+				self.previewLoadPosts('append');
+			});
+
+			$(document).on('click', '.sf-preview-page-btn', function (e) {
+				e.preventDefault();
+				var page = parseInt($(this).data('page'), 10);
+				if (!$(this).hasClass('active')) {
+					self.previewLoadPosts('page', page);
+				}
 			});
 		},
 
@@ -968,43 +976,126 @@
 		},
 
 		/**
-		 * Handle preview Load More button click.
+		 * Preview load state.
 		 */
-		handlePreviewLoadMore: function ($btn) {
-			if ($btn.hasClass('sf-loading')) return;
+		_previewLoading: false,
+		_previewScrollObserver: null,
 
-			var offset = parseInt($btn.data('offset'), 10) || 0;
-			var originalText = $btn.text();
+		/**
+		 * Unified preview data loader.
+		 *
+		 * @param {string} mode  'append' (load more / scroll) or 'page' (pagination).
+		 * @param {number} page  Page number (for pagination mode).
+		 */
+		previewLoadPosts: function (mode, page) {
+			if (this._previewLoading) return;
 
-			$btn.addClass('sf-loading').prop('disabled', true).text('Loading...');
+			var self     = this;
+			var $wrap    = $('.sf-preview-loadmore');
+			if (!$wrap.length) return;
 
+			var offset   = parseInt($wrap.data('offset'), 10) || 0;
 			var settings = this.collectSettings();
+			var $btn     = $wrap.find('.sf-preview-loadmore-btn');
+			var $pagBtns = $wrap.find('.sf-preview-page-btn');
+			var $trigger = $wrap.find('.sf-preview-scroll-trigger');
+			var btnText  = $btn.length ? $btn.text() : '';
 
-			$.post(sfAdmin.ajaxUrl, {
+			this._previewLoading = true;
+
+			if ($btn.length) {
+				$btn.prop('disabled', true).text('Loading...');
+			}
+			$pagBtns.prop('disabled', true);
+			if ($trigger.length) {
+				$trigger.find('.sf-preview-loader').show();
+			}
+
+			var postData = {
 				action: 'sf_preview_load_more',
 				nonce: sfAdmin.nonce,
 				settings: settings,
 				offset: offset
-			}, function (response) {
-				$btn.removeClass('sf-loading').prop('disabled', false);
+			};
 
-				if (response.success && response.data.html) {
-					var $feed = $btn.closest('.sf-preview-feed');
-					var $grid = $feed.find('.sf-preview-grid, .sf-preview-masonry, .sf-preview-list, .sf-preview-carousel');
+			if (mode === 'page') {
+				postData.page = page || 1;
+			}
+
+			$.post(sfAdmin.ajaxUrl, postData, function (response) {
+				self._previewLoading = false;
+
+				if (!response.success || !response.data.html) {
+					$btn.prop('disabled', false).text(btnText);
+					$pagBtns.prop('disabled', false);
+					return;
+				}
+
+				var $feed = $wrap.closest('.sf-preview-feed');
+				var $grid = $feed.find('.sf-preview-grid, .sf-preview-masonry, .sf-preview-list, .sf-preview-carousel');
+
+				if (mode === 'page') {
+					$grid.html(response.data.html);
+
+					$pagBtns.removeClass('active').prop('disabled', false);
+					$wrap.find('.sf-preview-page-btn[data-page="' + (page || 1) + '"]').addClass('active');
+				} else {
 					$grid.append(response.data.html);
-					$btn.data('offset', response.data.offset);
+					$wrap.data('offset', response.data.offset);
 
 					if (!response.data.has_more) {
-						$btn.parent().html('<span style="opacity:0.6;font-size:13px;">No more posts</span>');
+						if ($btn.length) {
+							$btn.replaceWith('<span style="opacity:0.6;font-size:13px;">No more posts</span>');
+						}
+						if ($trigger.length) {
+							$trigger.html('<span style="opacity:0.6;font-size:13px;">No more posts</span>');
+							self.destroyPreviewScroll();
+						}
 					} else {
-						$btn.text(originalText);
+						$btn.prop('disabled', false).text(btnText);
+						if ($trigger.length) {
+							$trigger.find('.sf-preview-loader').hide();
+						}
 					}
-				} else {
-					$btn.text(originalText);
 				}
 			}).fail(function () {
-				$btn.removeClass('sf-loading').prop('disabled', false).text(originalText);
+				self._previewLoading = false;
+				$btn.prop('disabled', false).text(btnText);
+				$pagBtns.prop('disabled', false);
 			});
+		},
+
+		/**
+		 * Initialize infinite scroll observer for preview.
+		 */
+		initPreviewScroll: function () {
+			this.destroyPreviewScroll();
+
+			var self     = this;
+			var $trigger = $('.sf-preview-scroll-trigger');
+			if (!$trigger.length || !('IntersectionObserver' in window)) return;
+
+			var $scrollRoot = $trigger.closest('.sf-preview-container')[0] || null;
+
+			this._previewScrollObserver = new IntersectionObserver(function (entries) {
+				entries.forEach(function (entry) {
+					if (entry.isIntersecting && !self._previewLoading) {
+						self.previewLoadPosts('append');
+					}
+				});
+			}, { root: $scrollRoot, rootMargin: '100px' });
+
+			this._previewScrollObserver.observe($trigger[0]);
+		},
+
+		/**
+		 * Destroy infinite scroll observer.
+		 */
+		destroyPreviewScroll: function () {
+			if (this._previewScrollObserver) {
+				this._previewScrollObserver.disconnect();
+				this._previewScrollObserver = null;
+			}
 		},
 
 		/**
@@ -1084,6 +1175,8 @@
 				complete: function () {
 					$('.sf-preview-loading').removeClass('active');
 					$('.sf-preview-content').css('visibility', '');
+					self._previewLoading = false;
+					self.initPreviewScroll();
 				}
 			});
 		},

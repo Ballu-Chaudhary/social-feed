@@ -300,7 +300,35 @@ class SF_Ajax {
 			cursor: pointer;
 			font-size: 14px;
 			font-weight: 500;
+			transition: opacity 0.2s;
 			}
+			.sf-preview-loadmore-btn:disabled { opacity: 0.6; cursor: wait; }
+			.sf-preview-loader {
+				display: inline-block;
+				width: 24px;
+				height: 24px;
+				border: 3px solid rgba(0,0,0,0.1);
+				border-top-color: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>;
+				border-radius: 50%;
+				animation: sfSpin 0.7s linear infinite;
+			}
+			@keyframes sfSpin { to { transform: rotate(360deg); } }
+			.sf-preview-scroll-trigger { padding: 16px 0; text-align: center; }
+			.sf-preview-pagination { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+			.sf-preview-page-btn {
+				min-width: 36px; height: 36px;
+				border: 1px solid #e5e7eb; border-radius: 6px;
+				background: #fff; color: #374151;
+				font-size: 13px; font-weight: 500;
+				cursor: pointer; transition: all 0.15s;
+			}
+			.sf-preview-page-btn:hover { border-color: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>; color: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>; }
+			.sf-preview-page-btn.active {
+				background: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>;
+				color: <?php echo esc_attr( $settings['loadmore_text_color'] ); ?>;
+				border-color: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>;
+			}
+			.sf-preview-page-btn:disabled { opacity: 0.5; cursor: wait; }
 			<?php if ( $settings['dark_mode'] ) : ?>
 			.sf-preview-feed { background: #1a1a1a; color: #ffffff; }
 			.sf-preview-followers, .sf-preview-meta { color: rgba(255,255,255,0.6); }
@@ -373,12 +401,25 @@ class SF_Ajax {
 				<?php endforeach; ?>
 			</div>
 
-			<?php if ( 'none' !== $settings['loadmore_type'] ) : ?>
-			<div class="sf-preview-loadmore">
-				<?php if ( 'button' === $settings['loadmore_type'] ) : ?>
-				<button type="button" class="sf-preview-loadmore-btn" data-offset="<?php echo count( $items ); ?>"><?php echo esc_html( $settings['loadmore_text'] ); ?></button>
-				<?php elseif ( 'pagination' === $settings['loadmore_type'] ) : ?>
-				<span style="opacity:0.7;">1 2 3 ...</span>
+			<?php
+			$lm_type    = $settings['loadmore_type'];
+			$item_count = count( $items );
+			$per_load   = max( 1, absint( $settings['posts_per_load'] ) );
+			$total_demo = $item_count + $per_load * 3;
+			if ( 'none' !== $lm_type ) :
+			?>
+			<div class="sf-preview-loadmore" data-offset="<?php echo $item_count; ?>">
+				<?php if ( 'button' === $lm_type ) : ?>
+				<button type="button" class="sf-preview-loadmore-btn"><?php echo esc_html( $settings['loadmore_text'] ); ?></button>
+				<?php elseif ( 'scroll' === $lm_type ) : ?>
+				<div class="sf-preview-scroll-trigger"><span class="sf-preview-loader"></span></div>
+				<?php elseif ( 'pagination' === $lm_type ) : ?>
+				<?php $total_pages = (int) ceil( $total_demo / $per_load ); ?>
+				<div class="sf-preview-pagination" data-total-pages="<?php echo $total_pages; ?>">
+					<?php for ( $p = 1; $p <= $total_pages; $p++ ) : ?>
+					<button type="button" class="sf-preview-page-btn<?php echo 1 === $p ? ' active' : ''; ?>" data-page="<?php echo $p; ?>"><?php echo $p; ?></button>
+					<?php endfor; ?>
+				</div>
 				<?php endif; ?>
 			</div>
 			<?php endif; ?>
@@ -432,12 +473,15 @@ class SF_Ajax {
 
 	/**
 	 * Handle preview load more (admin customizer).
+	 *
+	 * Supports all load behaviors: button (append), scroll (append), pagination (replace).
 	 */
 	public function handle_preview_load_more() {
 		$this->verify_request();
 
 		$settings = isset( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : array();
 		$offset   = isset( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;
+		$page     = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
 
 		if ( ! is_array( $settings ) ) {
 			$settings = array();
@@ -448,16 +492,50 @@ class SF_Ajax {
 		$defaults = SF_Customizer::get_defaults();
 		$settings = wp_parse_args( $settings, $defaults );
 
-		$per_load = max( 1, absint( $settings['posts_per_load'] ) );
-		$max      = $offset + $per_load * 3;
+		$per_load   = max( 1, absint( $settings['posts_per_load'] ) );
+		$initial    = $per_load;
+		$total      = $initial + $per_load * 3;
+		$is_paging  = 'pagination' === $settings['loadmore_type'];
 
-		if ( $offset >= $max ) {
+		if ( $is_paging ) {
+			$offset     = ( $page - 1 ) * $per_load;
+			$total_pages = (int) ceil( $total / $per_load );
+		}
+
+		if ( $offset >= $total ) {
 			wp_send_json_success( array(
 				'html'     => '',
 				'has_more' => false,
+				'offset'   => $offset,
 			) );
 		}
 
+		$end   = min( $offset + $per_load, $total );
+		$items = $this->generate_demo_items( $offset, $end );
+		$html  = $this->render_preview_items( $items, $settings );
+
+		$response = array(
+			'html'     => $html,
+			'has_more' => $end < $total,
+			'offset'   => $end,
+		);
+
+		if ( $is_paging ) {
+			$response['total_pages'] = $total_pages;
+			$response['current']     = $page;
+		}
+
+		wp_send_json_success( $response );
+	}
+
+	/**
+	 * Generate demo items for a range.
+	 *
+	 * @param int $start Start index.
+	 * @param int $end   End index (exclusive).
+	 * @return array
+	 */
+	private function generate_demo_items( $start, $end ) {
 		$captions = array(
 			'Beautiful sunset at the beach today!',
 			'Coffee time — morning vibes',
@@ -467,15 +545,29 @@ class SF_Ajax {
 			'City lights and late nights',
 		);
 
-		ob_start();
-		for ( $i = $offset; $i < $offset + $per_load && $i < $max; $i++ ) {
-			$item = array(
-				'image'    => 'https://picsum.photos/seed/more' . $i . '/400/400',
+		$items = array();
+		for ( $i = $start; $i < $end; $i++ ) {
+			$items[] = array(
+				'image'    => 'https://picsum.photos/seed/sf' . $i . '/400/400',
 				'caption'  => $captions[ $i % count( $captions ) ],
 				'likes'    => wp_rand( 100, 50000 ),
 				'comments' => wp_rand( 5, 500 ),
 				'date'     => wp_rand( 1, 7 ) . 'd ago',
 			);
+		}
+		return $items;
+	}
+
+	/**
+	 * Render preview item HTML.
+	 *
+	 * @param array $items    Items to render.
+	 * @param array $settings Feed settings.
+	 * @return string
+	 */
+	private function render_preview_items( $items, $settings ) {
+		ob_start();
+		foreach ( $items as $item ) :
 			?>
 			<div class="sf-preview-item">
 				<div class="sf-preview-item-inner">
@@ -513,16 +605,8 @@ class SF_Ajax {
 				<?php endif; ?>
 			</div>
 			<?php
-		}
-		$html = ob_get_clean();
-
-		$new_offset = $offset + $per_load;
-
-		wp_send_json_success( array(
-			'html'     => $html,
-			'has_more' => $new_offset < $max,
-			'offset'   => $new_offset,
-		) );
+		endforeach;
+		return ob_get_clean();
 	}
 
 	/**

@@ -25,6 +25,7 @@
 		 */
 		bindEvents: function () {
 			$(document).on('click', '.sf-feed__load-more-btn', this.handleLoadMore.bind(this));
+			$(document).on('click', '.sf-feed__page-btn', this.handlePagination.bind(this));
 			$(document).on('click', '.sf-lightbox-trigger', this.handleLightboxOpen.bind(this));
 			$(document).on('click', '.sf-lightbox__close', this.handleLightboxClose.bind(this));
 			$(document).on('click', '.sf-lightbox__nav', this.handleLightboxNav.bind(this));
@@ -70,6 +71,57 @@
 				} else {
 					$btn.text(originalText);
 					console.error('Social Feed: Load more failed');
+				}
+			});
+		},
+
+		/**
+		 * Handle pagination button click.
+		 *
+		 * @param {Event} e Click event.
+		 */
+		handlePagination: function (e) {
+			e.preventDefault();
+
+			var $btn  = $(e.currentTarget);
+			var $feed = $btn.closest('.sf-feed');
+			var $wrap = $btn.closest('.sf-feed__pagination');
+			var feedId = $feed.data('feed-id');
+			var page   = parseInt($btn.data('page'), 10);
+			var cursor = $wrap.data('cursor');
+
+			if ($btn.hasClass('active') || $btn.hasClass('loading') || !cursor) {
+				return;
+			}
+
+			$wrap.find('.sf-feed__page-btn').prop('disabled', true);
+			$btn.addClass('loading');
+
+			this.fetchMoreItems(feedId, cursor + ':page:' + page, function (response) {
+				$wrap.find('.sf-feed__page-btn').prop('disabled', false);
+				$btn.removeClass('loading');
+
+				if (response.success && response.data.html) {
+					var $items = $feed.find('.sf-feed__items');
+					$items.html(response.data.html);
+
+					$wrap.find('.sf-feed__page-btn').removeClass('active');
+					$btn.addClass('active');
+
+					if (response.data.next_cursor) {
+						$wrap.data('cursor', response.data.next_cursor);
+					}
+
+					if (response.data.total_pages) {
+						var totalPages = response.data.total_pages;
+						var currentCount = $wrap.find('.sf-feed__page-btn').length;
+						for (var p = currentCount + 1; p <= totalPages; p++) {
+							$wrap.append('<button type="button" class="sf-feed__page-btn" data-page="' + p + '">' + p + '</button>');
+						}
+					}
+
+					$feed[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+					$(document).trigger('sf:items_loaded', [$feed, response.data]);
 				}
 			});
 		},

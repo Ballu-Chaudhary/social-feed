@@ -183,6 +183,11 @@ $has_items   = ! empty( $posts );
 					<?php echo esc_html( $load_more_text ); ?>
 				</button>
 			</div>
+		<?php elseif ( 'pagination' === $load_more_type ) : ?>
+			<div class="sf-feed__pagination" data-cursor="<?php echo esc_attr( $next_cursor ); ?>">
+				<button type="button" class="sf-feed__page-btn active" data-page="1">1</button>
+				<button type="button" class="sf-feed__page-btn" data-page="2">2</button>
+			</div>
 		<?php else : ?>
 			<div class="sf-feed__infinite-trigger" data-cursor="<?php echo esc_attr( $next_cursor ); ?>">
 				<span class="sf-feed__loader" aria-label="<?php esc_attr_e( 'Loading more posts...', 'social-feed' ); ?>"></span>
