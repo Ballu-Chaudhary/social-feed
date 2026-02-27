@@ -105,11 +105,6 @@ class SF_Customizer {
 								<span class="sf-sidebar-label"><?php esc_html_e( 'Post Settings', 'social-feed' ); ?></span>
 								<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
 							</button>
-							<button type="button" class="sf-sidebar-item" data-section="ballu">
-									<span class="dashicons dashicons-admin-generic"></span>
-									<span class="sf-sidebar-label"><?php esc_html_e( 'Ballu', 'social-feed' ); ?></span>
-									<span class="dashicons dashicons-arrow-right-alt2 sf-sidebar-chevron"></span>
-								</button>
 								<button type="button" class="sf-sidebar-item" data-section="loadmore">
 									<span class="dashicons dashicons-download"></span>
 									<span class="sf-sidebar-label"><?php esc_html_e( 'Load More Button', 'social-feed' ); ?></span>
@@ -149,7 +144,6 @@ class SF_Customizer {
 							'design'   => __( 'Color Scheme', 'social-feed' ),
 							'header'   => __( 'Header', 'social-feed' ),
 							'post_settings' => __( 'Post Settings', 'social-feed' ),
-							'ballu'    => __( 'Ballu', 'social-feed' ),
 							'loadmore' => __( 'Load More Button', 'social-feed' ),
 							'advanced' => __( 'Advanced', 'social-feed' ),
 						);
@@ -182,9 +176,6 @@ class SF_Customizer {
 										case 'post_settings':
 											self::render_tab_post_settings( $settings );
 											break;
-											case 'ballu':
-												self::render_tab_ballu( $settings );
-												break;
 											case 'loadmore':
 												self::render_tab_loadmore( $settings );
 												break;
@@ -673,34 +664,6 @@ class SF_Customizer {
 		<?php
 	}
 
-	/**
-	 * Render Tab - Ballu.
-	 *
-	 * @param array $settings Current settings.
-	 */
-	private static function render_tab_ballu( $settings ) {
-		?>
-		<div class="sf-tab-content sf-tab-content-layout" data-tab="ballu">
-			<div class="sf-layout-panel-section">
-				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Post Style', 'social-feed' ); ?></div>
-				<div class="sf-field sf-toggle-field">
-					<label for="sf_ballu_show_caption"><?php esc_html_e( 'Show Caption', 'social-feed' ); ?></label>
-					<label class="sf-toggle">
-						<input type="checkbox" id="sf_ballu_show_caption" name="show_caption" value="1" <?php checked( $settings['show_caption'] ); ?>>
-						<span class="sf-toggle-slider"></span>
-					</label>
-				</div>
-				<div class="sf-ballu-caption-options sf-field sf-field-number-px" <?php echo ! $settings['show_caption'] ? 'style="display:none;"' : ''; ?>>
-					<label for="sf_ballu_caption_length"><?php esc_html_e( 'Caption Length', 'social-feed' ); ?></label>
-					<div class="sf-number-px-wrap">
-						<input type="number" id="sf_ballu_caption_length" name="caption_length" value="<?php echo esc_attr( $settings['caption_length'] ); ?>" min="1" max="500" step="1">
-						<span class="sf-number-px-suffix">px</span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php
-	}
 
 	/**
 	 * Render Tab 6 - Load More.

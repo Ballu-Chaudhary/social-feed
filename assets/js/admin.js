@@ -631,7 +631,7 @@
 		 * Switch to a section (show its panel in sidebar).
 		 *
 		 * @param {jQuery} $wrap    Customizer wrap element.
-		 * @param {string} section Section identifier (feed, layout, design, header, posts, ballu, loadmore, advanced).
+		 * @param {string} section Section identifier (feed, layout, design, header, post_settings, loadmore, advanced).
 		 */
 		switchToTab: function ($wrap, section) {
 			if (!$wrap || !$wrap.length || !section) return;
@@ -769,7 +769,7 @@
 			$(document).on('change', '#sf_border_style', this.handleBorderStyleChange);
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
 			$(document).on('change', '#sf_show_follow_btn', this.handleFollowBtnToggle);
-			$(document).on('change', '#sf_show_caption, #sf_ballu_show_caption', this.handleCaptionToggle);
+			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
 		},
 
@@ -927,7 +927,7 @@
 		 */
 		handleCaptionToggle: function () {
 			var isChecked = $(this).is(':checked');
-			var $allOpts = $('.sf-caption-options, .sf-ballu-caption-options');
+			var $allOpts = $('.sf-caption-options');
 			if (isChecked) {
 				$allOpts.slideDown(200);
 			} else {
