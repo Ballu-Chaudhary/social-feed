@@ -734,7 +734,6 @@ class SF_Customizer {
 					</div>
 					</div>
 				</div>
-			</div>
 			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'none' === $settings['loadmore_type'] || 'button' !== $settings['loadmore_type'] ? 'style="display:none;"' : ''; ?>>
 				<div class="sf-section-title"><?php esc_html_e( 'Button Appearance', 'social-feed' ); ?></div>
 				<div class="sf-field">
