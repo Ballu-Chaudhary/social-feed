@@ -440,13 +440,28 @@ class SF_Admin {
 		$connected_accounts = count( SF_Database::get_all_accounts( array( 'is_connected' => 1 ) ) );
 		?>
 		<div class="wrap sf-admin-wrap sf-feeds-wrap">
-			<!-- Modern Header -->
+			<!-- Back Button -->
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG ) ); ?>" class="sf-back-link">
+				<span class="dashicons dashicons-arrow-left-alt2"></span>
+				<?php esc_html_e( 'Back to Dashboard', 'social-feed' ); ?>
+			</a>
+
+			<!-- Header with Search -->
 			<div class="sf-feeds-header">
 				<div class="sf-feeds-header-left">
 					<h1 class="sf-feeds-title"><?php esc_html_e( 'All Feeds', 'social-feed' ); ?></h1>
 					<p class="sf-feeds-subtitle"><?php esc_html_e( 'Manage and create your social media feeds', 'social-feed' ); ?></p>
 				</div>
 				<div class="sf-feeds-header-right">
+					<?php if ( $total_feeds > 0 ) : ?>
+					<form method="get" class="sf-feeds-search-form">
+						<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG . '-feeds' ); ?>">
+						<div class="sf-search-input-wrap">
+							<span class="dashicons dashicons-search"></span>
+							<input type="search" name="s" value="<?php echo esc_attr( $search_query ); ?>" placeholder="<?php esc_attr_e( 'Search feeds...', 'social-feed' ); ?>" class="sf-search-input">
+						</div>
+					</form>
+					<?php endif; ?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="sf-btn-create-feed">
 						<span class="dashicons dashicons-plus-alt2"></span>
 						<?php esc_html_e( 'Create Feed', 'social-feed' ); ?>
@@ -454,46 +469,35 @@ class SF_Admin {
 				</div>
 			</div>
 
-			<!-- Stats Row with Search -->
-			<div class="sf-feeds-stats-row">
-				<div class="sf-feeds-stats">
-					<div class="sf-feeds-stat sf-feeds-stat--blue">
-						<div class="sf-feeds-stat-icon">
-							<span class="dashicons dashicons-rss"></span>
-						</div>
-						<div class="sf-feeds-stat-content">
-							<span class="sf-feeds-stat-number"><?php echo esc_html( $total_feeds ); ?></span>
-							<span class="sf-feeds-stat-label"><?php esc_html_e( 'Total Feeds', 'social-feed' ); ?></span>
-						</div>
+			<!-- Stats Cards -->
+			<div class="sf-feeds-stats">
+				<div class="sf-feeds-stat sf-feeds-stat--blue">
+					<div class="sf-feeds-stat-icon">
+						<span class="dashicons dashicons-rss"></span>
 					</div>
-					<div class="sf-feeds-stat sf-feeds-stat--green">
-						<div class="sf-feeds-stat-icon">
-							<span class="dashicons dashicons-yes-alt"></span>
-						</div>
-						<div class="sf-feeds-stat-content">
-							<span class="sf-feeds-stat-number"><?php echo esc_html( $active_feeds ); ?></span>
-							<span class="sf-feeds-stat-label"><?php esc_html_e( 'Active Feeds', 'social-feed' ); ?></span>
-						</div>
-					</div>
-					<div class="sf-feeds-stat sf-feeds-stat--purple">
-						<div class="sf-feeds-stat-icon">
-							<span class="dashicons dashicons-admin-users"></span>
-						</div>
-						<div class="sf-feeds-stat-content">
-							<span class="sf-feeds-stat-number"><?php echo esc_html( $connected_accounts ); ?></span>
-							<span class="sf-feeds-stat-label"><?php esc_html_e( 'Accounts', 'social-feed' ); ?></span>
-						</div>
+					<div class="sf-feeds-stat-content">
+						<span class="sf-feeds-stat-number"><?php echo esc_html( $total_feeds ); ?></span>
+						<span class="sf-feeds-stat-label"><?php esc_html_e( 'Total Feeds', 'social-feed' ); ?></span>
 					</div>
 				</div>
-				<?php if ( $total_feeds > 0 ) : ?>
-				<form method="get" class="sf-feeds-search-form">
-					<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG . '-feeds' ); ?>">
-					<div class="sf-search-input-wrap">
-						<span class="dashicons dashicons-search"></span>
-						<input type="search" name="s" value="<?php echo esc_attr( $search_query ); ?>" placeholder="<?php esc_attr_e( 'Search feeds...', 'social-feed' ); ?>" class="sf-search-input">
+				<div class="sf-feeds-stat sf-feeds-stat--green">
+					<div class="sf-feeds-stat-icon">
+						<span class="dashicons dashicons-yes-alt"></span>
 					</div>
-				</form>
-				<?php endif; ?>
+					<div class="sf-feeds-stat-content">
+						<span class="sf-feeds-stat-number"><?php echo esc_html( $active_feeds ); ?></span>
+						<span class="sf-feeds-stat-label"><?php esc_html_e( 'Active Feeds', 'social-feed' ); ?></span>
+					</div>
+				</div>
+				<div class="sf-feeds-stat sf-feeds-stat--purple">
+					<div class="sf-feeds-stat-icon">
+						<span class="dashicons dashicons-admin-users"></span>
+					</div>
+					<div class="sf-feeds-stat-content">
+						<span class="sf-feeds-stat-number"><?php echo esc_html( $connected_accounts ); ?></span>
+						<span class="sf-feeds-stat-label"><?php esc_html_e( 'Accounts', 'social-feed' ); ?></span>
+					</div>
+				</div>
 			</div>
 
 			<?php if ( empty( $feeds ) && empty( $search_query ) ) : ?>
