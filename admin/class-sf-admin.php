@@ -35,6 +35,8 @@ class SF_Admin {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_filter( 'admin_body_class', array( $this, 'add_body_class' ) );
+
+		require_once SF_PLUGIN_PATH . 'admin/class-sf-settings.php';
 	}
 
 	/**
