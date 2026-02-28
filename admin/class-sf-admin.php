@@ -409,20 +409,16 @@ class SF_Admin {
 	 * Render all feeds page.
 	 */
 	public function render_all_feeds() {
-		$current_filter = isset( $_GET['platform'] ) ? sanitize_key( $_GET['platform'] ) : '';
-		$search_query   = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$search_query = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 
-		$args = array(
-			'orderby' => 'created_at',
-			'order'   => 'DESC',
+		$all_feeds = SF_Database::get_all_feeds(
+			array(
+				'orderby' => 'created_at',
+				'order'   => 'DESC',
+			)
 		);
 
-		if ( ! empty( $current_filter ) ) {
-			$args['platform'] = $current_filter;
-		}
-
-		$feeds = SF_Database::get_all_feeds( $args );
-
+		$feeds = $all_feeds;
 		if ( ! empty( $search_query ) ) {
 			$feeds = array_filter(
 				$feeds,
@@ -431,136 +427,170 @@ class SF_Admin {
 				}
 			);
 		}
+
+		$total_feeds      = count( $all_feeds );
+		$active_feeds     = count(
+			array_filter(
+				$all_feeds,
+				function ( $f ) {
+					return 'active' === $f['status'];
+				}
+			)
+		);
+		$connected_accounts = count( SF_Database::get_all_accounts( array( 'is_connected' => 1 ) ) );
 		?>
-		<div class="wrap sf-admin-wrap">
-			<h1 class="sf-admin-title">
-				<?php esc_html_e( 'All Feeds', 'social-feed' ); ?>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="page-title-action">
-					<?php esc_html_e( 'Add New', 'social-feed' ); ?>
-				</a>
-			</h1>
-
-			<!-- Bulk Actions & Search -->
-			<form method="get" class="sf-feeds-form">
-				<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG . '-feeds' ); ?>">
-				<?php if ( ! empty( $current_filter ) ) : ?>
-					<input type="hidden" name="platform" value="<?php echo esc_attr( $current_filter ); ?>">
-				<?php endif; ?>
-
-				<div class="tablenav top">
-					<div class="alignleft actions bulkactions">
-						<label for="bulk-action-selector-top" class="screen-reader-text"><?php esc_html_e( 'Select bulk action', 'social-feed' ); ?></label>
-						<select name="bulk_action" id="bulk-action-selector-top" class="sf-bulk-action">
-							<option value=""><?php esc_html_e( 'Bulk Actions', 'social-feed' ); ?></option>
-							<option value="delete"><?php esc_html_e( 'Delete', 'social-feed' ); ?></option>
-							<option value="pause"><?php esc_html_e( 'Pause', 'social-feed' ); ?></option>
-						</select>
-						<button type="button" class="button sf-bulk-apply-btn"><?php esc_html_e( 'Apply', 'social-feed' ); ?></button>
-						<?php wp_nonce_field( 'sf_bulk_action', 'sf_bulk_nonce' ); ?>
-					</div>
-
-					<p class="search-box">
-						<label class="screen-reader-text" for="feed-search-input"><?php esc_html_e( 'Search Feeds', 'social-feed' ); ?></label>
-						<input type="search" id="feed-search-input" name="s" value="<?php echo esc_attr( $search_query ); ?>" placeholder="<?php esc_attr_e( 'Search feeds...', 'social-feed' ); ?>">
-						<input type="submit" id="search-submit" class="button" value="<?php esc_attr_e( 'Search', 'social-feed' ); ?>">
-					</p>
+		<div class="wrap sf-admin-wrap sf-feeds-wrap">
+			<!-- Modern Header -->
+			<div class="sf-feeds-header">
+				<div class="sf-feeds-header-left">
+					<h1 class="sf-feeds-title"><?php esc_html_e( 'All Feeds', 'social-feed' ); ?></h1>
+					<p class="sf-feeds-subtitle"><?php esc_html_e( 'Manage and create your social media feeds', 'social-feed' ); ?></p>
 				</div>
-			</form>
+				<div class="sf-feeds-header-right">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="sf-btn-create-feed">
+						<span class="dashicons dashicons-plus-alt2"></span>
+						<?php esc_html_e( 'Create Feed', 'social-feed' ); ?>
+					</a>
+				</div>
+			</div>
 
-			<?php if ( empty( $feeds ) ) : ?>
+			<!-- Mini Stats -->
+			<div class="sf-feeds-stats">
+				<div class="sf-feeds-stat">
+					<span class="sf-feeds-stat-number"><?php echo esc_html( $total_feeds ); ?></span>
+					<span class="sf-feeds-stat-label"><?php esc_html_e( 'Total Feeds', 'social-feed' ); ?></span>
+				</div>
+				<div class="sf-feeds-stat">
+					<span class="sf-feeds-stat-number"><?php echo esc_html( $active_feeds ); ?></span>
+					<span class="sf-feeds-stat-label"><?php esc_html_e( 'Active Feeds', 'social-feed' ); ?></span>
+				</div>
+				<div class="sf-feeds-stat">
+					<span class="sf-feeds-stat-number"><?php echo esc_html( $connected_accounts ); ?></span>
+					<span class="sf-feeds-stat-label"><?php esc_html_e( 'Connected Accounts', 'social-feed' ); ?></span>
+				</div>
+			</div>
+
+			<?php if ( $total_feeds > 0 ) : ?>
+			<!-- Search Bar -->
+			<div class="sf-feeds-toolbar">
+				<form method="get" class="sf-feeds-search-form">
+					<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG . '-feeds' ); ?>">
+					<div class="sf-search-input-wrap">
+						<span class="dashicons dashicons-search"></span>
+						<input type="search" name="s" value="<?php echo esc_attr( $search_query ); ?>" placeholder="<?php esc_attr_e( 'Search feeds...', 'social-feed' ); ?>" class="sf-search-input">
+					</div>
+				</form>
+			</div>
+			<?php endif; ?>
+
+			<?php if ( empty( $feeds ) && empty( $search_query ) ) : ?>
 				<!-- Empty State -->
-				<div class="sf-empty-state-large">
-					<div class="sf-empty-illustration">
-						<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<circle cx="60" cy="60" r="50" fill="#f0f0f1"/>
-							<rect x="30" y="35" width="60" height="50" rx="4" fill="#c3c4c7"/>
-							<rect x="35" y="42" width="20" height="15" rx="2" fill="#fff"/>
-							<rect x="35" y="62" width="50" height="4" rx="2" fill="#fff"/>
-							<rect x="35" y="70" width="35" height="4" rx="2" fill="#fff"/>
-							<circle cx="90" cy="85" r="18" fill="#2271b1"/>
-							<path d="M90 77v16M82 85h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+				<div class="sf-feeds-empty-state">
+					<div class="sf-feeds-empty-icon">
+						<svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="70" cy="70" r="65" fill="url(#emptyGrad)" fill-opacity="0.1"/>
+							<rect x="25" y="30" width="35" height="35" rx="6" fill="#e0e0e0"/>
+							<rect x="65" y="30" width="35" height="35" rx="6" fill="#e0e0e0"/>
+							<rect x="25" y="70" width="35" height="35" rx="6" fill="#e0e0e0"/>
+							<rect x="65" y="70" width="35" height="35" rx="6" fill="#e0e0e0"/>
+							<rect x="105" y="30" width="8" height="75" rx="4" fill="#e0e0e0"/>
+							<circle cx="105" cy="105" r="25" fill="url(#plusGrad)"/>
+							<path d="M105 95v20M95 105h20" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+							<defs>
+								<linearGradient id="emptyGrad" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+									<stop stop-color="#6366f1"/>
+									<stop offset="1" stop-color="#8b5cf6"/>
+								</linearGradient>
+								<linearGradient id="plusGrad" x1="80" y1="80" x2="130" y2="130" gradientUnits="userSpaceOnUse">
+									<stop stop-color="#6366f1"/>
+									<stop offset="1" stop-color="#8b5cf6"/>
+								</linearGradient>
+							</defs>
 						</svg>
 					</div>
-					<h2><?php esc_html_e( 'No feeds found', 'social-feed' ); ?></h2>
-					<p><?php esc_html_e( 'Create your first social media feed to display on your website.', 'social-feed' ); ?></p>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="button button-primary button-hero">
+					<h2 class="sf-feeds-empty-title"><?php esc_html_e( 'No Feeds Yet', 'social-feed' ); ?></h2>
+					<p class="sf-feeds-empty-desc"><?php esc_html_e( 'Start by creating your first social feed to display content from Instagram, YouTube, or Facebook.', 'social-feed' ); ?></p>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="sf-btn-create-first">
 						<?php esc_html_e( 'Create Your First Feed', 'social-feed' ); ?>
+					</a>
+					<a href="https://developer.wordpress.org/plugins/" target="_blank" rel="noopener noreferrer" class="sf-feeds-learn-link">
+						<?php esc_html_e( 'Learn how it works', 'social-feed' ); ?> &rarr;
+					</a>
+				</div>
+			<?php elseif ( empty( $feeds ) && ! empty( $search_query ) ) : ?>
+				<!-- No Search Results -->
+				<div class="sf-feeds-empty-state sf-feeds-no-results">
+					<div class="sf-feeds-empty-icon">
+						<span class="dashicons dashicons-search" style="font-size: 64px; width: 64px; height: 64px; color: #94a3b8;"></span>
+					</div>
+					<h2 class="sf-feeds-empty-title"><?php esc_html_e( 'No feeds found', 'social-feed' ); ?></h2>
+					<p class="sf-feeds-empty-desc">
+						<?php
+						printf(
+							/* translators: %s: search query */
+							esc_html__( 'No feeds match "%s". Try a different search term.', 'social-feed' ),
+							esc_html( $search_query )
+						);
+						?>
+					</p>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" class="button button-secondary">
+						<?php esc_html_e( 'Clear Search', 'social-feed' ); ?>
 					</a>
 				</div>
 			<?php else : ?>
-				<!-- Feeds Table -->
-				<div class="sf-feeds-table-wrap">
-				<table class="sf-feeds-table">
-					<thead>
-						<tr>
-							<td class="sf-col-cb check-column">
-								<input type="checkbox" id="cb-select-all-1" class="sf-select-all" aria-label="<?php esc_attr_e( 'Select all', 'social-feed' ); ?>">
-							</td>
-							<th class="sf-col-name column-primary"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></th>
-							<th class="sf-col-type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></th>
-							<th class="sf-col-status"><?php esc_html_e( 'Status', 'social-feed' ); ?></th>
-							<th class="sf-col-shortcode"><?php esc_html_e( 'Shortcode', 'social-feed' ); ?></th>
-							<th class="sf-col-updated"><?php esc_html_e( 'Last Updated', 'social-feed' ); ?></th>
-							<th class="sf-col-actions"><?php esc_html_e( 'Actions', 'social-feed' ); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ( $feeds as $feed ) : ?>
-							<tr data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>">
-								<td class="sf-col-cb check-column">
-									<input type="checkbox" name="feed_ids[]" value="<?php echo esc_attr( $feed['id'] ); ?>" class="sf-feed-checkbox">
-								</td>
-								<td class="sf-col-name column-primary">
-									<strong>
-										<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>">
-											<?php echo esc_html( $feed['name'] ); ?>
-										</a>
-									</strong>
-									<div class="row-actions">
-										<span class="edit">
-											<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>">
-												<?php esc_html_e( 'Edit', 'social-feed' ); ?>
-											</a> |
-										</span>
-										<span class="duplicate">
-											<a href="#" class="sf-duplicate-feed" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>">
-												<?php esc_html_e( 'Duplicate', 'social-feed' ); ?>
-											</a> |
-										</span>
-										<span class="trash">
-											<a href="#" class="sf-delete-feed" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>">
-												<?php esc_html_e( 'Delete', 'social-feed' ); ?>
-											</a>
-										</span>
-									</div>
-								</td>
-								<td class="sf-col-type"><?php echo esc_html( ucfirst( $feed['feed_type'] ) ); ?></td>
-								<td class="sf-col-status">
-									<label class="sf-toggle sf-toggle-inline">
-										<input type="checkbox" class="sf-status-toggle" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" <?php checked( 'active', $feed['status'] ); ?>>
-										<span class="sf-toggle-slider"></span>
-									</label>
-								</td>
-								<td class="sf-col-shortcode">
-									<span class="sf-shortcode-cell">
-										<code class="sf-shortcode">[social_feed id="<?php echo esc_attr( $feed['id'] ); ?>"]</code>
-										<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed['id'] ); ?>&quot;]" title="<?php esc_attr_e( 'Copy', 'social-feed' ); ?>">
-											<span class="dashicons dashicons-clipboard"></span>
-										</button>
-									</span>
-								</td>
-								<td class="sf-col-updated">
-									<?php echo esc_html( SF_Helpers::sf_time_ago( $feed['updated_at'] ) ); ?>
-								</td>
-								<td class="sf-col-actions">
-									<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>" class="button button-small">
-										<?php esc_html_e( 'Edit', 'social-feed' ); ?>
+				<!-- Feed Cards Grid -->
+				<div class="sf-feeds-grid">
+					<?php foreach ( $feeds as $feed ) : ?>
+						<?php
+						$is_active    = 'active' === $feed['status'];
+						$status_class = $is_active ? 'sf-feed-status--active' : 'sf-feed-status--paused';
+						$status_text  = $is_active ? __( 'Active', 'social-feed' ) : __( 'Paused', 'social-feed' );
+						$created_date = date_i18n( get_option( 'date_format' ), strtotime( $feed['created_at'] ) );
+						?>
+						<div class="sf-feed-card" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>">
+							<div class="sf-feed-card-header">
+								<div class="sf-feed-card-platform">
+									<?php echo $this->get_platform_icon( $feed['platform'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</div>
+								<span class="sf-feed-card-status <?php echo esc_attr( $status_class ); ?>">
+									<?php echo esc_html( $status_text ); ?>
+								</span>
+							</div>
+							<div class="sf-feed-card-body">
+								<h3 class="sf-feed-card-name">
+									<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>">
+										<?php echo esc_html( $feed['name'] ); ?>
 									</a>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
+								</h3>
+								<p class="sf-feed-card-meta">
+									<span class="sf-feed-card-type"><?php echo esc_html( ucfirst( $feed['feed_type'] ) ); ?></span>
+									<span class="sf-feed-card-sep">&bull;</span>
+									<span class="sf-feed-card-date"><?php echo esc_html( $created_date ); ?></span>
+								</p>
+								<div class="sf-feed-card-shortcode">
+									<code>[social_feed id="<?php echo esc_attr( $feed['id'] ); ?>"]</code>
+									<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed['id'] ); ?>&quot;]" title="<?php esc_attr_e( 'Copy shortcode', 'social-feed' ); ?>">
+										<span class="dashicons dashicons-admin-page"></span>
+									</button>
+								</div>
+							</div>
+							<div class="sf-feed-card-actions">
+								<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>" class="sf-feed-action sf-feed-action--edit" title="<?php esc_attr_e( 'Edit', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-edit"></span>
+								</a>
+								<button type="button" class="sf-feed-action sf-feed-action--duplicate sf-duplicate-feed" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" title="<?php esc_attr_e( 'Duplicate', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-admin-page"></span>
+								</button>
+								<button type="button" class="sf-feed-action sf-feed-action--delete sf-delete-feed" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" title="<?php esc_attr_e( 'Delete', 'social-feed' ); ?>">
+									<span class="dashicons dashicons-trash"></span>
+								</button>
+								<label class="sf-toggle sf-feed-action--toggle" title="<?php echo $is_active ? esc_attr__( 'Pause feed', 'social-feed' ) : esc_attr__( 'Activate feed', 'social-feed' ); ?>">
+									<input type="checkbox" class="sf-status-toggle" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" <?php checked( $is_active ); ?>>
+									<span class="sf-toggle-slider"></span>
+								</label>
+							</div>
+						</div>
+					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
 		</div>
