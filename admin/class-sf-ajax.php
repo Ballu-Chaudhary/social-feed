@@ -225,13 +225,18 @@ class SF_Ajax {
 				scroll-snap-align: start;
 			}
 			.sf-preview-item {
-				border-radius: <?php echo intval( $settings['post_radius'] ); ?>px;
-				overflow: hidden;
 				<?php if ( 'none' !== $settings['border_style'] ) : ?>
 				border: 1px <?php echo esc_attr( $settings['border_style'] ); ?> <?php echo esc_attr( $settings['border_color'] ); ?>;
+				border-radius: <?php echo intval( $settings['post_radius'] ); ?>px;
 				<?php endif; ?>
 			}
-			.sf-preview-item-inner { position: relative; padding-bottom: 100%; background: #f3f4f6; }
+			.sf-preview-item-inner {
+				position: relative;
+				padding-bottom: 100%;
+				background: #f3f4f6;
+				border-radius: <?php echo intval( $settings['post_radius'] ); ?>px;
+				overflow: hidden;
+			}
 			.sf-preview-item img {
 				position: absolute;
 				top: 0;

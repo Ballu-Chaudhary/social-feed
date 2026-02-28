@@ -1013,7 +1013,7 @@
 		applyPostRadiusToPreview: function () {
 			var val = parseInt($('#sf_post_radius_value').val(), 10);
 			if (isNaN(val) || val < 0) val = 0;
-			$('.sf-preview-item').css('border-radius', val + 'px');
+			$('.sf-preview-item-inner').css('border-radius', val + 'px');
 		},
 
 		/**
