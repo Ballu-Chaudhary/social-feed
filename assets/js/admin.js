@@ -239,6 +239,19 @@
 			$(document).on('click', '.sf-duplicate-feed', this.handleDuplicateFeed);
 			$(document).on('click', '.sf-bulk-apply-btn', this.handleBulkAction);
 			$(document).on('change', '.sf-select-all', this.handleSelectAll);
+
+			$(document).on('click', '#sf-modal-confirm', this.handleModalConfirm);
+			$(document).on('click', '#sf-modal-cancel, #sf-modal-close', this.closeDeleteModal);
+			$(document).on('click', '.sf-modal-overlay', function (e) {
+				if ($(e.target).hasClass('sf-modal-overlay')) {
+					SF_Admin.closeDeleteModal();
+				}
+			});
+
+			$(document).on('input', '#sf-live-search', this.handleLiveSearch);
+			$(document).on('click', '#sf-search-clear', this.clearSearch);
+
+			$(document).on('click', '.sf-filter-tab', this.handleFilterTab);
 		},
 
 		/**
@@ -257,6 +270,7 @@
 		 */
 		handleCopy: function (e) {
 			e.preventDefault();
+			e.stopPropagation();
 
 			var $btn = $(this);
 			var text = $btn.data('copy');
@@ -265,14 +279,16 @@
 				return;
 			}
 
+			var decoded = $('<textarea>').html(text).text();
+
 			if (navigator.clipboard && window.isSecureContext) {
-				navigator.clipboard.writeText(text).then(function () {
+				navigator.clipboard.writeText(decoded).then(function () {
 					SF_Admin.showCopySuccess($btn);
 				}).catch(function () {
-					SF_Admin.fallbackCopy(text, $btn);
+					SF_Admin.fallbackCopy(decoded, $btn);
 				});
 			} else {
-				SF_Admin.fallbackCopy(text, $btn);
+				SF_Admin.fallbackCopy(decoded, $btn);
 			}
 		},
 
@@ -303,16 +319,29 @@
 		 * @param {jQuery} $btn Button element.
 		 */
 		showCopySuccess: function ($btn) {
-			var $icon = $btn.find('.dashicons');
-			var originalClass = $icon.attr('class');
+			$btn.addClass('sf-copy-btn--copied');
 
-			$icon.removeClass('dashicons-clipboard').addClass('dashicons-yes');
+			var $copyIcon = $btn.find('.sf-copy-icon');
+			var $checkIcon = $btn.find('.sf-copy-check');
+
+			if ($copyIcon.length && $checkIcon.length) {
+				$copyIcon.hide();
+				$checkIcon.show();
+			} else {
+				var $icon = $btn.find('.dashicons');
+				$icon.removeClass('dashicons-clipboard dashicons-admin-page').addClass('dashicons-yes');
+			}
 
 			setTimeout(function () {
-				$icon.attr('class', originalClass);
-			}, 1500);
-
-			SF_Admin.showNotice(sfAdmin.i18n.copied, 'success');
+				$btn.removeClass('sf-copy-btn--copied');
+				if ($copyIcon.length && $checkIcon.length) {
+					$copyIcon.show();
+					$checkIcon.hide();
+				} else {
+					var $icon = $btn.find('.dashicons');
+					$icon.removeClass('dashicons-yes').addClass('dashicons-admin-page');
+				}
+			}, 2000);
 		},
 
 		/**
@@ -321,9 +350,13 @@
 		 * @param {Event} e Change event.
 		 */
 		handleStatusToggle: function (e) {
+			e.stopPropagation();
+
 			var $toggle = $(this);
 			var feedId = $toggle.data('feed-id');
-			var status = $toggle.is(':checked') ? 'active' : 'paused';
+			var isActive = $toggle.is(':checked');
+			var status = isActive ? 'active' : 'paused';
+			var $card = $toggle.closest('.sf-feed-card');
 
 			$toggle.prop('disabled', true);
 
@@ -338,20 +371,47 @@
 				},
 				success: function (response) {
 					if (response.success) {
-						SF_Admin.showNotice(sfAdmin.i18n.saved, 'success');
+						SF_Admin.updateCardStatus($card, isActive);
 					} else {
-						$toggle.prop('checked', !$toggle.is(':checked'));
+						$toggle.prop('checked', !isActive);
 						SF_Admin.showNotice(response.data.message || sfAdmin.i18n.error, 'error');
 					}
 				},
 				error: function () {
-					$toggle.prop('checked', !$toggle.is(':checked'));
+					$toggle.prop('checked', !isActive);
 					SF_Admin.showNotice(sfAdmin.i18n.error, 'error');
 				},
 				complete: function () {
 					$toggle.prop('disabled', false);
 				}
 			});
+		},
+
+		/**
+		 * Update card status UI.
+		 *
+		 * @param {jQuery} $card Card element.
+		 * @param {boolean} isActive Whether feed is active.
+		 */
+		updateCardStatus: function ($card, isActive) {
+			if (!$card || !$card.length) return;
+
+			var $status = $card.find('.sf-feed-card-status');
+			var $toggleWrap = $card.find('.sf-feed-toggle-wrap');
+
+			$card.attr('data-feed-status', isActive ? 'active' : 'paused');
+
+			if (isActive) {
+				$card.removeClass('sf-feed-card--paused');
+				$status.removeClass('sf-feed-status--paused').addClass('sf-feed-status--active');
+				$status.html('<span class="sf-status-dot"></span> ' + (sfAdmin.i18n.active || 'Active'));
+				$toggleWrap.attr('data-tooltip', sfAdmin.i18n.click_to_pause || 'Click to pause');
+			} else {
+				$card.addClass('sf-feed-card--paused');
+				$status.removeClass('sf-feed-status--active').addClass('sf-feed-status--paused');
+				$status.html('<span class="sf-status-dot"></span> ' + (sfAdmin.i18n.paused || 'Paused'));
+				$toggleWrap.attr('data-tooltip', sfAdmin.i18n.click_to_activate || 'Click to activate');
+			}
 		},
 
 		/**
@@ -389,22 +449,48 @@
 		},
 
 		/**
-		 * Handle delete feed.
+		 * Handle delete feed - show modal.
 		 *
 		 * @param {Event} e Click event.
 		 */
 		handleDeleteFeed: function (e) {
 			e.preventDefault();
+			e.stopPropagation();
+
+			var $btn = $(this);
+			var feedId = $btn.data('feed-id');
+			var feedName = $btn.data('feed-name') || 'this feed';
+
+			var $modal = $('#sf-delete-modal');
+			if ($modal.length) {
+				$('#sf-delete-feed-name').text(feedName);
+				$('#sf-modal-confirm').data('feed-id', feedId);
+				$modal.css('display', 'flex').addClass('sf-modal--visible');
+				return;
+			}
 
 			if (!confirm(sfAdmin.i18n.confirm_delete)) {
 				return;
 			}
 
-			var $link = $(this);
-			var feedId = $link.data('feed-id');
-			var $row = $link.closest('tr');
+			SF_Admin.executeDeleteFeed(feedId, $btn);
+		},
 
-			$row.css('opacity', '0.5');
+		/**
+		 * Execute delete feed AJAX.
+		 *
+		 * @param {number} feedId Feed ID.
+		 * @param {jQuery} $btn Button element.
+		 */
+		executeDeleteFeed: function (feedId, $btn) {
+			var $card = $btn ? $btn.closest('.sf-feed-card') : null;
+			var $row = $btn ? $btn.closest('tr') : null;
+
+			if ($card && $card.length) {
+				$card.css('opacity', '0.5');
+			} else if ($row && $row.length) {
+				$row.css('opacity', '0.5');
+			}
 
 			$.ajax({
 				url: sfAdmin.ajaxUrl,
@@ -416,20 +502,166 @@
 				},
 				success: function (response) {
 					if (response.success) {
-						$row.fadeOut(300, function () {
-							$(this).remove();
-							SF_Admin.checkEmptyTable();
-						});
+						if ($card && $card.length) {
+							$card.fadeOut(300, function () {
+								$(this).remove();
+								SF_Admin.checkEmptyGrid();
+							});
+						} else if ($row && $row.length) {
+							$row.fadeOut(300, function () {
+								$(this).remove();
+								SF_Admin.checkEmptyTable();
+							});
+						}
+						SF_Admin.closeDeleteModal();
 					} else {
-						$row.css('opacity', '1');
+						if ($card && $card.length) {
+							$card.css('opacity', '1');
+						} else if ($row && $row.length) {
+							$row.css('opacity', '1');
+						}
 						SF_Admin.showNotice(response.data.message || sfAdmin.i18n.error, 'error');
+						SF_Admin.closeDeleteModal();
 					}
 				},
 				error: function () {
-					$row.css('opacity', '1');
+					if ($card && $card.length) {
+						$card.css('opacity', '1');
+					} else if ($row && $row.length) {
+						$row.css('opacity', '1');
+					}
 					SF_Admin.showNotice(sfAdmin.i18n.error, 'error');
+					SF_Admin.closeDeleteModal();
 				}
 			});
+		},
+
+		/**
+		 * Handle modal confirm button.
+		 */
+		handleModalConfirm: function () {
+			var $btn = $(this);
+			var feedId = $btn.data('feed-id');
+
+			$btn.find('.sf-btn-text').hide();
+			$btn.find('.sf-btn-loading').show();
+			$btn.prop('disabled', true);
+
+			SF_Admin.executeDeleteFeed(feedId, null);
+		},
+
+		/**
+		 * Close delete modal.
+		 */
+		closeDeleteModal: function () {
+			var $modal = $('#sf-delete-modal');
+			$modal.removeClass('sf-modal--visible');
+
+			setTimeout(function () {
+				$modal.hide();
+				$('#sf-modal-confirm').prop('disabled', false);
+				$('#sf-modal-confirm .sf-btn-text').show();
+				$('#sf-modal-confirm .sf-btn-loading').hide();
+			}, 200);
+		},
+
+		/**
+		 * Handle live search.
+		 */
+		handleLiveSearch: function () {
+			var query = $(this).val().toLowerCase().trim();
+			var $clearBtn = $('#sf-search-clear');
+			var $grid = $('#sf-feeds-grid');
+			var $noResults = $('#sf-no-results-live');
+			var visibleCount = 0;
+
+			if (query.length > 0) {
+				$clearBtn.show();
+			} else {
+				$clearBtn.hide();
+			}
+
+			$grid.find('.sf-feed-card').each(function () {
+				var $card = $(this);
+				var feedName = $card.data('feed-name') || '';
+
+				if (feedName.indexOf(query) !== -1) {
+					$card.show();
+					visibleCount++;
+				} else {
+					$card.hide();
+				}
+			});
+
+			if (visibleCount === 0 && query.length > 0) {
+				$noResults.show();
+			} else {
+				$noResults.hide();
+			}
+		},
+
+		/**
+		 * Clear search input.
+		 */
+		clearSearch: function () {
+			$('#sf-live-search').val('').trigger('input').focus();
+		},
+
+		/**
+		 * Handle filter tab click.
+		 */
+		handleFilterTab: function (e) {
+			var $tab = $(this);
+			var filter = $tab.data('filter');
+
+			if (!filter) {
+				return;
+			}
+
+			e.preventDefault();
+
+			$('.sf-filter-tab').removeClass('sf-filter-tab--active');
+			$tab.addClass('sf-filter-tab--active');
+
+			var $grid = $('#sf-feeds-grid');
+			var visibleCount = 0;
+
+			$grid.find('.sf-feed-card').each(function () {
+				var $card = $(this);
+				var status = $card.data('feed-status');
+
+				if (filter === 'all') {
+					$card.show();
+					visibleCount++;
+				} else if (filter === 'active' && status === 'active') {
+					$card.show();
+					visibleCount++;
+				} else if (filter === 'paused' && status !== 'active') {
+					$card.show();
+					visibleCount++;
+				} else {
+					$card.hide();
+				}
+			});
+
+			$('#sf-live-search').val('');
+			$('#sf-search-clear').hide();
+
+			if (visibleCount === 0) {
+				$('#sf-no-results-live').show();
+			} else {
+				$('#sf-no-results-live').hide();
+			}
+		},
+
+		/**
+		 * Check if grid is empty and show empty state.
+		 */
+		checkEmptyGrid: function () {
+			var $grid = $('#sf-feeds-grid');
+			if ($grid.find('.sf-feed-card').length === 0) {
+				window.location.reload();
+			}
 		},
 
 		/**

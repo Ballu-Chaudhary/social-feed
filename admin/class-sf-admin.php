@@ -409,7 +409,8 @@ class SF_Admin {
 	 * Render all feeds page.
 	 */
 	public function render_all_feeds() {
-		$search_query = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$search_query  = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$filter_status = isset( $_GET['status'] ) ? sanitize_key( $_GET['status'] ) : 'all';
 
 		$all_feeds = SF_Database::get_all_feeds(
 			array(
@@ -419,24 +420,16 @@ class SF_Admin {
 		);
 
 		$feeds = $all_feeds;
-		if ( ! empty( $search_query ) ) {
-			$feeds = array_filter(
-				$feeds,
-				function ( $feed ) use ( $search_query ) {
-					return stripos( $feed['name'], $search_query ) !== false;
-				}
-			);
+
+		if ( 'active' === $filter_status ) {
+			$feeds = array_filter( $feeds, function ( $f ) { return 'active' === $f['status']; } );
+		} elseif ( 'paused' === $filter_status ) {
+			$feeds = array_filter( $feeds, function ( $f ) { return 'active' !== $f['status']; } );
 		}
 
-		$total_feeds      = count( $all_feeds );
-		$active_feeds     = count(
-			array_filter(
-				$all_feeds,
-				function ( $f ) {
-					return 'active' === $f['status'];
-				}
-			)
-		);
+		$total_feeds  = count( $all_feeds );
+		$active_feeds = count( array_filter( $all_feeds, function ( $f ) { return 'active' === $f['status']; } ) );
+		$paused_feeds = $total_feeds - $active_feeds;
 		$connected_accounts = count( SF_Database::get_all_accounts( array( 'is_connected' => 1 ) ) );
 		?>
 		<div class="wrap sf-admin-wrap sf-feeds-wrap">
@@ -454,13 +447,13 @@ class SF_Admin {
 				</div>
 				<div class="sf-feeds-header-right">
 					<?php if ( $total_feeds > 0 ) : ?>
-					<form method="get" class="sf-feeds-search-form">
-						<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG . '-feeds' ); ?>">
-						<div class="sf-search-input-wrap">
-							<span class="dashicons dashicons-search"></span>
-							<input type="search" name="s" value="<?php echo esc_attr( $search_query ); ?>" placeholder="<?php esc_attr_e( 'Search feeds...', 'social-feed' ); ?>" class="sf-search-input">
-						</div>
-					</form>
+					<div class="sf-search-input-wrap" id="sf-live-search-wrap">
+						<span class="dashicons dashicons-search"></span>
+						<input type="search" id="sf-live-search" value="<?php echo esc_attr( $search_query ); ?>" placeholder="<?php esc_attr_e( 'Search feeds...', 'social-feed' ); ?>" class="sf-search-input" autocomplete="off">
+						<button type="button" class="sf-search-clear" id="sf-search-clear" style="display: none;">
+							<span class="dashicons dashicons-no-alt"></span>
+						</button>
+					</div>
 					<?php endif; ?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="sf-btn-create-feed">
 						<span class="dashicons dashicons-plus-alt2"></span>
@@ -499,6 +492,24 @@ class SF_Admin {
 					</div>
 				</div>
 			</div>
+
+			<?php if ( $total_feeds > 0 ) : ?>
+			<!-- Filter Tabs -->
+			<div class="sf-feeds-filter-tabs">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" class="sf-filter-tab <?php echo 'all' === $filter_status ? 'sf-filter-tab--active' : ''; ?>" data-filter="all">
+					<?php esc_html_e( 'All', 'social-feed' ); ?>
+					<span class="sf-filter-count"><?php echo esc_html( $total_feeds ); ?></span>
+				</a>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds&status=active' ) ); ?>" class="sf-filter-tab <?php echo 'active' === $filter_status ? 'sf-filter-tab--active' : ''; ?>" data-filter="active">
+					<?php esc_html_e( 'Active', 'social-feed' ); ?>
+					<span class="sf-filter-count"><?php echo esc_html( $active_feeds ); ?></span>
+				</a>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds&status=paused' ) ); ?>" class="sf-filter-tab <?php echo 'paused' === $filter_status ? 'sf-filter-tab--active' : ''; ?>" data-filter="paused">
+					<?php esc_html_e( 'Paused', 'social-feed' ); ?>
+					<span class="sf-filter-count"><?php echo esc_html( $paused_feeds ); ?></span>
+				</a>
+			</div>
+			<?php endif; ?>
 
 			<?php if ( empty( $feeds ) && empty( $search_query ) ) : ?>
 				<!-- Empty State -->
@@ -556,67 +567,164 @@ class SF_Admin {
 				</div>
 			<?php else : ?>
 				<!-- Feed Cards Grid -->
-				<div class="sf-feeds-grid">
+				<div class="sf-feeds-grid" id="sf-feeds-grid">
 					<?php foreach ( $feeds as $feed ) : ?>
 						<?php
 						$is_active    = 'active' === $feed['status'];
 						$status_class = $is_active ? 'sf-feed-status--active' : 'sf-feed-status--paused';
 						$status_text  = $is_active ? __( 'Active', 'social-feed' ) : __( 'Paused', 'social-feed' );
 						$created_date = date_i18n( get_option( 'date_format' ), strtotime( $feed['created_at'] ) );
+						$edit_url     = admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] );
+						$post_count   = $this->get_feed_post_count( $feed['id'] );
+						$last_sync    = $this->get_feed_last_sync( $feed['id'] );
 						?>
-						<div class="sf-feed-card" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>">
-							<div class="sf-feed-card-header">
-								<div class="sf-feed-card-platform">
-									<?php echo $this->get_platform_icon( $feed['platform'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<div class="sf-feed-card <?php echo $is_active ? '' : 'sf-feed-card--paused'; ?>" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" data-feed-name="<?php echo esc_attr( strtolower( $feed['name'] ) ); ?>" data-feed-status="<?php echo esc_attr( $feed['status'] ); ?>">
+							<a href="<?php echo esc_url( $edit_url ); ?>" class="sf-feed-card-link">
+								<div class="sf-feed-card-header">
+									<div class="sf-feed-card-platform">
+										<?php echo $this->get_platform_icon( $feed['platform'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+									</div>
+									<span class="sf-feed-card-status <?php echo esc_attr( $status_class ); ?>">
+										<span class="sf-status-dot"></span>
+										<?php echo esc_html( $status_text ); ?>
+									</span>
 								</div>
-								<span class="sf-feed-card-status <?php echo esc_attr( $status_class ); ?>">
-									<?php echo esc_html( $status_text ); ?>
-								</span>
-							</div>
-							<div class="sf-feed-card-body">
-								<h3 class="sf-feed-card-name">
-									<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>">
-										<?php echo esc_html( $feed['name'] ); ?>
-									</a>
-								</h3>
-								<p class="sf-feed-card-meta">
-									<span class="sf-feed-card-type"><?php echo esc_html( ucfirst( $feed['feed_type'] ) ); ?></span>
-									<span class="sf-feed-card-sep">&bull;</span>
-									<span class="sf-feed-card-date"><?php echo esc_html( $created_date ); ?></span>
-								</p>
+								<div class="sf-feed-card-body">
+									<h3 class="sf-feed-card-name"><?php echo esc_html( $feed['name'] ); ?></h3>
+									<div class="sf-feed-card-info">
+										<span class="sf-feed-info-item">
+											<span class="dashicons dashicons-category"></span>
+											<?php echo esc_html( ucfirst( $feed['feed_type'] ) ); ?>
+										</span>
+										<span class="sf-feed-info-item">
+											<span class="dashicons dashicons-images-alt2"></span>
+											<?php echo esc_html( $post_count ); ?> <?php esc_html_e( 'posts', 'social-feed' ); ?>
+										</span>
+										<span class="sf-feed-info-item">
+											<span class="dashicons dashicons-calendar-alt"></span>
+											<?php echo esc_html( $created_date ); ?>
+										</span>
+									</div>
+									<?php if ( $last_sync ) : ?>
+									<div class="sf-feed-card-sync">
+										<span class="dashicons dashicons-update"></span>
+										<?php
+										printf(
+											/* translators: %s: time ago */
+											esc_html__( 'Synced %s', 'social-feed' ),
+											esc_html( $last_sync )
+										);
+										?>
+									</div>
+									<?php endif; ?>
+								</div>
+							</a>
+							<div class="sf-feed-card-footer">
 								<div class="sf-feed-card-shortcode">
 									<code>[social_feed id="<?php echo esc_attr( $feed['id'] ); ?>"]</code>
-									<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( $feed['id'] ); ?>&quot;]" title="<?php esc_attr_e( 'Copy shortcode', 'social-feed' ); ?>">
-										<span class="dashicons dashicons-admin-page"></span>
+									<button type="button" class="sf-copy-btn" data-copy='[social_feed id="<?php echo esc_attr( $feed['id'] ); ?>"]'>
+										<span class="sf-copy-icon dashicons dashicons-admin-page"></span>
+										<span class="sf-copy-check dashicons dashicons-yes" style="display: none;"></span>
 									</button>
 								</div>
-							</div>
-							<div class="sf-feed-card-actions">
-								<div class="sf-feed-card-actions-left">
-									<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>" class="sf-feed-action sf-feed-action--edit" title="<?php esc_attr_e( 'Edit', 'social-feed' ); ?>">
-										<span class="dashicons dashicons-edit"></span>
-									</a>
-									<button type="button" class="sf-feed-action sf-feed-action--duplicate sf-duplicate-feed" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" title="<?php esc_attr_e( 'Duplicate', 'social-feed' ); ?>">
-										<span class="dashicons dashicons-admin-page"></span>
-									</button>
-									<button type="button" class="sf-feed-action sf-feed-action--delete sf-delete-feed" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" title="<?php esc_attr_e( 'Delete', 'social-feed' ); ?>">
-										<span class="dashicons dashicons-trash"></span>
-									</button>
-								</div>
-								<div class="sf-feed-card-actions-right">
-									<label class="sf-feed-toggle-wrap">
-										<input type="checkbox" class="sf-status-toggle" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" <?php checked( $is_active ); ?>>
-										<span class="sf-feed-toggle-switch"></span>
-										<span class="sf-feed-toggle-label"><?php echo $is_active ? esc_html__( 'On', 'social-feed' ) : esc_html__( 'Off', 'social-feed' ); ?></span>
-									</label>
+								<div class="sf-feed-card-actions">
+									<div class="sf-feed-card-actions-left">
+										<a href="<?php echo esc_url( $edit_url ); ?>" class="sf-feed-action sf-feed-action--edit sf-tooltip" data-tooltip="<?php esc_attr_e( 'Edit Feed', 'social-feed' ); ?>">
+											<span class="dashicons dashicons-edit"></span>
+										</a>
+										<button type="button" class="sf-feed-action sf-feed-action--duplicate sf-duplicate-feed sf-tooltip" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" data-tooltip="<?php esc_attr_e( 'Duplicate Feed', 'social-feed' ); ?>">
+											<span class="dashicons dashicons-admin-page"></span>
+										</button>
+										<button type="button" class="sf-feed-action sf-feed-action--delete sf-delete-feed sf-tooltip" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" data-feed-name="<?php echo esc_attr( $feed['name'] ); ?>" data-tooltip="<?php esc_attr_e( 'Delete Feed', 'social-feed' ); ?>">
+											<span class="dashicons dashicons-trash"></span>
+										</button>
+									</div>
+									<div class="sf-feed-card-actions-right">
+										<label class="sf-feed-toggle-wrap sf-tooltip" data-tooltip="<?php echo $is_active ? esc_attr__( 'Click to pause', 'social-feed' ) : esc_attr__( 'Click to activate', 'social-feed' ); ?>">
+											<input type="checkbox" class="sf-status-toggle" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" <?php checked( $is_active ); ?>>
+											<span class="sf-feed-toggle-switch"></span>
+										</label>
+									</div>
 								</div>
 							</div>
 						</div>
 					<?php endforeach; ?>
 				</div>
+
+				<!-- No Results Message (for live search) -->
+				<div class="sf-feeds-no-results-live" id="sf-no-results-live" style="display: none;">
+					<div class="sf-feeds-empty-icon">
+						<span class="dashicons dashicons-search"></span>
+					</div>
+					<h2 class="sf-feeds-empty-title"><?php esc_html_e( 'No feeds found', 'social-feed' ); ?></h2>
+					<p class="sf-feeds-empty-desc"><?php esc_html_e( 'Try a different search term.', 'social-feed' ); ?></p>
+				</div>
 			<?php endif; ?>
+
+			<!-- Delete Confirmation Modal -->
+			<div class="sf-modal-overlay" id="sf-delete-modal" style="display: none;">
+				<div class="sf-modal">
+					<div class="sf-modal-header">
+						<h3 class="sf-modal-title"><?php esc_html_e( 'Delete Feed', 'social-feed' ); ?></h3>
+						<button type="button" class="sf-modal-close" id="sf-modal-close">
+							<span class="dashicons dashicons-no-alt"></span>
+						</button>
+					</div>
+					<div class="sf-modal-body">
+						<div class="sf-modal-icon">
+							<span class="dashicons dashicons-warning"></span>
+						</div>
+						<p class="sf-modal-message">
+							<?php esc_html_e( 'Are you sure you want to delete', 'social-feed' ); ?>
+							<strong id="sf-delete-feed-name"></strong>?
+						</p>
+						<p class="sf-modal-warning"><?php esc_html_e( 'This action cannot be undone.', 'social-feed' ); ?></p>
+					</div>
+					<div class="sf-modal-footer">
+						<button type="button" class="sf-btn sf-btn-secondary" id="sf-modal-cancel">
+							<?php esc_html_e( 'Cancel', 'social-feed' ); ?>
+						</button>
+						<button type="button" class="sf-btn sf-btn-danger" id="sf-modal-confirm" data-feed-id="">
+							<span class="sf-btn-text"><?php esc_html_e( 'Delete Feed', 'social-feed' ); ?></span>
+							<span class="sf-btn-loading" style="display: none;">
+								<span class="sf-spinner"></span>
+								<?php esc_html_e( 'Deleting...', 'social-feed' ); ?>
+							</span>
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Get feed post count.
+	 *
+	 * @param int $feed_id Feed ID.
+	 * @return int Post count.
+	 */
+	private function get_feed_post_count( $feed_id ) {
+		$cached = get_transient( 'sf_feed_cache_' . $feed_id );
+		if ( $cached && isset( $cached['items'] ) ) {
+			return count( $cached['items'] );
+		}
+		$post_limit = SF_Database::get_feed_meta( $feed_id, 'posts_to_show', 12 );
+		return intval( $post_limit );
+	}
+
+	/**
+	 * Get feed last sync time.
+	 *
+	 * @param int $feed_id Feed ID.
+	 * @return string|false Human readable time or false.
+	 */
+	private function get_feed_last_sync( $feed_id ) {
+		$last_sync = SF_Database::get_feed_meta( $feed_id, 'last_sync', '' );
+		if ( ! $last_sync ) {
+			return false;
+		}
+		return human_time_diff( strtotime( $last_sync ), current_time( 'timestamp' ) ) . ' ' . __( 'ago', 'social-feed' );
 	}
 
 	/**

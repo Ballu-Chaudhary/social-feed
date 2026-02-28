@@ -3859,23 +3859,51 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	padding: 0 20px;
-	height: 42px;
+	padding: 0 24px;
+	height: 44px;
 	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 	color: #fff !important;
 	font-size: 14px;
 	font-weight: 600;
-	border-radius: 8px;
+	border-radius: 10px;
 	text-decoration: none;
-	box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
-	transition: all 0.2s ease;
+	box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 	white-space: nowrap;
+	position: relative;
+	overflow: hidden;
+}
+
+.sf-btn-create-feed::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+	transition: left 0.5s ease;
+}
+
+.sf-btn-create-feed:hover::before {
+	left: 100%;
 }
 
 .sf-btn-create-feed:hover {
-	transform: translateY(-1px);
-	box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
 	color: #fff !important;
+}
+
+.sf-btn-create-feed:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.sf-btn-create-feed .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
 }
 
 .sf-btn-create-feed:active {
@@ -4037,64 +4065,148 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	padding: 48px 32px;
 }
 
-/* Feed Cards Grid - 3 columns desktop, 2 tablet, 1 mobile */
+/* Feed Cards Grid */
 .sf-feeds-grid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 20px;
+	gap: 24px;
 }
 
+/* ==========================================================================
+   FILTER TABS
+   ========================================================================== */
+.sf-feeds-filter-tabs {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 24px;
+	padding: 6px;
+	background: #f3f4f6;
+	border-radius: 10px;
+	width: fit-content;
+}
+
+.sf-filter-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 18px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #6b7280;
+	text-decoration: none;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+}
+
+.sf-filter-tab:hover {
+	color: #374151;
+	background: rgba(255, 255, 255, 0.5);
+}
+
+.sf-filter-tab--active {
+	background: #fff;
+	color: #111827;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.sf-filter-tab--active:hover {
+	background: #fff;
+}
+
+.sf-filter-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 6px;
+	font-size: 12px;
+	font-weight: 600;
+	background: #e5e7eb;
+	color: #6b7280;
+	border-radius: 11px;
+}
+
+.sf-filter-tab--active .sf-filter-count {
+	background: #6366f1;
+	color: #fff;
+}
+
+/* ==========================================================================
+   FEED CARD IMPROVEMENTS
+   ========================================================================== */
 .sf-feed-card {
 	background: #fff;
 	border: 1px solid #e5e7eb;
-	border-radius: 12px;
+	border-radius: 14px;
 	overflow: hidden;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-	transition: all 0.25s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	display: flex;
 	flex-direction: column;
+	position: relative;
 }
 
 .sf-feed-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-	border-color: #d1d5db;
+	transform: translateY(-6px);
+	box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+	border-color: #a5b4fc;
 }
 
+.sf-feed-card--paused {
+	opacity: 0.75;
+}
+
+.sf-feed-card--paused:hover {
+	opacity: 1;
+}
+
+.sf-feed-card-link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	flex: 1;
+	cursor: pointer;
+}
+
+.sf-feed-card-link:focus {
+	outline: none;
+}
+
+.sf-feed-card-link:focus-visible .sf-feed-card-header {
+	box-shadow: inset 0 0 0 2px #6366f1;
+}
+
+/* Card Header */
 .sf-feed-card-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 14px 16px;
-	background: #f9fafb;
+	padding: 16px;
+	background: linear-gradient(180deg, #fafbfc 0%, #f5f6f8 100%);
 	border-bottom: 1px solid #e5e7eb;
-	min-height: 68px;
-	box-sizing: border-box;
 }
 
 .sf-feed-card-platform {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 40px;
-	height: 40px;
-	min-width: 40px;
-	min-height: 40px;
+	width: 42px;
+	height: 42px;
+	min-width: 42px;
 	background: #fff;
 	border-radius: 10px;
 	border: 1px solid #e5e7eb;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .sf-feed-card-platform .sf-platform-icon {
 	width: 24px;
 	height: 24px;
-	min-width: 24px;
-	min-height: 24px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	line-height: 1;
 }
 
 .sf-feed-card-platform .sf-platform-icon svg {
@@ -4115,19 +4227,18 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	color: #1877F2;
 }
 
+/* Status Badge with Dot */
 .sf-feed-card-status {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
+	gap: 6px;
 	padding: 6px 12px;
-	border-radius: 6px;
+	border-radius: 20px;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	line-height: 1;
-	height: 28px;
-	box-sizing: border-box;
 }
 
 .sf-feed-card-status.sf-feed-status--active {
@@ -4140,54 +4251,95 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	color: #b45309;
 }
 
+.sf-status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+	flex-shrink: 0;
+}
+
+.sf-feed-status--active .sf-status-dot {
+	background: #16a34a;
+	box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+	animation: sf-pulse 2s infinite;
+}
+
+@keyframes sf-pulse {
+	0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+	50% { box-shadow: 0 0 0 4px rgba(22, 163, 74, 0); }
+}
+
+.sf-feed-status--paused .sf-status-dot {
+	background: #b45309;
+}
+
+/* Card Body */
 .sf-feed-card-body {
-	padding: 16px;
+	padding: 20px 16px;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
 }
 
 .sf-feed-card-name {
-	font-size: 16px;
+	font-size: 17px;
 	font-weight: 600;
-	margin: 0;
-	line-height: 1.4;
-}
-
-.sf-feed-card-name a {
+	margin: 0 0 12px;
+	line-height: 1.3;
 	color: #111827;
-	text-decoration: none;
-	transition: color 0.15s ease;
 }
 
-.sf-feed-card-name a:hover {
-	color: #6366f1;
+.sf-feed-card-info {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	margin-bottom: 10px;
 }
 
-.sf-feed-card-meta {
+.sf-feed-info-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
 	font-size: 13px;
 	color: #6b7280;
-	margin: 0;
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
 }
 
-.sf-feed-card-sep {
-	margin: 0 8px;
-	color: #d1d5db;
+.sf-feed-info-item .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+	color: #9ca3af;
+}
+
+.sf-feed-card-sync {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: #10b981;
+	margin-top: auto;
+	padding-top: 8px;
+}
+
+.sf-feed-card-sync .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+/* Card Footer */
+.sf-feed-card-footer {
+	border-top: 1px solid #e5e7eb;
+	background: #f9fafb;
 }
 
 .sf-feed-card-shortcode {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	background: #f9fafb;
-	padding: 12px 14px;
-	border-radius: 8px;
-	border: 1px solid #e5e7eb;
-	margin-top: auto;
+	gap: 8px;
+	padding: 12px 16px;
+	border-bottom: 1px solid #eef0f2;
 }
 
 .sf-feed-card-shortcode code {
@@ -4202,41 +4354,54 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	text-overflow: ellipsis;
 }
 
-.sf-feed-card-shortcode .sf-copy-btn {
+.sf-copy-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 30px;
-	height: 30px;
-	min-width: 30px;
+	width: 28px;
+	height: 28px;
+	min-width: 28px;
 	background: #fff;
 	border: 1px solid #e5e7eb;
 	border-radius: 6px;
 	color: #6b7280;
 	cursor: pointer;
 	transition: all 0.15s ease;
+	position: relative;
 }
 
-.sf-feed-card-shortcode .sf-copy-btn:hover {
+.sf-copy-btn:hover {
 	border-color: #6366f1;
 	color: #6366f1;
 	background: #eef2ff;
 }
 
-.sf-feed-card-shortcode .sf-copy-btn .dashicons {
+.sf-copy-btn .dashicons {
 	font-size: 14px;
 	width: 14px;
 	height: 14px;
 }
 
-/* Card Actions - Left/Right split */
+.sf-copy-btn--copied {
+	border-color: #10b981 !important;
+	color: #10b981 !important;
+	background: #ecfdf5 !important;
+}
+
+.sf-copy-btn--copied .sf-copy-icon {
+	display: none !important;
+}
+
+.sf-copy-btn--copied .sf-copy-check {
+	display: flex !important;
+}
+
+/* Card Actions */
 .sf-feed-card-actions {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 12px 16px;
-	background: #f9fafb;
-	border-top: 1px solid #e5e7eb;
 }
 
 .sf-feed-card-actions-left {
@@ -4254,8 +4419,8 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
+	width: 34px;
+	height: 34px;
 	background: #fff;
 	border: 1px solid #e5e7eb;
 	border-radius: 8px;
@@ -4294,11 +4459,10 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	background: #fef2f2;
 }
 
-/* Toggle Switch with Label */
+/* Toggle Switch */
 .sf-feed-toggle-wrap {
 	display: flex;
 	align-items: center;
-	gap: 10px;
 	cursor: pointer;
 }
 
@@ -4336,24 +4500,302 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	left: 22px;
 }
 
-.sf-feed-toggle-label {
-	font-size: 13px;
+/* ==========================================================================
+   TOOLTIPS
+   ========================================================================== */
+.sf-tooltip {
+	position: relative;
+}
+
+.sf-tooltip::before {
+	content: attr(data-tooltip);
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 6px 10px;
+	background: #1f2937;
+	color: #fff;
+	font-size: 12px;
 	font-weight: 500;
+	white-space: nowrap;
+	border-radius: 6px;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.15s ease;
+	z-index: 100;
+	pointer-events: none;
+}
+
+.sf-tooltip::after {
+	content: '';
+	position: absolute;
+	bottom: calc(100% + 4px);
+	left: 50%;
+	transform: translateX(-50%);
+	border: 4px solid transparent;
+	border-top-color: #1f2937;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.15s ease;
+	z-index: 100;
+}
+
+.sf-tooltip:hover::before,
+.sf-tooltip:hover::after {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* ==========================================================================
+   SEARCH IMPROVEMENTS
+   ========================================================================== */
+.sf-search-clear {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	background: #e5e7eb;
+	border: none;
+	border-radius: 50%;
 	color: #6b7280;
-	min-width: 24px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.15s ease;
 }
 
-.sf-feed-toggle-wrap input:checked ~ .sf-feed-toggle-label {
-	color: #10b981;
+.sf-search-clear:hover {
+	background: #d1d5db;
+	color: #374151;
 }
 
-/* Responsive - Tablet */
-@media (max-width: 1100px) {
+.sf-search-clear .dashicons {
+	font-size: 12px;
+	width: 12px;
+	height: 12px;
+}
+
+.sf-search-input:focus + .sf-search-clear,
+.sf-search-clear:focus {
+	display: flex;
+}
+
+/* No Results (Live Search) */
+.sf-feeds-no-results-live {
+	text-align: center;
+	padding: 60px 32px;
+	background: #f9fafb;
+	border-radius: 12px;
+	border: 2px dashed #e5e7eb;
+}
+
+.sf-feeds-no-results-live .sf-feeds-empty-icon .dashicons {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	color: #9ca3af;
+}
+
+/* ==========================================================================
+   DELETE MODAL
+   ========================================================================== */
+.sf-modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(4px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.2s ease;
+}
+
+.sf-modal-overlay.sf-modal--visible {
+	opacity: 1;
+	visibility: visible;
+}
+
+.sf-modal {
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+	width: 100%;
+	max-width: 420px;
+	margin: 20px;
+	transform: scale(0.9) translateY(20px);
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sf-modal-overlay.sf-modal--visible .sf-modal {
+	transform: scale(1) translateY(0);
+}
+
+.sf-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.sf-modal-title {
+	font-size: 18px;
+	font-weight: 600;
+	color: #111827;
+	margin: 0;
+}
+
+.sf-modal-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	background: transparent;
+	border: none;
+	border-radius: 8px;
+	color: #6b7280;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.sf-modal-close:hover {
+	background: #f3f4f6;
+	color: #374151;
+}
+
+.sf-modal-close .dashicons {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.sf-modal-body {
+	padding: 24px;
+	text-align: center;
+}
+
+.sf-modal-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 64px;
+	height: 64px;
+	margin: 0 auto 20px;
+	background: #fef2f2;
+	border-radius: 50%;
+}
+
+.sf-modal-icon .dashicons {
+	font-size: 32px;
+	width: 32px;
+	height: 32px;
+	color: #dc2626;
+}
+
+.sf-modal-message {
+	font-size: 15px;
+	color: #374151;
+	margin: 0 0 8px;
+}
+
+.sf-modal-message strong {
+	color: #111827;
+}
+
+.sf-modal-warning {
+	font-size: 13px;
+	color: #9ca3af;
+	margin: 0;
+}
+
+.sf-modal-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	padding: 16px 24px;
+	background: #f9fafb;
+	border-top: 1px solid #e5e7eb;
+	border-radius: 0 0 16px 16px;
+}
+
+.sf-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 20px;
+	font-size: 14px;
+	font-weight: 500;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	border: none;
+}
+
+.sf-btn-secondary {
+	background: #fff;
+	color: #374151;
+	border: 1px solid #d1d5db;
+}
+
+.sf-btn-secondary:hover {
+	background: #f9fafb;
+	border-color: #9ca3af;
+}
+
+.sf-btn-danger {
+	background: #dc2626;
+	color: #fff;
+}
+
+.sf-btn-danger:hover {
+	background: #b91c1c;
+}
+
+.sf-btn-danger:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.sf-spinner {
+	width: 14px;
+	height: 14px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: sf-spin 0.6s linear infinite;
+}
+
+@keyframes sf-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+/* Responsive - Large Tablet */
+@media (max-width: 1200px) {
 	.sf-feeds-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
+/* Responsive - Tablet */
 @media (max-width: 960px) {
 	.sf-feeds-header {
 		flex-direction: column;
@@ -4366,7 +4808,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 		width: 100%;
 	}
 
-	.sf-feeds-search-form {
+	.sf-search-input-wrap {
 		flex: 1;
 		width: auto;
 	}
@@ -4391,7 +4833,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 		gap: 12px;
 	}
 
-	.sf-feeds-search-form {
+	.sf-search-input-wrap {
 		width: 100%;
 	}
 
@@ -4405,6 +4847,18 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 		gap: 12px;
 	}
 
+	.sf-feeds-filter-tabs {
+		width: 100%;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.sf-filter-tab {
+		padding: 8px 14px;
+		font-size: 13px;
+		white-space: nowrap;
+	}
+
 	.sf-feeds-grid {
 		grid-template-columns: 1fr;
 	}
@@ -4416,6 +4870,10 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 	.sf-feed-card-actions-left {
 		flex: 1;
+	}
+
+	.sf-modal {
+		max-width: calc(100% - 32px);
 	}
 }
 
