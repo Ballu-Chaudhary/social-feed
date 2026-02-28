@@ -274,6 +274,7 @@ class SF_Customizer {
 			'columns_mobile'      => 1,
 			'feed_height'         => '',
 			'image_padding'       => 10,
+			'post_radius'         => '8',
 			'bg_color'            => '#ffffff',
 			'text_color'          => '#333333',
 			'border_style'        => 'none',
@@ -426,7 +427,40 @@ class SF_Customizer {
 				</div>
 			</div>
 
-			<!-- 4. Number of Posts -->
+			<!-- 4. Post Corner Style -->
+			<?php
+			$post_radius = isset( $settings['post_radius'] ) ? $settings['post_radius'] : '8';
+			$radius_presets = array(
+				'0'      => __( 'Square', 'social-feed' ),
+				'8'      => __( 'Rounded', 'social-feed' ),
+				'16'     => __( 'More Rounded', 'social-feed' ),
+				'custom' => __( 'Custom', 'social-feed' ),
+			);
+			$is_custom = ! in_array( $post_radius, array( '0', '8', '16' ), true );
+			$active_key = $is_custom ? 'custom' : $post_radius;
+			?>
+			<div class="sf-layout-panel-section">
+				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Post Corner Style', 'social-feed' ); ?></div>
+				<div class="sf-corner-style-options">
+					<?php foreach ( $radius_presets as $val => $label ) : ?>
+					<label class="sf-corner-option <?php echo $active_key === $val ? 'active' : ''; ?>">
+						<input type="radio" name="post_radius_preset" value="<?php echo esc_attr( $val ); ?>" <?php checked( $active_key, $val ); ?>>
+						<span class="sf-corner-preview" style="border-radius: <?php echo 'custom' === $val ? '12' : esc_attr( $val ); ?>px;"></span>
+						<span class="sf-corner-label"><?php echo esc_html( $label ); ?></span>
+					</label>
+					<?php endforeach; ?>
+				</div>
+				<div class="sf-field sf-field-number-px sf-post-radius-custom" <?php echo $is_custom ? '' : 'style="display:none;"'; ?>>
+					<label for="sf_post_radius"><?php esc_html_e( 'Radius', 'social-feed' ); ?></label>
+					<div class="sf-number-px-wrap">
+						<input type="number" id="sf_post_radius" name="post_radius" value="<?php echo esc_attr( $is_custom ? $post_radius : '' ); ?>" min="0" max="100" step="1" placeholder="12">
+						<span class="sf-number-px-suffix">px</span>
+					</div>
+				</div>
+				<input type="hidden" id="sf_post_radius_value" name="post_radius" value="<?php echo esc_attr( $post_radius ); ?>">
+			</div>
+
+			<!-- 5. Number of Posts -->
 			<div class="sf-layout-panel-section">
 				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Number of Posts', 'social-feed' ); ?></div>
 				<div class="sf-device-rows">

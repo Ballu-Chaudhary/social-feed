@@ -191,7 +191,7 @@ class SF_Renderer {
 			'columns_tablet'    => '--sf-columns-tablet',
 			'columns_mobile'    => '--sf-columns-mobile',
 			'gap'               => '--sf-gap',
-			'border_radius'     => '--sf-border-radius',
+			'post_radius'       => '--sf-border-radius',
 			'bg_color'          => '--sf-bg-color',
 			'text_color'        => '--sf-text-color',
 			'link_color'        => '--sf-link-color',
@@ -214,7 +214,7 @@ class SF_Renderer {
 
 				if ( in_array( $setting, array( 'columns', 'columns_tablet', 'columns_mobile' ), true ) ) {
 					$value = absint( $value );
-				} elseif ( in_array( $setting, array( 'gap', 'border_radius', 'font_size', 'border_width' ), true ) ) {
+				} elseif ( in_array( $setting, array( 'gap', 'post_radius', 'font_size', 'border_width' ), true ) ) {
 					$value = is_numeric( $value ) ? $value . 'px' : $value;
 				}
 

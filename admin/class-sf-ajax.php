@@ -225,7 +225,7 @@ class SF_Ajax {
 				scroll-snap-align: start;
 			}
 			.sf-preview-item {
-				border-radius: <?php echo intval( $settings['border_radius'] ); ?>px;
+				border-radius: <?php echo intval( $settings['post_radius'] ); ?>px;
 				overflow: hidden;
 				<?php if ( 'none' !== $settings['border_style'] ) : ?>
 				border: 1px <?php echo esc_attr( $settings['border_style'] ); ?> <?php echo esc_attr( $settings['border_color'] ); ?>;
@@ -650,7 +650,7 @@ class SF_Ajax {
 		}
 
 		$meta_fields = array(
-			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding',
+			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding', 'post_radius',
 			'post_count_desktop', 'post_count_tablet', 'post_count_mobile',
 			'bg_color', 'text_color', 'border_style', 'border_color', 'border_radius',
 			'hover_effect', 'dark_mode', 'show_header', 'show_profile_pic', 'show_username',

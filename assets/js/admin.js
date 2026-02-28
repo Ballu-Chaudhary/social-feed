@@ -770,6 +770,8 @@
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
 			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
+			$(document).on('change', 'input[name="post_radius_preset"]', this.handlePostRadiusPreset.bind(this));
+			$(document).on('input', '#sf_post_radius', this.handlePostRadiusCustom.bind(this));
 
 			$(document).on('click', '.sf-info-icon', function (e) {
 				e.stopPropagation();
@@ -973,6 +975,45 @@
 				$('.sf-loadmore-button-section').slideUp(200);
 				$('.sf-loadmore-general-section').slideDown(200);
 			}
+		},
+
+		/**
+		 * Handle post corner style preset change.
+		 */
+		handlePostRadiusPreset: function () {
+			var val = $('input[name="post_radius_preset"]:checked').val();
+
+			$('.sf-corner-option').removeClass('active');
+			$('input[name="post_radius_preset"]:checked').closest('.sf-corner-option').addClass('active');
+
+			if (val === 'custom') {
+				$('.sf-post-radius-custom').slideDown(200);
+				var custom = $('#sf_post_radius').val();
+				$('#sf_post_radius_value').val(custom || '12');
+			} else {
+				$('.sf-post-radius-custom').slideUp(200);
+				$('#sf_post_radius_value').val(val);
+			}
+			this.applyPostRadiusToPreview();
+			this.debouncePreview();
+		},
+
+		/**
+		 * Handle post corner style custom input.
+		 */
+		handlePostRadiusCustom: function () {
+			var val = $('#sf_post_radius').val();
+			$('#sf_post_radius_value').val(val);
+			this.applyPostRadiusToPreview();
+		},
+
+		/**
+		 * Apply post radius to preview items without full reload.
+		 */
+		applyPostRadiusToPreview: function () {
+			var val = parseInt($('#sf_post_radius_value').val(), 10);
+			if (isNaN(val) || val < 0) val = 0;
+			$('.sf-preview-item').css('border-radius', val + 'px');
 		},
 
 		/**
