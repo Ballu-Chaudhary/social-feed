@@ -84,6 +84,8 @@ register_deactivation_hook( __FILE__, 'sf_deactivate' );
  * Initialize the plugin.
  */
 function sf_init() {
+	SF_Database::maybe_upgrade();
+
 	$core = new SF_Core();
 	$core->init();
 }

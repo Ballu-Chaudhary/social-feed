@@ -22,7 +22,11 @@ class SF_Customizer {
 	public static function render( $feed_id = 0 ) {
 		$feed     = $feed_id ? SF_Database::get_feed( $feed_id ) : null;
 		$meta     = $feed_id ? SF_Database::get_all_feed_meta( $feed_id ) : array();
-		$accounts = SF_Database::get_all_accounts( array( 'is_connected' => 1 ) );
+		$account_args = array( 'is_connected' => 1 );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$account_args['wp_user_id'] = get_current_user_id();
+		}
+		$accounts = SF_Database::get_all_accounts( $account_args );
 		$is_pro   = self::is_pro();
 
 		$defaults = self::get_defaults();

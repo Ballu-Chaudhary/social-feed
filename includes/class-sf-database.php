@@ -19,7 +19,7 @@ class SF_Database {
 	 *
 	 * @var string
 	 */
-	const DB_VERSION = '1.0.0';
+	const DB_VERSION = '1.1.0';
 
 	/**
 	 * Table names cache.
@@ -75,6 +75,7 @@ class SF_Database {
 
 		$sql[] = "CREATE TABLE " . self::get_table( 'accounts' ) . " (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			wp_user_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			platform varchar(50) NOT NULL,
 			account_name varchar(255) NOT NULL,
 			account_id_ext varchar(255) NOT NULL,
@@ -90,7 +91,8 @@ class SF_Database {
 			PRIMARY KEY (id),
 			UNIQUE KEY platform_account (platform, account_id_ext),
 			KEY platform (platform),
-			KEY is_connected (is_connected)
+			KEY is_connected (is_connected),
+			KEY wp_user_id (wp_user_id)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE " . self::get_table( 'feed_items' ) . " (
@@ -173,6 +175,18 @@ class SF_Database {
 		}
 
 		update_option( 'sf_db_version', self::DB_VERSION );
+	}
+
+	/**
+	 * Check if the DB needs upgrading and run create_tables if so.
+	 * dbDelta handles adding missing columns without data loss.
+	 */
+	public static function maybe_upgrade() {
+		$installed = get_option( 'sf_db_version', '0' );
+
+		if ( version_compare( $installed, self::DB_VERSION, '<' ) ) {
+			self::create_tables();
+		}
 	}
 
 	// =========================================================================
@@ -331,6 +345,7 @@ class SF_Database {
 		global $wpdb;
 
 		$defaults = array(
+			'wp_user_id'     => get_current_user_id(),
 			'platform'       => '',
 			'account_name'   => '',
 			'account_id_ext' => '',
@@ -414,6 +429,7 @@ class SF_Database {
 		global $wpdb;
 
 		$defaults = array(
+			'wp_user_id'   => null,
 			'platform'     => '',
 			'is_connected' => null,
 			'orderby'      => 'created_at',
@@ -425,6 +441,11 @@ class SF_Database {
 		$args   = wp_parse_args( $args, $defaults );
 		$where  = array( '1=1' );
 		$values = array();
+
+		if ( null !== $args['wp_user_id'] ) {
+			$where[]  = 'wp_user_id = %d';
+			$values[] = (int) $args['wp_user_id'];
+		}
 
 		if ( ! empty( $args['platform'] ) ) {
 			$where[]  = 'platform = %s';

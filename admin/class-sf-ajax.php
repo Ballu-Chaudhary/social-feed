@@ -1025,6 +1025,7 @@ class SF_Ajax {
 			$result     = SF_Database::update_account( $existing['id'], $account_data );
 			$account_id = $existing['id'];
 		} else {
+			$account_data['wp_user_id'] = get_current_user_id();
 			$account_id = SF_Database::create_account( $account_data );
 			$result     = $account_id ? true : false;
 		}
@@ -1062,6 +1063,11 @@ class SF_Ajax {
 		$account = SF_Database::get_account( $account_id );
 		if ( ! $account ) {
 			wp_send_json_error( array( 'message' => __( 'Account not found.', 'social-feed' ) ) );
+		}
+
+		$owner_id = isset( $account['wp_user_id'] ) ? (int) $account['wp_user_id'] : 0;
+		if ( ! current_user_can( 'manage_options' ) && $owner_id !== get_current_user_id() ) {
+			wp_send_json_error( array( 'message' => __( 'You can only delete your own accounts.', 'social-feed' ) ) );
 		}
 
 		$feeds = SF_Database::get_all_feeds( array( 'limit' => 1000 ) );
@@ -1111,6 +1117,14 @@ class SF_Ajax {
 			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'social-feed' ) ) );
 		}
 
+		$account = SF_Database::get_account( $account_id );
+		if ( $account ) {
+			$owner_id = isset( $account['wp_user_id'] ) ? (int) $account['wp_user_id'] : 0;
+			if ( ! current_user_can( 'manage_options' ) && $owner_id !== get_current_user_id() ) {
+				wp_send_json_error( array( 'message' => __( 'You can only reconnect your own accounts.', 'social-feed' ) ) );
+			}
+		}
+
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
 		$url = SF_Accounts::get_oauth_url( $platform );
 
@@ -1136,7 +1150,11 @@ class SF_Ajax {
 	public function handle_get_accounts_list() {
 		$this->verify_request();
 
-		$accounts = SF_Database::get_all_accounts();
+		$args = array();
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$args['wp_user_id'] = get_current_user_id();
+		}
+		$accounts = SF_Database::get_all_accounts( $args );
 
 		$accounts_data = array();
 		foreach ( $accounts as $account ) {
@@ -1148,7 +1166,7 @@ class SF_Ajax {
 				}
 			}
 
-			$accounts_data[] = array(
+			$item = array(
 				'id'            => $account['id'],
 				'platform'      => $account['platform'],
 				'account_name'  => $account['account_name'],
@@ -1158,6 +1176,14 @@ class SF_Ajax {
 				'last_error'    => $account['last_error'],
 				'feeds_count'   => $feeds_count,
 			);
+
+			if ( current_user_can( 'manage_options' ) ) {
+				$wp_user_id          = isset( $account['wp_user_id'] ) ? (int) $account['wp_user_id'] : 0;
+				$user                = $wp_user_id ? get_userdata( $wp_user_id ) : null;
+				$item['connected_by'] = $user ? $user->display_name : __( 'Unknown', 'social-feed' );
+			}
+
+			$accounts_data[] = $item;
 		}
 
 		wp_send_json_success( array( 'accounts' => $accounts_data ) );

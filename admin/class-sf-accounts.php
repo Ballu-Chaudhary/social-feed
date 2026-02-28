@@ -18,7 +18,11 @@ class SF_Accounts {
 	 * Render the connected accounts page.
 	 */
 	public static function render() {
-		$accounts = SF_Database::get_all_accounts();
+		$args = array();
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$args['wp_user_id'] = get_current_user_id();
+		}
+		$accounts = SF_Database::get_all_accounts( $args );
 		?>
 		<div class="wrap sf-admin-wrap sf-accounts-wrap">
 			<div class="sf-accounts-header">
@@ -66,6 +70,8 @@ class SF_Accounts {
 		$feeds_count  = self::get_feeds_using_account( $account['id'] );
 		$platform     = $account['platform'];
 		$expiry_date  = $account['token_expires'] ? date_i18n( get_option( 'date_format' ), strtotime( $account['token_expires'] ) ) : __( 'Never', 'social-feed' );
+		$wp_user_id   = isset( $account['wp_user_id'] ) ? (int) $account['wp_user_id'] : 0;
+		$connected_by = $wp_user_id ? get_userdata( $wp_user_id ) : null;
 		?>
 		<div class="sf-account-card sf-account-<?php echo esc_attr( $status['type'] ); ?>" data-account-id="<?php echo esc_attr( $account['id'] ); ?>">
 			<div class="sf-account-card-header">
@@ -104,6 +110,12 @@ class SF_Accounts {
 					<span class="sf-meta-label"><?php esc_html_e( 'Feeds Using', 'social-feed' ); ?></span>
 					<span class="sf-meta-value"><?php echo esc_html( $feeds_count ); ?></span>
 				</div>
+				<?php if ( $connected_by && current_user_can( 'manage_options' ) ) : ?>
+				<div class="sf-meta-item">
+					<span class="sf-meta-label"><?php esc_html_e( 'Connected By', 'social-feed' ); ?></span>
+					<span class="sf-meta-value"><?php echo esc_html( $connected_by->display_name ); ?></span>
+				</div>
+				<?php endif; ?>
 			</div>
 
 			<div class="sf-account-card-actions">
