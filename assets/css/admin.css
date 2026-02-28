@@ -3812,26 +3812,26 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 .sf-search-input-wrap {
 	position: relative;
-	display: flex;
-	align-items: center;
+	display: block;
 }
 
 .sf-search-input-wrap .dashicons {
 	position: absolute;
-	left: 14px;
+	left: 12px;
 	top: 50%;
 	transform: translateY(-50%);
 	color: #9ca3af;
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
 	pointer-events: none;
-	z-index: 1;
+	z-index: 2;
+	line-height: 1;
 }
 
 .sf-search-input {
 	width: 100%;
-	padding: 0 16px 0 42px;
+	padding: 0 14px 0 40px !important;
 	border: 1px solid #e5e7eb;
 	border-radius: 8px;
 	font-size: 14px;
@@ -3839,7 +3839,8 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	transition: all 0.2s ease;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 	height: 42px;
-	line-height: 42px;
+	line-height: 40px;
+	box-sizing: border-box;
 }
 
 .sf-search-input:focus {
@@ -3850,6 +3851,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 .sf-search-input::placeholder {
 	color: #9ca3af;
+	padding-left: 0;
 }
 
 /* Create Feed Button */
@@ -4063,54 +4065,74 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 16px 20px;
-	background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
-	border-bottom: 1px solid #eee;
-	gap: 16px;
+	padding: 14px 16px;
+	background: #f9fafb;
+	border-bottom: 1px solid #e5e7eb;
+	min-height: 68px;
+	box-sizing: border-box;
 }
 
 .sf-feed-card-platform {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 42px;
-	height: 42px;
+	width: 40px;
+	height: 40px;
+	min-width: 40px;
+	min-height: 40px;
 	background: #fff;
 	border-radius: 10px;
 	border: 1px solid #e5e7eb;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-	flex-shrink: 0;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .sf-feed-card-platform .sf-platform-icon {
-	width: 26px;
-	height: 26px;
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	min-height: 24px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #E1306C;
+	line-height: 1;
 }
 
 .sf-feed-card-platform .sf-platform-icon svg {
-	width: 26px;
-	height: 26px;
+	width: 24px;
+	height: 24px;
+	display: block;
+}
+
+.sf-feed-card-platform .sf-platform-icon.sf-platform-instagram {
+	color: #E1306C;
+}
+
+.sf-feed-card-platform .sf-platform-icon.sf-platform-youtube {
+	color: #FF0000;
+}
+
+.sf-feed-card-platform .sf-platform-icon.sf-platform-facebook {
+	color: #1877F2;
 }
 
 .sf-feed-card-status {
 	display: inline-flex;
 	align-items: center;
-	padding: 6px 14px;
-	border-radius: 20px;
+	justify-content: center;
+	padding: 6px 12px;
+	border-radius: 6px;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	flex-shrink: 0;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	height: 28px;
+	box-sizing: border-box;
 }
 
 .sf-feed-card-status.sf-feed-status--active {
-	background: #d1fae5;
-	color: #059669;
+	background: #dcfce7;
+	color: #16a34a;
 }
 
 .sf-feed-card-status.sf-feed-status--paused {
@@ -4119,11 +4141,11 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 }
 
 .sf-feed-card-body {
-	padding: 20px;
+	padding: 16px;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 10px;
 }
 
 .sf-feed-card-name {
@@ -4212,9 +4234,9 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 14px 20px;
-	background: #fafafa;
-	border-top: 1px solid #f0f0f0;
+	padding: 12px 16px;
+	background: #f9fafb;
+	border-top: 1px solid #e5e7eb;
 }
 
 .sf-feed-card-actions-left {
