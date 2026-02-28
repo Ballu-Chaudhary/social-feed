@@ -183,6 +183,22 @@ body.sf-admin-page.sf-dashboard-page #wpcontent {
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+.sf-dashboard-wrap .sf-stat-card--clickable {
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.sf-dashboard-wrap .sf-stat-card--clickable:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 6px 16px rgba(34, 113, 177, 0.15);
+	border-left-color: #135e96;
+}
+
+.sf-dashboard-wrap .sf-stat-card--clickable:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
 .sf-dashboard-wrap .sf-stat-card--blue {
 	border-left-color: #2271b1;
 }

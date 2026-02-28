@@ -286,22 +286,6 @@ class SF_Admin {
 	}
 
 	/**
-	 * Get recent feeds.
-	 *
-	 * @param int $limit Number of feeds to return.
-	 * @return array
-	 */
-	private function get_recent_feeds( $limit = 5 ) {
-		return SF_Database::get_all_feeds(
-			array(
-				'orderby' => 'created_at',
-				'order'   => 'DESC',
-				'limit'   => $limit,
-			)
-		);
-	}
-
-	/**
 	 * Get recent error logs.
 	 *
 	 * @param int $limit Number of logs to return.
@@ -336,7 +320,6 @@ class SF_Admin {
 	 */
 	public function render_dashboard() {
 		$stats         = $this->get_stats();
-		$recent_feeds  = $this->get_recent_feeds();
 		$recent_errors = $this->get_recent_errors();
 		$is_pro        = $this->is_pro();
 		?>
@@ -353,13 +336,13 @@ class SF_Admin {
 			<div class="sf-dashboard-grid">
 				<!-- Stats Section - 3 cards -->
 				<div class="sf-stats-grid">
-					<div class="sf-stat-card sf-stat-card--blue">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" class="sf-stat-card sf-stat-card--blue sf-stat-card--clickable">
 						<span class="sf-stat-icon-wrap"><span class="dashicons dashicons-rss"></span></span>
 						<div class="sf-stat-content">
 							<span class="sf-stat-number"><?php echo esc_html( (string) $stats['total_feeds'] ); ?></span>
 							<span class="sf-stat-label"><?php esc_html_e( 'Total Feeds', 'social-feed' ); ?></span>
 						</div>
-					</div>
+					</a>
 					<div class="sf-stat-card sf-stat-card--green">
 						<span class="sf-stat-icon-wrap"><span class="dashicons dashicons-admin-users"></span></span>
 						<div class="sf-stat-content">
@@ -392,70 +375,6 @@ class SF_Admin {
 							<span class="dashicons dashicons-update"></span>
 							<?php esc_html_e( 'Clear Cache', 'social-feed' ); ?>
 						</button>
-					</div>
-				</div>
-
-				<!-- Recent Feeds -->
-				<div class="sf-card sf-recent-feeds">
-					<h2 class="sf-card-title">
-						<?php esc_html_e( 'Recent Feeds', 'social-feed' ); ?>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ) ); ?>" class="sf-view-all">
-							<?php esc_html_e( 'View All', 'social-feed' ); ?>
-						</a>
-					</h2>
-					<div class="sf-card-content">
-						<?php if ( empty( $recent_feeds ) ) : ?>
-							<div class="sf-empty-state">
-								<p><?php esc_html_e( 'No feeds created yet.', 'social-feed' ); ?></p>
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="button button-primary">
-									<?php esc_html_e( 'Create Your First Feed', 'social-feed' ); ?>
-								</a>
-							</div>
-						<?php else : ?>
-							<table class="sf-table">
-								<thead>
-									<tr>
-										<th><?php esc_html_e( 'Platform', 'social-feed' ); ?></th>
-										<th><?php esc_html_e( 'Feed Name', 'social-feed' ); ?></th>
-										<th><?php esc_html_e( 'Status', 'social-feed' ); ?></th>
-										<th><?php esc_html_e( 'Shortcode', 'social-feed' ); ?></th>
-										<th><?php esc_html_e( 'Actions', 'social-feed' ); ?></th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php foreach ( $recent_feeds as $feed ) : ?>
-										<?php
-										$status_class = 'active' === $feed['status'] ? 'sf-status-badge--active' : 'sf-status-badge--paused';
-										$status_text  = 'active' === $feed['status'] ? __( 'Active', 'social-feed' ) : __( 'Paused', 'social-feed' );
-										?>
-										<tr>
-											<td><?php echo $this->get_platform_icon( $feed['platform'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-											<td>
-												<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>">
-													<?php echo esc_html( $feed['name'] ); ?>
-												</a>
-											</td>
-											<td><span class="sf-status-badge <?php echo esc_attr( $status_class ); ?>"><?php echo esc_html( $status_text ); ?></span></td>
-											<td>
-												<div class="sf-shortcode-wrap">
-													<code>[social_feed id="<?php echo esc_attr( (string) $feed['id'] ); ?>"]</code>
-													<button type="button" class="sf-copy-btn" data-copy="[social_feed id=&quot;<?php echo esc_attr( (string) $feed['id'] ); ?>&quot;]" title="<?php esc_attr_e( 'Copy shortcode', 'social-feed' ); ?>">
-														<span class="dashicons dashicons-clipboard"></span>
-													</button>
-												</div>
-											</td>
-											<td class="sf-actions-cell">
-												<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] ) ); ?>" class="button button-small"><?php esc_html_e( 'Edit', 'social-feed' ); ?></a>
-												<label class="sf-toggle sf-toggle-inline">
-													<input type="checkbox" class="sf-status-toggle" data-feed-id="<?php echo esc_attr( (string) $feed['id'] ); ?>" <?php checked( 'active', $feed['status'] ); ?>>
-													<span class="sf-toggle-slider"></span>
-												</label>
-											</td>
-										</tr>
-									<?php endforeach; ?>
-								</tbody>
-							</table>
-						<?php endif; ?>
 					</div>
 				</div>
 
