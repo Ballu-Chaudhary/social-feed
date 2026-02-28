@@ -128,6 +128,52 @@ class SF_Settings {
 				'pro_only'    => true,
 			)
 		);
+
+		add_settings_section(
+			'sf_instagram_api_section',
+			__( 'Instagram API Credentials', 'social-feed' ),
+			array( __CLASS__, 'render_instagram_api_section_desc' ),
+			'sf_settings_general'
+		);
+
+		add_settings_field(
+			'instagram_app_id',
+			__( 'App ID', 'social-feed' ),
+			array( __CLASS__, 'render_text_field' ),
+			'sf_settings_general',
+			'sf_instagram_api_section',
+			array(
+				'id'          => 'instagram_app_id',
+				'placeholder' => __( 'Enter your Instagram App ID', 'social-feed' ),
+				'description' => __( 'Found in your Meta Developer App dashboard under Instagram > Basic Display.', 'social-feed' ),
+			)
+		);
+
+		add_settings_field(
+			'instagram_app_secret',
+			__( 'App Secret', 'social-feed' ),
+			array( __CLASS__, 'render_password_field' ),
+			'sf_settings_general',
+			'sf_instagram_api_section',
+			array(
+				'id'          => 'instagram_app_secret',
+				'placeholder' => __( 'Enter your Instagram App Secret', 'social-feed' ),
+				'description' => __( 'Keep this value private. Never share it publicly.', 'social-feed' ),
+			)
+		);
+	}
+
+	/**
+	 * Render Instagram API section description.
+	 */
+	public static function render_instagram_api_section_desc() {
+		echo '<p class="description">';
+		printf(
+			/* translators: %s: URL to Meta developer docs */
+			esc_html__( 'Create an app at %s to get your credentials. Required for connecting Instagram accounts.', 'social-feed' ),
+			'<a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">developers.facebook.com/apps</a>'
+		);
+		echo '</p>';
 	}
 
 	/**
@@ -351,6 +397,8 @@ class SF_Settings {
 			'debug_mode'               => '0',
 			'proxy_images'             => '0',
 			'load_assets_conditionally' => '1',
+			'instagram_app_id'         => '',
+			'instagram_app_secret'     => '',
 		);
 	}
 
@@ -379,6 +427,8 @@ class SF_Settings {
 		$sanitized['debug_mode']                = isset( $input['debug_mode'] ) ? '1' : '0';
 		$sanitized['proxy_images']              = isset( $input['proxy_images'] ) ? '1' : '0';
 		$sanitized['load_assets_conditionally'] = isset( $input['load_assets_conditionally'] ) ? '1' : '0';
+		$sanitized['instagram_app_id']          = sanitize_text_field( $input['instagram_app_id'] ?? '' );
+		$sanitized['instagram_app_secret']      = sanitize_text_field( $input['instagram_app_secret'] ?? '' );
 
 		return $sanitized;
 	}
@@ -542,6 +592,29 @@ class SF_Settings {
 		<?php endif; ?>
 		<?php if ( $disabled ) : ?>
 			<span class="sf-pro-badge"><?php esc_html_e( 'PRO', 'social-feed' ); ?></span>
+		<?php endif; ?>
+		<?php
+	}
+
+	/**
+	 * Render password field with visibility toggle.
+	 *
+	 * @param array $args Field arguments.
+	 */
+	public static function render_password_field( $args ) {
+		$settings    = get_option( self::OPTION_NAME, self::get_defaults() );
+		$value       = $settings[ $args['id'] ] ?? '';
+		$placeholder = $args['placeholder'] ?? '';
+
+		?>
+		<input type="password"
+			name="<?php echo esc_attr( self::OPTION_NAME . '[' . $args['id'] . ']' ); ?>"
+			value="<?php echo esc_attr( $value ); ?>"
+			placeholder="<?php echo esc_attr( $placeholder ); ?>"
+			class="regular-text"
+			autocomplete="off">
+		<?php if ( ! empty( $args['description'] ) ) : ?>
+			<p class="description"><?php echo esc_html( $args['description'] ); ?></p>
 		<?php endif; ?>
 		<?php
 	}
