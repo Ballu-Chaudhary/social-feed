@@ -264,6 +264,7 @@ class SF_Customizer {
 			'platform'            => 'instagram',
 			'account_id'          => 0,
 			'feed_type'           => 'user',
+			'hashtag'             => '',
 			'post_count'          => 9,
 			'post_count_desktop'   => 9,
 			'post_count_tablet'    => 9,
@@ -347,13 +348,47 @@ class SF_Customizer {
 						</a>
 					</div>
 				</div>
-				<div class="sf-field">
-					<label for="sf_feed_type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></label>
-					<select id="sf_feed_type" name="feed_type">
-						<option value="user" <?php selected( $settings['feed_type'], 'user' ); ?>><?php esc_html_e( 'User Timeline', 'social-feed' ); ?></option>
-						<option value="hashtag" <?php selected( $settings['feed_type'], 'hashtag' ); ?>><?php esc_html_e( 'Hashtag', 'social-feed' ); ?></option>
-						<option value="tagged" <?php selected( $settings['feed_type'], 'tagged' ); ?>><?php esc_html_e( 'Tagged Posts', 'social-feed' ); ?></option>
-					</select>
+				<div class="sf-field sf-field-feed-type">
+					<label>
+						<?php esc_html_e( 'Feed Type', 'social-feed' ); ?>
+						<span class="sf-info-icon" data-info="<?php esc_attr_e( 'Choose which posts to display in your feed.', 'social-feed' ); ?>">i</span>
+					</label>
+					<?php
+					$feed_types = array(
+						'user'    => array(
+							'icon'  => 'dashicons-admin-users',
+							'label' => __( 'User Timeline', 'social-feed' ),
+							'desc'  => __( 'Show posts from your connected account.', 'social-feed' ),
+						),
+						'hashtag' => array(
+							'icon'  => 'dashicons-tag',
+							'label' => __( 'Hashtag', 'social-feed' ),
+							'desc'  => __( 'Show posts matching a specific hashtag.', 'social-feed' ),
+						),
+						'tagged'  => array(
+							'icon'  => 'dashicons-format-image',
+							'label' => __( 'Tagged Posts', 'social-feed' ),
+							'desc'  => __( 'Show posts your account is tagged in.', 'social-feed' ),
+						),
+					);
+					?>
+					<div class="sf-feed-type-cards">
+						<?php foreach ( $feed_types as $value => $type_data ) : ?>
+						<label class="sf-feed-type-card <?php echo $settings['feed_type'] === $value ? 'active' : ''; ?>">
+							<input type="radio" name="feed_type" value="<?php echo esc_attr( $value ); ?>" <?php checked( $settings['feed_type'], $value ); ?>>
+							<span class="dashicons <?php echo esc_attr( $type_data['icon'] ); ?>"></span>
+							<span class="sf-feed-type-label"><?php echo esc_html( $type_data['label'] ); ?></span>
+							<span class="sf-info-icon sf-feed-type-info" data-info="<?php echo esc_attr( $type_data['desc'] ); ?>">i</span>
+						</label>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<div class="sf-field sf-field-hashtag" <?php echo 'hashtag' !== $settings['feed_type'] ? 'style="display:none;"' : ''; ?>>
+					<label for="sf_hashtag"><?php esc_html_e( 'Hashtag', 'social-feed' ); ?></label>
+					<div class="sf-hashtag-input-wrap">
+						<span class="sf-hashtag-prefix">#</span>
+						<input type="text" id="sf_hashtag" name="hashtag" value="<?php echo esc_attr( $settings['hashtag'] ); ?>" placeholder="<?php esc_attr_e( 'travel', 'social-feed' ); ?>">
+					</div>
 				</div>
 				<div class="sf-field">
 					<label for="sf_post_count"><?php esc_html_e( 'Number of Posts', 'social-feed' ); ?></label>

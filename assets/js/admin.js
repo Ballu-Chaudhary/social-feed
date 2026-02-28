@@ -766,6 +766,7 @@
 			});
 
 			$(document).on('change', '#sf_platform', this.handlePlatformChange);
+			$(document).on('change', 'input[name="feed_type"]', this.handleFeedTypeChange);
 			$(document).on('change', '#sf_border_style', this.handleBorderStyleChange);
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
 			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
@@ -914,10 +915,22 @@
 					$opt.hide();
 				}
 			});
+		},
 
-			$('#sf_feed_type optgroup').hide();
-			$('.sf-feed-type-' + platform).show();
-			$('#sf_feed_type').val($('.sf-feed-type-' + platform + ' option:first').val());
+		/**
+		 * Handle feed type change.
+		 */
+		handleFeedTypeChange: function () {
+			var type = $('input[name="feed_type"]:checked').val();
+
+			$('.sf-feed-type-card').removeClass('active');
+			$('input[name="feed_type"]:checked').closest('.sf-feed-type-card').addClass('active');
+
+			if (type === 'hashtag') {
+				$('.sf-field-hashtag').slideDown(200);
+			} else {
+				$('.sf-field-hashtag').slideUp(200);
+			}
 		},
 
 		/**

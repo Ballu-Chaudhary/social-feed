@@ -655,7 +655,7 @@ class SF_Ajax {
 		}
 
 		$meta_fields = array(
-			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding', 'post_radius',
+			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding', 'post_radius', 'hashtag',
 			'post_count_desktop', 'post_count_tablet', 'post_count_mobile',
 			'bg_color', 'text_color', 'border_style', 'border_color', 'border_radius',
 			'hover_effect', 'dark_mode', 'show_header', 'show_profile_pic', 'show_username',
