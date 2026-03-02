@@ -4,6 +4,29 @@
  * @package SocialFeed
  */
 
+(function () {
+	'use strict';
+
+	try {
+		var dismissed = localStorage.getItem('sf_upgrade_banner_dismissed');
+		var dismissedTime = localStorage.getItem('sf_upgrade_banner_dismissed_time');
+
+		if (dismissed === 'true' && dismissedTime) {
+			var daysSinceDismissed = (Date.now() - parseInt(dismissedTime, 10)) / (1000 * 60 * 60 * 24);
+			if (daysSinceDismissed < 1) {
+				var style = document.createElement('style');
+				style.textContent = '#sf-upgrade-banner { display: none !important; }';
+				document.head.appendChild(style);
+			} else {
+				localStorage.removeItem('sf_upgrade_banner_dismissed');
+				localStorage.removeItem('sf_upgrade_banner_dismissed_time');
+			}
+		}
+	} catch (e) {
+		// localStorage not available
+	}
+})();
+
 (function ($) {
 	'use strict';
 
@@ -270,7 +293,7 @@
 
 				if (dismissed === 'true' && dismissedTime) {
 					var daysSinceDismissed = (Date.now() - parseInt(dismissedTime, 10)) / (1000 * 60 * 60 * 24);
-					if (daysSinceDismissed < 7) {
+					if (daysSinceDismissed < 1) {
 						$banner.addClass('sf-banner-hidden');
 					} else {
 						localStorage.removeItem('sf_upgrade_banner_dismissed');
