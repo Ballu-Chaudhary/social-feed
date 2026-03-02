@@ -49,6 +49,7 @@ class SF_Ajax {
 			'sf_activate_license',
 			'sf_deactivate_license',
 			'sf_check_license',
+			'sf_dismiss_upgrade_banner',
 		);
 
 		foreach ( $actions as $action ) {
@@ -1489,5 +1490,24 @@ class SF_Ajax {
 		$result = SF_License::check_license();
 
 		wp_send_json_success( $result );
+	}
+
+	/**
+	 * Handle dismiss upgrade banner request.
+	 */
+	public function handle_dismiss_upgrade_banner() {
+		check_ajax_referer( 'sf_dismiss_banner', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'social-feed' ) ), 403 );
+		}
+
+		$user_id = get_current_user_id();
+		if ( $user_id ) {
+			update_user_meta( $user_id, 'sf_upgrade_banner_dismissed', true );
+			wp_send_json_success( array( 'message' => __( 'Banner dismissed.', 'social-feed' ) ) );
+		}
+
+		wp_send_json_error( array( 'message' => __( 'Could not dismiss banner.', 'social-feed' ) ) );
 	}
 }
