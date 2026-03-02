@@ -49,46 +49,56 @@
 	min-height: calc(100vh - 32px);
 	margin-left: -20px;
 	background: #f0f2f5;
+	overflow-x: hidden;
 }
 
-/* Sidebar Backdrop (Mobile) */
+/* Sidebar Backdrop (Mobile only) */
 .sf-sidebar-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: rgba(0, 0, 0, 0.5);
-	backdrop-filter: blur(4px);
-	z-index: 99998;
-	opacity: 0;
-	visibility: hidden;
-	transition: all 0.3s ease;
-}
-
-.sf-app-layout.sf-sidebar-open .sf-sidebar-backdrop {
-	opacity: 1;
-	visibility: visible;
+	display: none;
 }
 
 /* Sidebar */
 .sf-sidebar {
-	position: fixed;
-	top: 32px;
-	left: 0;
-	bottom: 0;
-	width: 260px;
+	position: relative;
+	width: 240px;
+	min-width: 240px;
 	background: #111827;
 	display: flex;
 	flex-direction: column;
-	z-index: 99999;
-	transform: translateX(-100%);
-	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+	z-index: 100;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	margin-left: -240px;
 }
 
 .sf-app-layout.sf-sidebar-open .sf-sidebar {
-	transform: translateX(0);
+	margin-left: 0;
+}
+
+/* Collapsed Sidebar */
+.sf-app-layout.sf-sidebar-collapsed .sf-sidebar {
+	width: 72px;
+	min-width: 72px;
+	margin-left: 0;
+}
+
+.sf-app-layout.sf-sidebar-collapsed .sf-brand-text,
+.sf-app-layout.sf-sidebar-collapsed .sf-nav-label,
+.sf-app-layout.sf-sidebar-collapsed .sf-sidebar-version {
+	display: none;
+}
+
+.sf-app-layout.sf-sidebar-collapsed .sf-sidebar-header {
+	justify-content: center;
+	padding: 20px 12px;
+}
+
+.sf-app-layout.sf-sidebar-collapsed .sf-nav-link {
+	justify-content: center;
+	padding: 12px;
+}
+
+.sf-app-layout.sf-sidebar-collapsed .sf-nav-icon {
+	margin: 0;
 }
 
 /* Sidebar Header */
@@ -104,12 +114,14 @@
 	display: flex;
 	align-items: center;
 	gap: 12px;
+	overflow: hidden;
 }
 
 .sf-brand-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 }
 
 .sf-brand-text {
@@ -117,37 +129,19 @@
 	font-weight: 700;
 	color: #fff;
 	letter-spacing: -0.02em;
+	white-space: nowrap;
+	transition: opacity 0.2s ease;
 }
 
 .sf-sidebar-close {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	background: rgba(255, 255, 255, 0.1);
-	border: none;
-	border-radius: 8px;
-	color: #9ca3af;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.sf-sidebar-close:hover {
-	background: rgba(255, 255, 255, 0.15);
-	color: #fff;
-}
-
-.sf-sidebar-close .dashicons {
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
+	display: none;
 }
 
 /* Sidebar Navigation */
 .sf-sidebar-nav {
 	flex: 1;
 	overflow-y: auto;
+	overflow-x: hidden;
 	padding: 16px 12px;
 }
 
@@ -172,6 +166,8 @@
 	font-size: 14px;
 	font-weight: 500;
 	transition: all 0.2s ease;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .sf-nav-link:hover {
@@ -193,6 +189,7 @@
 	font-size: 18px;
 	width: 20px;
 	height: 20px;
+	min-width: 20px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -205,17 +202,21 @@
 
 .sf-nav-label {
 	flex: 1;
+	transition: opacity 0.2s ease;
 }
 
 /* Sidebar Footer */
 .sf-sidebar-footer {
 	padding: 16px 20px;
 	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	overflow: hidden;
 }
 
 .sf-sidebar-version {
 	font-size: 12px;
 	color: #6b7280;
+	white-space: nowrap;
+	transition: opacity 0.2s ease;
 }
 
 /* Main Content Area */
@@ -224,8 +225,7 @@
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
-	margin-left: 0;
-	transition: margin-left 0.3s ease;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Top Header Bar */
@@ -238,9 +238,10 @@
 	border-bottom: 1px solid #e5e7eb;
 	position: sticky;
 	top: 32px;
-	z-index: 100;
+	z-index: 99;
 }
 
+/* Hamburger Toggle Button */
 .sf-hamburger {
 	display: flex;
 	flex-direction: column;
@@ -255,6 +256,7 @@
 	cursor: pointer;
 	transition: all 0.2s ease;
 	gap: 5px;
+	flex-shrink: 0;
 }
 
 .sf-hamburger:hover {
@@ -273,14 +275,17 @@
 	background: #374151;
 	border-radius: 1px;
 	transition: all 0.3s ease;
+	transform-origin: center;
 }
 
+/* Hamburger Animation when sidebar is open */
 .sf-app-layout.sf-sidebar-open .sf-hamburger-line:nth-child(1) {
 	transform: translateY(7px) rotate(45deg);
 }
 
 .sf-app-layout.sf-sidebar-open .sf-hamburger-line:nth-child(2) {
 	opacity: 0;
+	transform: scaleX(0);
 }
 
 .sf-app-layout.sf-sidebar-open .sf-hamburger-line:nth-child(3) {
@@ -291,6 +296,7 @@
 	font-size: 18px;
 	font-weight: 600;
 	color: #111827;
+	flex: 1;
 }
 
 /* Content Area */
@@ -338,22 +344,70 @@
 	height: 16px;
 }
 
-/* Desktop Sidebar Behavior */
-@media (min-width: 1024px) {
+/* ==========================================================================
+   Responsive Sidebar Behavior
+   ========================================================================== */
+
+/* Mobile/Tablet - Overlay Mode */
+@media (max-width: 1024px) {
 	.sf-sidebar {
+		position: fixed;
+		top: 32px;
+		left: 0;
+		bottom: 0;
+		margin-left: 0;
 		transform: translateX(-100%);
+		box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+		z-index: 100000;
 	}
 
 	.sf-app-layout.sf-sidebar-open .sf-sidebar {
 		transform: translateX(0);
 	}
 
-	.sf-sidebar-close {
-		display: none;
+	.sf-sidebar-backdrop {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+		z-index: 99999;
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.3s ease;
 	}
 
-	.sf-sidebar-backdrop {
-		display: none;
+	.sf-app-layout.sf-sidebar-open .sf-sidebar-backdrop {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.sf-sidebar-close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		background: rgba(255, 255, 255, 0.1);
+		border: none;
+		border-radius: 8px;
+		color: #9ca3af;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.sf-sidebar-close:hover {
+		background: rgba(255, 255, 255, 0.15);
+		color: #fff;
+	}
+
+	.sf-sidebar-close .dashicons {
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
 	}
 }
 
@@ -365,10 +419,19 @@
 
 	.sf-topbar {
 		top: 46px;
+		padding: 12px 16px;
 	}
 
 	.sf-app-layout {
 		min-height: calc(100vh - 46px);
+	}
+
+	.sf-content-area {
+		padding: 16px;
+	}
+
+	.sf-topbar-title {
+		font-size: 16px;
 	}
 }
 
