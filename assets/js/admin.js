@@ -870,11 +870,13 @@
 	var SF_Customizer = {
 		previewTimer: null,
 		currentDevice: 'desktop',
+		navHistory: [],
 
 		/**
 		 * Initialize customizer.
 		 */
 		init: function () {
+			this.navHistory = [];
 			this.bindEvents();
 			this.initTabs();
 			this.initColorPickers();
@@ -951,8 +953,9 @@
 			var self = this;
 
 			$(document).on('click', '.sf-sidebar-toplevel-btn', this.handleToplevelClick);
-			$(document).on('click', '.sf-sidebar-item', this.handleSidebarItemClick);
-			$(document).on('click', '.sf-sidebar-back', this.handleSidebarBack);
+			$(document).on('click', '.sf-sidebar-item', this.handleSidebarItemClick.bind(this));
+			$(document).on('click', '.sf-sidebar-back', this.handleSidebarBack.bind(this));
+			$(document).on('click', '.sf-customizer-back-btn', this.handleTopBackClick.bind(this));
 			$(document).on('click', '.sf-device-btn', this.handleDeviceSwitch.bind(this));
 			$(document).on('click', '.sf-refresh-preview', this.loadPreview.bind(this));
 			$(document).on('click', '.sf-save-feed', this.handleSave.bind(this));
@@ -1100,22 +1103,56 @@
 
 		handleSidebarItemClick: function (e) {
 			e.preventDefault();
-			var section = $(this).attr('data-section') || $(this).data('section');
-			var $wrap = $(this).closest('.sf-customizer-wrap');
+			var $clicked = $(e.currentTarget);
+			var section = $clicked.attr('data-section') || $clicked.data('section');
+			var $wrap = $clicked.closest('.sf-customizer-wrap');
 			if (!$wrap.length || !section) return;
+
+			/* Push current state to history before navigating */
+			this.navHistory.push({ type: 'nav' });
 
 			/* Remove active from all sidebar items */
 			$wrap.find('.sf-sidebar-item').removeClass('active');
 			/* Add active to clicked item */
-			$(this).addClass('active');
+			$clicked.addClass('active');
 
-			SF_Customizer.switchToTab($wrap, section);
+			this.switchToTab($wrap, section);
 		},
 
 		handleSidebarBack: function (e) {
 			e.preventDefault();
-			var $wrap = $(this).closest('.sf-customizer-wrap');
-			SF_Customizer.showSidebarNav($wrap);
+			var $wrap = $(e.currentTarget).closest('.sf-customizer-wrap');
+			
+			/* Pop from history since we're going back */
+			if (this.navHistory.length > 0) {
+				this.navHistory.pop();
+			}
+			
+			this.showSidebarNav($wrap);
+		},
+
+		/**
+		 * Handle top back button click - smart navigation.
+		 */
+		handleTopBackClick: function (e) {
+			e.preventDefault();
+			var $btn = $(e.currentTarget);
+			var $wrap = $btn.closest('.sf-customizer-wrap');
+			var dashboardUrl = $btn.data('dashboard-url');
+
+			/* Check if we're in a section panel */
+			var $activePanel = $wrap.find('.sf-sidebar-panel.sf-panel-visible');
+			
+			if ($activePanel.length) {
+				/* We're inside a section - go back to main nav */
+				if (this.navHistory.length > 0) {
+					this.navHistory.pop();
+				}
+				this.showSidebarNav($wrap);
+			} else {
+				/* We're at main nav level - go to dashboard */
+				window.location.href = dashboardUrl;
+			}
 		},
 
 		handleFeedNameEdit: function (e) {

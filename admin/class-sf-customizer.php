@@ -45,10 +45,10 @@ class SF_Customizer {
 		<div class="sf-customizer-wrap" data-feed-id="<?php echo esc_attr( $feed_id ); ?>">
 			<!-- Top bar -->
 			<div class="<?php echo $is_pro ? 'sf-customizer-topbar' : 'sf-customizer-upgrade-banner'; ?>">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>" class="sf-customizer-back-btn" title="<?php esc_attr_e( 'Back to Dashboard', 'social-feed' ); ?>">
+				<button type="button" class="sf-customizer-back-btn" title="<?php esc_attr_e( 'Back', 'social-feed' ); ?>" data-dashboard-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>">
 					<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 					<span><?php esc_html_e( 'Back', 'social-feed' ); ?></span>
-				</a>
+				</button>
 				<div class="sf-topbar-right">
 					<?php if ( ! $is_pro ) : ?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="sf-upgrade-link"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
