@@ -226,9 +226,6 @@
 		init: function () {
 			this.bindEvents();
 			this.initColorPicker();
-			this.restoreSidebarState();
-
-			$(window).on('resize', this.handleSidebarResize);
 		},
 
 		/**
@@ -255,112 +252,6 @@
 			$(document).on('click', '#sf-search-clear', this.clearSearch);
 
 			$(document).on('click', '.sf-filter-tab', this.handleFilterTab);
-
-			$(document).on('click', '#sf-hamburger', this.toggleSidebar);
-			$(document).on('click', '#sf-sidebar-toggle', this.toggleSidebar);
-			$(document).on('click', '#sf-sidebar-backdrop', this.closeSidebar);
-			$(document).on('keydown', this.handleSidebarKeydown);
-		},
-
-		/**
-		 * Toggle sidebar visibility.
-		 */
-		toggleSidebar: function () {
-			var $layout = $('#sf-app-layout');
-			var $hamburger = $('#sf-hamburger');
-			var isOpen = $layout.hasClass('sf-sidebar-open');
-			var isMobile = window.innerWidth <= 1024;
-
-			if (isOpen) {
-				SF_Admin.closeSidebar();
-			} else {
-				$layout.addClass('sf-sidebar-open');
-				$hamburger.attr('aria-expanded', 'true');
-
-				if (isMobile) {
-					$('body').css('overflow', 'hidden');
-				}
-
-				SF_Admin.saveSidebarState('open');
-			}
-		},
-
-		/**
-		 * Close sidebar.
-		 */
-		closeSidebar: function () {
-			var $layout = $('#sf-app-layout');
-			var $hamburger = $('#sf-hamburger');
-
-			$layout.removeClass('sf-sidebar-open');
-			$hamburger.attr('aria-expanded', 'false');
-			$('body').css('overflow', '');
-
-			SF_Admin.saveSidebarState('closed');
-		},
-
-		/**
-		 * Handle sidebar keyboard navigation.
-		 */
-		handleSidebarKeydown: function (e) {
-			if (e.key === 'Escape') {
-				var isMobile = window.innerWidth <= 1024;
-				if (isMobile) {
-					SF_Admin.closeSidebar();
-				}
-			}
-		},
-
-		/**
-		 * Save sidebar state to localStorage.
-		 */
-		saveSidebarState: function (state) {
-			try {
-				localStorage.setItem('sf_sidebar_state', state);
-			} catch (e) {
-				// localStorage not available
-			}
-		},
-
-		/**
-		 * Restore sidebar state from localStorage.
-		 */
-		restoreSidebarState: function () {
-			var $layout = $('#sf-app-layout');
-			if (!$layout.length) return;
-
-			var isMobile = window.innerWidth <= 1024;
-
-			if (isMobile) {
-				$layout.removeClass('sf-sidebar-open');
-				return;
-			}
-
-			try {
-				var state = localStorage.getItem('sf_sidebar_state');
-				if (state === 'open') {
-					$layout.addClass('sf-sidebar-open');
-					$('#sf-hamburger').attr('aria-expanded', 'true');
-				}
-			} catch (e) {
-				// localStorage not available
-			}
-		},
-
-		/**
-		 * Handle window resize for sidebar.
-		 */
-		handleSidebarResize: function () {
-			var $layout = $('#sf-app-layout');
-			if (!$layout.length) return;
-
-			var isMobile = window.innerWidth <= 1024;
-
-			if (isMobile && $layout.hasClass('sf-sidebar-open')) {
-				$('body').css('overflow', 'hidden');
-			} else {
-				$('body').css('overflow', '');
-			}
 		},
 
 		/**

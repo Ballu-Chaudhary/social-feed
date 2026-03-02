@@ -360,9 +360,6 @@ class SF_Admin {
 		);
 		?>
 		<div class="sf-app-layout" id="sf-app-layout">
-			<!-- Backdrop for mobile -->
-			<div class="sf-sidebar-backdrop" id="sf-sidebar-backdrop"></div>
-
 			<!-- Sidebar -->
 			<aside class="sf-sidebar" id="sf-sidebar" aria-label="<?php esc_attr_e( 'Plugin Navigation', 'social-feed' ); ?>">
 				<div class="sf-sidebar-header">
@@ -381,13 +378,6 @@ class SF_Admin {
 						</span>
 						<span class="sf-brand-text"><?php esc_html_e( 'Social Feed', 'social-feed' ); ?></span>
 					</div>
-					<button type="button" class="sf-sidebar-toggle" id="sf-sidebar-toggle" aria-label="<?php esc_attr_e( 'Toggle sidebar', 'social-feed' ); ?>">
-						<span class="sf-toggle-icon">
-							<span class="sf-toggle-line"></span>
-							<span class="sf-toggle-line"></span>
-							<span class="sf-toggle-line"></span>
-						</span>
-					</button>
 				</div>
 				<nav class="sf-sidebar-nav">
 					<ul class="sf-nav-list">
@@ -418,12 +408,7 @@ class SF_Admin {
 			<main class="sf-main-content" id="sf-main-content">
 				<!-- Top Header Bar -->
 				<header class="sf-topbar">
-					<button type="button" class="sf-hamburger" id="sf-hamburger" aria-label="<?php esc_attr_e( 'Toggle menu', 'social-feed' ); ?>" aria-expanded="false" aria-controls="sf-sidebar">
-						<span class="sf-hamburger-line"></span>
-						<span class="sf-hamburger-line"></span>
-						<span class="sf-hamburger-line"></span>
-					</button>
-					<div class="sf-topbar-title">
+					<h1 class="sf-topbar-title">
 						<?php
 						$page_titles = array(
 							'dashboard' => __( 'Dashboard', 'social-feed' ),
@@ -436,7 +421,7 @@ class SF_Admin {
 						);
 						echo esc_html( isset( $page_titles[ $current_page ] ) ? $page_titles[ $current_page ] : '' );
 						?>
-					</div>
+					</h1>
 				</header>
 				<div class="sf-content-area">
 		<?php
