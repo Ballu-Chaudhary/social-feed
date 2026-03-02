@@ -152,9 +152,6 @@ class SF_Customizer {
 							?>
 							<div id="<?php echo esc_attr( $panel_id ); ?>" class="sf-sidebar-panel" data-section="<?php echo esc_attr( $section ); ?>">
 								<div class="sf-sidebar-panel-header">
-									<button type="button" class="sf-sidebar-back">
-										<span class="dashicons dashicons-arrow-left-alt2"></span>
-									</button>
 									<h3 class="sf-sidebar-panel-title"><?php echo esc_html( $title ); ?></h3>
 								</div>
 								<div class="sf-sidebar-panel-body">

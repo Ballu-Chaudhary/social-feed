@@ -1450,32 +1450,6 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	flex-shrink: 0;
 }
 
-.sf-sidebar-back {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
-	padding: 0;
-	border: none;
-	background: var(--sf-customizer-surface-alt);
-	border-radius: var(--sf-customizer-radius-sm);
-	color: var(--sf-customizer-text-secondary);
-	cursor: pointer;
-	transition: all 0.2s;
-}
-
-.sf-sidebar-back:hover {
-	background: var(--sf-customizer-surface-hover);
-	color: var(--sf-customizer-accent);
-}
-
-.sf-sidebar-back .dashicons {
-	font-size: 20px;
-	width: 20px;
-	height: 20px;
-}
-
 .sf-sidebar-panel-title {
 	margin: 0;
 	font-size: 15px;

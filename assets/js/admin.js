@@ -954,7 +954,6 @@
 
 			$(document).on('click', '.sf-sidebar-toplevel-btn', this.handleToplevelClick);
 			$(document).on('click', '.sf-sidebar-item', this.handleSidebarItemClick.bind(this));
-			$(document).on('click', '.sf-sidebar-back', this.handleSidebarBack.bind(this));
 			$(document).on('click', '.sf-customizer-back-btn', this.handleTopBackClick.bind(this));
 			$(document).on('click', '.sf-device-btn', this.handleDeviceSwitch.bind(this));
 			$(document).on('click', '.sf-refresh-preview', this.loadPreview.bind(this));
@@ -1117,18 +1116,6 @@
 			$clicked.addClass('active');
 
 			this.switchToTab($wrap, section);
-		},
-
-		handleSidebarBack: function (e) {
-			e.preventDefault();
-			var $wrap = $(e.currentTarget).closest('.sf-customizer-wrap');
-			
-			/* Pop from history since we're going back */
-			if (this.navHistory.length > 0) {
-				this.navHistory.pop();
-			}
-			
-			this.showSidebarNav($wrap);
 		},
 
 		/**
