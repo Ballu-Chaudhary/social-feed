@@ -226,6 +226,7 @@
 		init: function () {
 			this.bindEvents();
 			this.initColorPicker();
+			this.initUpgradeBanner();
 		},
 
 		/**
@@ -252,6 +253,58 @@
 			$(document).on('click', '#sf-search-clear', this.clearSearch);
 
 			$(document).on('click', '.sf-filter-tab', this.handleFilterTab);
+
+			$(document).on('click', '#sf-upgrade-banner-close', this.closeUpgradeBanner);
+		},
+
+		/**
+		 * Initialize upgrade banner (check if dismissed).
+		 */
+		initUpgradeBanner: function () {
+			var $banner = $('#sf-upgrade-banner');
+			if (!$banner.length) return;
+
+			try {
+				var dismissed = localStorage.getItem('sf_upgrade_banner_dismissed');
+				var dismissedTime = localStorage.getItem('sf_upgrade_banner_dismissed_time');
+
+				if (dismissed === 'true' && dismissedTime) {
+					var daysSinceDismissed = (Date.now() - parseInt(dismissedTime, 10)) / (1000 * 60 * 60 * 24);
+					if (daysSinceDismissed < 7) {
+						$banner.addClass('sf-banner-hidden');
+					} else {
+						localStorage.removeItem('sf_upgrade_banner_dismissed');
+						localStorage.removeItem('sf_upgrade_banner_dismissed_time');
+					}
+				}
+			} catch (e) {
+				// localStorage not available
+			}
+		},
+
+		/**
+		 * Close upgrade banner and remember preference.
+		 */
+		closeUpgradeBanner: function () {
+			var $banner = $('#sf-upgrade-banner');
+
+			$banner.css({
+				'opacity': '1',
+				'transform': 'translateY(0)'
+			}).animate({
+				'opacity': '0'
+			}, 200, function () {
+				$banner.slideUp(200, function () {
+					$banner.addClass('sf-banner-hidden');
+				});
+			});
+
+			try {
+				localStorage.setItem('sf_upgrade_banner_dismissed', 'true');
+				localStorage.setItem('sf_upgrade_banner_dismissed_time', Date.now().toString());
+			} catch (e) {
+				// localStorage not available
+			}
 		},
 
 		/**

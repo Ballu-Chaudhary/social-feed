@@ -321,8 +321,34 @@ class SF_Admin {
 	 * @param string $current_page Current page slug (unused, kept for compatibility).
 	 */
 	private function render_layout_start( $current_page = '' ) {
+		$is_pro = $this->is_pro();
 		?>
 		<div class="sf-app-layout" id="sf-app-layout">
+			<?php if ( ! $is_pro ) : ?>
+			<!-- Upgrade Banner -->
+			<div class="sf-upgrade-banner" id="sf-upgrade-banner">
+				<div class="sf-upgrade-banner-content">
+					<span class="sf-upgrade-banner-icon">
+						<span class="dashicons dashicons-star-filled"></span>
+					</span>
+					<span class="sf-upgrade-banner-text">
+						<?php
+						printf(
+							/* translators: %1$s: opening link tag, %2$s: closing link tag */
+							esc_html__( "You're using %1\$sSocial Feed Lite%2\$s. To unlock more features consider %3\$supgrading to Pro%4\$s", 'social-feed' ),
+							'<strong>',
+							'</strong>',
+							'<a href="' . esc_url( 'https://socialfeedplugin.com/pricing/' ) . '" target="_blank" rel="noopener noreferrer" class="sf-upgrade-banner-link">',
+							'</a>'
+						);
+						?>
+					</span>
+				</div>
+				<button type="button" class="sf-upgrade-banner-close" id="sf-upgrade-banner-close" aria-label="<?php esc_attr_e( 'Dismiss', 'social-feed' ); ?>">
+					<span class="dashicons dashicons-no-alt"></span>
+				</button>
+			</div>
+			<?php endif; ?>
 			<div class="sf-content-area">
 		<?php
 	}
@@ -351,12 +377,6 @@ class SF_Admin {
 			<!-- Page Header -->
 			<div class="sf-page-header">
 				<h1 class="sf-page-title"><?php esc_html_e( 'Dashboard', 'social-feed' ); ?></h1>
-				<?php if ( ! $is_pro ) : ?>
-				<a href="<?php echo esc_url( 'https://socialfeedplugin.com/pricing/' ); ?>" class="sf-btn-upgrade" target="_blank" rel="noopener noreferrer">
-					<span class="dashicons dashicons-star-filled"></span>
-					<?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?>
-				</a>
-				<?php endif; ?>
 			</div>
 
 			<div class="sf-dashboard-grid">
