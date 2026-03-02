@@ -1050,7 +1050,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
-/* Upgrade banner - single top bar for free: upgrade text + Upgrade link left, Help + Save right */
+/* Upgrade banner - compact top bar for free version */
 .sf-customizer-upgrade-banner {
 	display: flex;
 	align-items: center;
@@ -1062,37 +1062,59 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	flex-shrink: 0;
 }
 
-.sf-upgrade-banner-left {
-	display: flex;
+/* Back button in customizer top bar */
+.sf-customizer-back-btn {
+	display: inline-flex;
 	align-items: center;
-	gap: 12px;
+	gap: 6px;
+	padding: 6px 12px 6px 8px;
+	font-size: 13px;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.9);
+	text-decoration: none;
+	background: rgba(255, 255, 255, 0.15);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 6px;
+	transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.sf-customizer-upgrade-banner .sf-upgrade-text {
-	line-height: 1.4;
+.sf-customizer-back-btn:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.25);
+	border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Upgrade link: same height/size as Save button for visual balance */
+.sf-customizer-back-btn:active {
+	transform: translateX(-1px);
+}
+
+.sf-customizer-back-btn svg {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+}
+
+/* Upgrade link in top bar right side */
 .sf-customizer-upgrade-banner .sf-upgrade-link {
 	display: inline-flex;
 	align-items: center;
-	height: 36px;
-	padding: 0 20px;
-	font-size: 14px;
+	height: 32px;
+	padding: 0 16px;
+	font-size: 13px;
 	font-weight: 600;
 	line-height: 1;
-	color: #fff;
+	color: #6366f1;
 	text-decoration: none;
-	background: rgba(255, 255, 255, 0.2);
-	border: 1px solid rgba(255, 255, 255, 0.4);
-	border-radius: var(--sf-customizer-radius-sm);
-	transition: background 0.2s, border-color 0.2s, color 0.2s;
+	background: #fff;
+	border: none;
+	border-radius: 6px;
+	transition: background 0.2s, transform 0.15s;
 }
 
 .sf-customizer-upgrade-banner .sf-upgrade-link:hover {
-	color: #fff;
-	background: rgba(255, 255, 255, 0.3);
-	border-color: rgba(255, 255, 255, 0.5);
+	color: #5a5fd9;
+	background: rgba(255, 255, 255, 0.95);
+	transform: translateY(-1px);
 }
 
 /* Help / Save (and Embed, unsaved) on the right - visible on purple */
@@ -1137,11 +1159,11 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	color: #5a5fd9;
 }
 
-/* Top bar - right-aligned actions only */
+/* Top bar - back button left, actions right */
 .sf-customizer-topbar {
 	display: flex;
 	align-items: center;
-	justify-content: flex-end;
+	justify-content: space-between;
 	padding: 12px 20px;
 	background: var(--sf-customizer-surface);
 	border-bottom: 1px solid var(--sf-customizer-border);
@@ -1149,24 +1171,17 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.sf-topbar-back {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
+/* Back button style for Pro topbar (non-gradient) */
+.sf-customizer-topbar .sf-customizer-back-btn {
 	color: var(--sf-customizer-text-secondary);
-	text-decoration: none;
-	font-size: 13px;
-	transition: color 0.2s;
+	background: transparent;
+	border: 1px solid var(--sf-customizer-border);
 }
 
-.sf-topbar-back:hover {
+.sf-customizer-topbar .sf-customizer-back-btn:hover {
 	color: var(--sf-customizer-accent);
-}
-
-.sf-topbar-back .dashicons {
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
+	background: rgba(99, 102, 241, 0.06);
+	border-color: var(--sf-customizer-accent);
 }
 
 .sf-feed-name-wrap {
