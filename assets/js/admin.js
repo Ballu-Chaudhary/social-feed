@@ -259,31 +259,34 @@
 		},
 
 		/**
-		 * Initialize upgrade banner.
+		 * Initialize upgrade banner - check localStorage.
 		 */
 		initUpgradeBanner: function () {
-			// Banner visibility is controlled by PHP/user meta
+			var $banner = $('#sf-upgrade-banner');
+			if (!$banner.length) return;
+
+			try {
+				if (localStorage.getItem('sf_banner_dismissed') !== 'true') {
+					$banner.addClass('sf-banner-visible');
+				}
+			} catch (e) {
+				$banner.addClass('sf-banner-visible');
+			}
 		},
 
 		/**
-		 * Close upgrade banner and save preference via AJAX.
+		 * Close upgrade banner and save to localStorage.
 		 */
 		closeUpgradeBanner: function () {
 			var $banner = $('#sf-upgrade-banner');
-			var nonce = $banner.data('nonce');
 
-			$banner.fadeOut(200, function () {
-				$banner.addClass('sf-banner-hidden');
-			});
+			$banner.removeClass('sf-banner-visible');
 
-			$.ajax({
-				url: sfAdmin.ajaxUrl,
-				type: 'POST',
-				data: {
-					action: 'sf_dismiss_upgrade_banner',
-					nonce: nonce
-				}
-			});
+			try {
+				localStorage.setItem('sf_banner_dismissed', 'true');
+			} catch (e) {
+				// localStorage not available
+			}
 		},
 
 		/**

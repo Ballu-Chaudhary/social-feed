@@ -321,45 +321,22 @@ class SF_Admin {
 	 * @param string $current_page Current page slug (unused, kept for compatibility).
 	 */
 	private function render_layout_start( $current_page = '' ) {
-		$is_pro          = $this->is_pro();
-		$banner_dismissed = $this->is_upgrade_banner_dismissed();
+		$is_pro = $this->is_pro();
 		?>
 		<div class="sf-app-layout" id="sf-app-layout">
-			<?php if ( ! $is_pro && ! $banner_dismissed ) : ?>
+			<?php if ( ! $is_pro ) : ?>
 			<!-- Upgrade Banner -->
-			<div class="sf-upgrade-banner" id="sf-upgrade-banner" data-nonce="<?php echo esc_attr( wp_create_nonce( 'sf_dismiss_banner' ) ); ?>">
-				<div class="sf-upgrade-banner-content">
-					<span class="sf-upgrade-banner-icon">
-						<span class="dashicons dashicons-star-filled"></span>
-					</span>
-					<span class="sf-upgrade-banner-text">
-						<?php esc_html_e( "You're using Social Feed Lite.", 'social-feed' ); ?>
-						<a href="<?php echo esc_url( 'https://socialfeedplugin.com/pricing/' ); ?>" target="_blank" rel="noopener noreferrer" class="sf-upgrade-banner-link">
-							<?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?>
-							<span class="dashicons dashicons-arrow-right-alt"></span>
-						</a>
-					</span>
+			<div class="sf-upgrade-banner" id="sf-upgrade-banner">
+				<div class="sf-upgrade-banner-left">
+					<span class="sf-upgrade-banner-icon"></span>
+					<span class="sf-upgrade-banner-text"><?php esc_html_e( "You're using Social Feed Lite.", 'social-feed' ); ?></span>
+					<a href="<?php echo esc_url( 'https://socialfeedplugin.com/pricing/' ); ?>" target="_blank" rel="noopener noreferrer" class="sf-upgrade-banner-btn"><?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?> &rarr;</a>
 				</div>
-				<button type="button" class="sf-upgrade-banner-close" id="sf-upgrade-banner-close" aria-label="<?php esc_attr_e( 'Dismiss', 'social-feed' ); ?>">
-					<span class="dashicons dashicons-no-alt"></span>
-				</button>
+				<button type="button" class="sf-upgrade-banner-close" id="sf-upgrade-banner-close" aria-label="<?php esc_attr_e( 'Dismiss', 'social-feed' ); ?>">&times;</button>
 			</div>
 			<?php endif; ?>
 			<div class="sf-content-area">
 		<?php
-	}
-
-	/**
-	 * Check if upgrade banner is dismissed.
-	 *
-	 * @return bool True if dismissed.
-	 */
-	private function is_upgrade_banner_dismissed() {
-		$user_id = get_current_user_id();
-		if ( ! $user_id ) {
-			return false;
-		}
-		return (bool) get_user_meta( $user_id, 'sf_upgrade_banner_dismissed', true );
 	}
 
 	/**
