@@ -316,114 +316,14 @@ class SF_Admin {
 	}
 
 	/**
-	 * Render admin layout start with sidebar.
+	 * Render admin layout start.
 	 *
-	 * @param string $current_page Current page slug.
+	 * @param string $current_page Current page slug (unused, kept for compatibility).
 	 */
 	private function render_layout_start( $current_page = '' ) {
-		$menu_items = array(
-			'dashboard'  => array(
-				'label' => __( 'Dashboard', 'social-feed' ),
-				'icon'  => 'dashicons-dashboard',
-				'url'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
-			),
-			'feeds'      => array(
-				'label' => __( 'All Feeds', 'social-feed' ),
-				'icon'  => 'dashicons-rss',
-				'url'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-feeds' ),
-			),
-			'create'     => array(
-				'label' => __( 'Create Feed', 'social-feed' ),
-				'icon'  => 'dashicons-plus-alt',
-				'url'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ),
-			),
-			'accounts'   => array(
-				'label' => __( 'Instagram Accounts', 'social-feed' ),
-				'icon'  => 'dashicons-instagram',
-				'url'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-accounts' ),
-			),
-			'settings'   => array(
-				'label' => __( 'Settings', 'social-feed' ),
-				'icon'  => 'dashicons-admin-settings',
-				'url'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-settings' ),
-			),
-			'license'    => array(
-				'label' => __( 'License', 'social-feed' ),
-				'icon'  => 'dashicons-awards',
-				'url'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-license' ),
-			),
-			'help'       => array(
-				'label' => __( 'Help & Support', 'social-feed' ),
-				'icon'  => 'dashicons-editor-help',
-				'url'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-help' ),
-			),
-		);
 		?>
 		<div class="sf-app-layout" id="sf-app-layout">
-			<!-- Sidebar -->
-			<aside class="sf-sidebar" id="sf-sidebar" aria-label="<?php esc_attr_e( 'Plugin Navigation', 'social-feed' ); ?>">
-				<div class="sf-sidebar-header">
-					<div class="sf-sidebar-brand">
-						<span class="sf-brand-icon">
-							<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<circle cx="12" cy="12" r="10" fill="url(#brandGrad)"/>
-								<path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-								<defs>
-									<linearGradient id="brandGrad" x1="4" y1="4" x2="20" y2="20">
-										<stop stop-color="#6366f1"/>
-										<stop offset="1" stop-color="#8b5cf6"/>
-									</linearGradient>
-								</defs>
-							</svg>
-						</span>
-						<span class="sf-brand-text"><?php esc_html_e( 'Social Feed', 'social-feed' ); ?></span>
-					</div>
-				</div>
-				<nav class="sf-sidebar-nav">
-					<ul class="sf-nav-list">
-						<?php foreach ( $menu_items as $key => $item ) : ?>
-						<li class="sf-nav-item">
-							<a href="<?php echo esc_url( $item['url'] ); ?>" class="sf-nav-link <?php echo $current_page === $key ? 'sf-nav-link--active' : ''; ?>">
-								<span class="sf-nav-icon dashicons <?php echo esc_attr( $item['icon'] ); ?>"></span>
-								<span class="sf-nav-label"><?php echo esc_html( $item['label'] ); ?></span>
-							</a>
-						</li>
-						<?php endforeach; ?>
-					</ul>
-				</nav>
-				<div class="sf-sidebar-footer">
-					<div class="sf-sidebar-version">
-						<?php
-						printf(
-							/* translators: %s: plugin version */
-							esc_html__( 'Version %s', 'social-feed' ),
-							esc_html( SF_VERSION )
-						);
-						?>
-					</div>
-				</div>
-			</aside>
-
-			<!-- Main Content Area -->
-			<main class="sf-main-content" id="sf-main-content">
-				<!-- Top Header Bar -->
-				<header class="sf-topbar">
-					<h1 class="sf-topbar-title">
-						<?php
-						$page_titles = array(
-							'dashboard' => __( 'Dashboard', 'social-feed' ),
-							'feeds'     => __( 'All Feeds', 'social-feed' ),
-							'create'    => __( 'Create Feed', 'social-feed' ),
-							'accounts'  => __( 'Instagram Accounts', 'social-feed' ),
-							'settings'  => __( 'Settings', 'social-feed' ),
-							'license'   => __( 'License', 'social-feed' ),
-							'help'      => __( 'Help & Support', 'social-feed' ),
-						);
-						echo esc_html( isset( $page_titles[ $current_page ] ) ? $page_titles[ $current_page ] : '' );
-						?>
-					</h1>
-				</header>
-				<div class="sf-content-area">
+			<div class="sf-content-area">
 		<?php
 	}
 
@@ -432,8 +332,7 @@ class SF_Admin {
 	 */
 	private function render_layout_end() {
 		?>
-				</div><!-- .sf-content-area -->
-			</main><!-- .sf-main-content -->
+			</div><!-- .sf-content-area -->
 		</div><!-- .sf-app-layout -->
 		<?php
 	}
@@ -449,14 +348,16 @@ class SF_Admin {
 		$this->render_layout_start( 'dashboard' );
 		?>
 		<div class="sf-page-content sf-dashboard-content">
-			<?php if ( ! $is_pro ) : ?>
-			<div class="sf-page-actions">
+			<!-- Page Header -->
+			<div class="sf-page-header">
+				<h1 class="sf-page-title"><?php esc_html_e( 'Dashboard', 'social-feed' ); ?></h1>
+				<?php if ( ! $is_pro ) : ?>
 				<a href="<?php echo esc_url( 'https://socialfeedplugin.com/pricing/' ); ?>" class="sf-btn-upgrade" target="_blank" rel="noopener noreferrer">
 					<span class="dashicons dashicons-star-filled"></span>
 					<?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?>
 				</a>
+				<?php endif; ?>
 			</div>
-			<?php endif; ?>
 
 			<div class="sf-dashboard-grid">
 				<!-- Stats Section - 3 cards -->
