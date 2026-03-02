@@ -1536,15 +1536,14 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;
+	overflow-x: hidden;
 	background: #f8fafc;
-	padding-right: 2px;
 }
 
 .sf-sidebar-panel-body .sf-customizer-content {
 	flex: 0 0 auto;
 	padding: 0;
 	background: transparent;
-	margin-right: 2px;
 }
 
 /* Tab content inside panel - show single active */
@@ -2209,17 +2208,17 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 /* Layout Panel - Compact SaaS-style */
 .sf-tab-content-layout {
-	padding: 12px 0 16px;
+	padding: 12px 14px 16px;
 }
 
-/* Section wrapper - clean container */
+/* Section wrapper - clean container with visible corners */
 .sf-tab-content-layout .sf-layout-panel-section {
 	background: #fff;
 	border-radius: 10px;
-	margin: 0 12px 12px;
+	margin: 0 0 12px;
 	padding: 0;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-	overflow: hidden;
+	overflow: visible;
 	border: 1px solid #e5e7eb;
 }
 
@@ -2372,7 +2371,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	font-weight: 600;
 }
 
-/* Pro badge - compact pill */
+/* Pro badge - rocket icon style */
 .sf-tab-content-layout .sf-pro-badge,
 .sf-customizer-content .sf-pro-badge {
 	display: inline-flex;
@@ -2380,15 +2379,26 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	justify-content: center;
 	flex-shrink: 0;
 	margin-left: auto;
-	padding: 2px 8px;
-	font-size: 9px;
-	font-weight: 600;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
-	color: #7c3aed;
+	width: 24px;
+	height: 24px;
+	font-size: 0;
+	color: transparent;
 	background: #ede9fe;
 	border: none;
-	border-radius: 4px;
+	border-radius: 6px;
+	position: relative;
+}
+
+/* Rocket icon using pseudo-element */
+.sf-tab-content-layout .sf-pro-badge::before,
+.sf-customizer-content .sf-pro-badge::before {
+	content: "";
+	width: 14px;
+	height: 14px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z'/%3E%3Cpath d='m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z'/%3E%3Cpath d='M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0'/%3E%3Cpath d='M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5'/%3E%3C/svg%3E");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
 /* Number input field - compact inline layout */
