@@ -50,32 +50,20 @@
 }
 
 /* ==========================================================================
-   Upgrade Banner - Compact Top Notification
+   Upgrade Banner - Slim Top Notification
    ========================================================================== */
 
 .sf-upgrade-banner {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
-	padding: 10px 20px;
-	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+	height: 42px;
+	padding: 0 16px;
+	background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
 	color: #fff;
-	border-radius: 8px;
-	box-shadow: 0 2px 12px rgba(99, 102, 241, 0.25);
+	border-radius: 6px;
+	box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
 	margin: 0 0 16px;
-	animation: sf-banner-fade-in 0.3s ease-out;
-}
-
-@keyframes sf-banner-fade-in {
-	from {
-		opacity: 0;
-		transform: translateY(-8px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
 }
 
 .sf-upgrade-banner.sf-banner-hidden {
@@ -85,23 +73,20 @@
 .sf-upgrade-banner-content {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	flex: 1;
-	min-width: 0;
+	gap: 6px;
 }
 
 .sf-upgrade-banner-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex-shrink: 0;
 }
 
 .sf-upgrade-banner-icon .dashicons {
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-	color: #fbbf24;
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+	color: #fcd34d;
 }
 
 .sf-upgrade-banner-text {
@@ -109,35 +94,37 @@
 	align-items: center;
 	gap: 8px;
 	font-size: 13px;
-	line-height: 1.4;
-	color: rgba(255, 255, 255, 0.95);
-	flex-wrap: wrap;
+	font-weight: 400;
+	line-height: 1;
+	color: rgba(255, 255, 255, 0.9);
 }
 
 .sf-upgrade-banner-link {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	color: #fff;
-	font-weight: 600;
-	text-decoration: none;
-	background: rgba(255, 255, 255, 0.15);
-	padding: 4px 10px;
+	gap: 3px;
+	margin-left: 4px;
+	padding: 5px 10px;
+	font-size: 12px;
+	font-weight: 500;
+	color: #6366f1;
+	background: #fff;
 	border-radius: 4px;
-	transition: all 0.2s ease;
+	text-decoration: none;
+	transition: all 0.15s ease;
 	white-space: nowrap;
 }
 
 .sf-upgrade-banner-link .dashicons {
-	font-size: 14px;
-	width: 14px;
-	height: 14px;
-	transition: transform 0.2s ease;
+	font-size: 12px;
+	width: 12px;
+	height: 12px;
+	transition: transform 0.15s ease;
 }
 
 .sf-upgrade-banner-link:hover {
-	background: rgba(255, 255, 255, 0.25);
-	color: #fff;
+	background: #f0f0ff;
+	color: #4f46e5;
 }
 
 .sf-upgrade-banner-link:hover .dashicons {
@@ -148,16 +135,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
-	height: 24px;
+	width: 22px;
+	height: 22px;
 	padding: 0;
+	margin-left: auto;
 	background: transparent;
 	border: none;
 	border-radius: 4px;
-	color: rgba(255, 255, 255, 0.7);
+	color: rgba(255, 255, 255, 0.6);
 	cursor: pointer;
-	flex-shrink: 0;
-	transition: all 0.2s ease;
+	transition: all 0.15s ease;
 }
 
 .sf-upgrade-banner-close:hover {
@@ -166,26 +153,30 @@
 }
 
 .sf-upgrade-banner-close .dashicons {
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
 }
 
 /* Responsive Banner */
 @media (max-width: 600px) {
 	.sf-upgrade-banner {
-		padding: 8px 12px;
-		gap: 8px;
+		height: 38px;
+		padding: 0 12px;
 	}
 
 	.sf-upgrade-banner-text {
 		font-size: 12px;
-		gap: 6px;
 	}
 
 	.sf-upgrade-banner-link {
-		padding: 3px 8px;
-		font-size: 12px;
+		padding: 4px 8px;
+		font-size: 11px;
+	}
+
+	.sf-upgrade-banner-close {
+		width: 20px;
+		height: 20px;
 	}
 }
 
