@@ -252,6 +252,48 @@
 			$(document).on('click', '#sf-search-clear', this.clearSearch);
 
 			$(document).on('click', '.sf-filter-tab', this.handleFilterTab);
+
+			$(document).on('click', '#sf-hamburger', this.toggleSidebar);
+			$(document).on('click', '#sf-sidebar-close', this.closeSidebar);
+			$(document).on('click', '#sf-sidebar-backdrop', this.closeSidebar);
+			$(document).on('keydown', this.handleSidebarKeydown);
+		},
+
+		/**
+		 * Toggle sidebar visibility.
+		 */
+		toggleSidebar: function () {
+			var $layout = $('#sf-app-layout');
+			var $hamburger = $('#sf-hamburger');
+			var isOpen = $layout.hasClass('sf-sidebar-open');
+
+			if (isOpen) {
+				SF_Admin.closeSidebar();
+			} else {
+				$layout.addClass('sf-sidebar-open');
+				$hamburger.attr('aria-expanded', 'true');
+				$('#sf-sidebar').focus();
+			}
+		},
+
+		/**
+		 * Close sidebar.
+		 */
+		closeSidebar: function () {
+			var $layout = $('#sf-app-layout');
+			var $hamburger = $('#sf-hamburger');
+
+			$layout.removeClass('sf-sidebar-open');
+			$hamburger.attr('aria-expanded', 'false');
+		},
+
+		/**
+		 * Handle sidebar keyboard navigation.
+		 */
+		handleSidebarKeydown: function (e) {
+			if (e.key === 'Escape') {
+				SF_Admin.closeSidebar();
+			}
 		},
 
 		/**

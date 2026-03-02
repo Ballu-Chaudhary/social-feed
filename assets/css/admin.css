@@ -40,6 +40,339 @@
 }
 
 /* ==========================================================================
+   App Layout - Modern Sidebar Navigation
+   ========================================================================== */
+
+/* Main App Container */
+.sf-app-layout {
+	display: flex;
+	min-height: calc(100vh - 32px);
+	margin-left: -20px;
+	background: #f0f2f5;
+}
+
+/* Sidebar Backdrop (Mobile) */
+.sf-sidebar-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(4px);
+	z-index: 99998;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.3s ease;
+}
+
+.sf-app-layout.sf-sidebar-open .sf-sidebar-backdrop {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Sidebar */
+.sf-sidebar {
+	position: fixed;
+	top: 32px;
+	left: 0;
+	bottom: 0;
+	width: 260px;
+	background: #111827;
+	display: flex;
+	flex-direction: column;
+	z-index: 99999;
+	transform: translateX(-100%);
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.sf-app-layout.sf-sidebar-open .sf-sidebar {
+	transform: translateX(0);
+}
+
+/* Sidebar Header */
+.sf-sidebar-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sf-sidebar-brand {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.sf-brand-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sf-brand-text {
+	font-size: 18px;
+	font-weight: 700;
+	color: #fff;
+	letter-spacing: -0.02em;
+}
+
+.sf-sidebar-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+	border-radius: 8px;
+	color: #9ca3af;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.sf-sidebar-close:hover {
+	background: rgba(255, 255, 255, 0.15);
+	color: #fff;
+}
+
+.sf-sidebar-close .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+/* Sidebar Navigation */
+.sf-sidebar-nav {
+	flex: 1;
+	overflow-y: auto;
+	padding: 16px 12px;
+}
+
+.sf-nav-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sf-nav-item {
+	margin-bottom: 4px;
+}
+
+.sf-nav-link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	color: #9ca3af;
+	text-decoration: none;
+	border-radius: 10px;
+	font-size: 14px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+.sf-nav-link:hover {
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.sf-nav-link--active {
+	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+	color: #fff;
+	box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.sf-nav-link--active:hover {
+	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.sf-nav-icon {
+	font-size: 18px;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0.8;
+}
+
+.sf-nav-link--active .sf-nav-icon {
+	opacity: 1;
+}
+
+.sf-nav-label {
+	flex: 1;
+}
+
+/* Sidebar Footer */
+.sf-sidebar-footer {
+	padding: 16px 20px;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sf-sidebar-version {
+	font-size: 12px;
+	color: #6b7280;
+}
+
+/* Main Content Area */
+.sf-main-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	margin-left: 0;
+	transition: margin-left 0.3s ease;
+}
+
+/* Top Header Bar */
+.sf-topbar {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 16px 24px;
+	background: #fff;
+	border-bottom: 1px solid #e5e7eb;
+	position: sticky;
+	top: 32px;
+	z-index: 100;
+}
+
+.sf-hamburger {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	background: #f3f4f6;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	gap: 5px;
+}
+
+.sf-hamburger:hover {
+	background: #e5e7eb;
+}
+
+.sf-hamburger:focus {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.sf-hamburger-line {
+	display: block;
+	width: 18px;
+	height: 2px;
+	background: #374151;
+	border-radius: 1px;
+	transition: all 0.3s ease;
+}
+
+.sf-app-layout.sf-sidebar-open .sf-hamburger-line:nth-child(1) {
+	transform: translateY(7px) rotate(45deg);
+}
+
+.sf-app-layout.sf-sidebar-open .sf-hamburger-line:nth-child(2) {
+	opacity: 0;
+}
+
+.sf-app-layout.sf-sidebar-open .sf-hamburger-line:nth-child(3) {
+	transform: translateY(-7px) rotate(-45deg);
+}
+
+.sf-topbar-title {
+	font-size: 18px;
+	font-weight: 600;
+	color: #111827;
+}
+
+/* Content Area */
+.sf-content-area {
+	flex: 1;
+	padding: 24px;
+	overflow-y: auto;
+}
+
+.sf-page-content {
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+.sf-page-actions {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 24px;
+}
+
+.sf-btn-upgrade {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 20px;
+	background: linear-gradient(135deg, #f59e0b, #d97706);
+	color: #fff !important;
+	font-size: 14px;
+	font-weight: 600;
+	border-radius: 8px;
+	text-decoration: none;
+	box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+	transition: all 0.2s ease;
+}
+
+.sf-btn-upgrade:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+	color: #fff !important;
+}
+
+.sf-btn-upgrade .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* Desktop Sidebar Behavior */
+@media (min-width: 1024px) {
+	.sf-sidebar {
+		transform: translateX(-100%);
+	}
+
+	.sf-app-layout.sf-sidebar-open .sf-sidebar {
+		transform: translateX(0);
+	}
+
+	.sf-sidebar-close {
+		display: none;
+	}
+
+	.sf-sidebar-backdrop {
+		display: none;
+	}
+}
+
+/* Mobile Admin Bar Adjustment */
+@media (max-width: 782px) {
+	.sf-sidebar {
+		top: 46px;
+	}
+
+	.sf-topbar {
+		top: 46px;
+	}
+
+	.sf-app-layout {
+		min-height: calc(100vh - 46px);
+	}
+}
+
+/* ==========================================================================
    Base Admin Layout
    ========================================================================== */
 

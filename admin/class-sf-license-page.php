@@ -20,24 +20,31 @@ class SF_License_Page {
 	 * Render the license page.
 	 */
 	public static function render() {
+		?>
+		<div class="wrap sf-license-page">
+			<?php self::render_content(); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the license page content (without wrapper).
+	 */
+	public static function render_content() {
 		$license_data = SF_License::get_license_data();
 		$has_license  = ! empty( $license_data['status'] ) && 'valid' === $license_data['status'];
 		$is_expired   = ! empty( $license_data['expires'] ) && 'lifetime' !== $license_data['expires'] && strtotime( $license_data['expires'] ) < time();
 
 		?>
-		<div class="wrap sf-license-page">
-			<h1><?php esc_html_e( 'License', 'social-feed' ); ?></h1>
-
-			<div class="sf-license-container">
-				<?php if ( $has_license && ! $is_expired ) : ?>
-					<?php self::render_active_license( $license_data ); ?>
-				<?php elseif ( $has_license && $is_expired ) : ?>
-					<?php self::render_expired_license( $license_data ); ?>
-				<?php else : ?>
-					<?php self::render_activation_form(); ?>
-					<?php self::render_pricing_cards(); ?>
-				<?php endif; ?>
-			</div>
+		<div class="sf-license-container">
+			<?php if ( $has_license && ! $is_expired ) : ?>
+				<?php self::render_active_license( $license_data ); ?>
+			<?php elseif ( $has_license && $is_expired ) : ?>
+				<?php self::render_expired_license( $license_data ); ?>
+			<?php else : ?>
+				<?php self::render_activation_form(); ?>
+				<?php self::render_pricing_cards(); ?>
+			<?php endif; ?>
 		</div>
 
 		<style>

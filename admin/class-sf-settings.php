@@ -437,6 +437,17 @@ class SF_Settings {
 	 * Render the settings page.
 	 */
 	public static function render() {
+		?>
+		<div class="wrap sf-admin-wrap sf-settings-page">
+			<?php self::render_content(); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the settings page content (without wrapper).
+	 */
+	public static function render_content() {
 		$settings    = get_option( self::OPTION_NAME, self::get_defaults() );
 		$settings    = wp_parse_args( $settings, self::get_defaults() );
 		$current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'general';
@@ -444,10 +455,7 @@ class SF_Settings {
 		$last_clear  = get_option( 'sf_last_cache_clear', 0 );
 
 		?>
-		<div class="wrap sf-admin-wrap sf-settings-page">
-			<h1 class="sf-admin-title"><?php esc_html_e( 'Settings', 'social-feed' ); ?></h1>
-
-			<nav class="sf-tabs">
+		<nav class="sf-tabs">
 				<a href="<?php echo esc_url( add_query_arg( 'tab', 'general' ) ); ?>" class="sf-tab <?php echo 'general' === $current_tab ? 'sf-tab--active' : ''; ?>">
 					<span class="dashicons dashicons-admin-generic"></span>
 					<?php esc_html_e( 'General', 'social-feed' ); ?>
@@ -532,11 +540,10 @@ class SF_Settings {
 					<?php endif; ?>
 				</div>
 
-				<div class="sf-settings-footer">
-					<?php submit_button( __( 'Save Settings', 'social-feed' ), 'primary', 'submit', false ); ?>
-				</div>
-			</form>
-		</div>
+			<div class="sf-settings-footer">
+				<?php submit_button( __( 'Save Settings', 'social-feed' ), 'primary', 'submit', false ); ?>
+			</div>
+		</form>
 		<?php
 	}
 

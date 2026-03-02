@@ -18,45 +18,53 @@ class SF_Accounts {
 	 * Render the connected accounts page.
 	 */
 	public static function render() {
+		?>
+		<div class="wrap sf-admin-wrap sf-accounts-wrap">
+			<?php self::render_content(); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the accounts page content (without wrapper).
+	 */
+	public static function render_content() {
 		$args = array();
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$args['wp_user_id'] = get_current_user_id();
 		}
 		$accounts = SF_Database::get_all_accounts( $args );
 		?>
-		<div class="wrap sf-admin-wrap sf-accounts-wrap">
-			<div class="sf-accounts-header">
-				<h1 class="sf-admin-title"><?php esc_html_e( 'Instagram Accounts', 'social-feed' ); ?></h1>
-				<?php if ( ! empty( $accounts ) ) : ?>
-					<button type="button" class="button button-primary sf-connect-account-btn">
-						<span class="dashicons dashicons-plus-alt2"></span>
-						<?php esc_html_e( 'Connect New Account', 'social-feed' ); ?>
-					</button>
-				<?php endif; ?>
-			</div>
-
-			<?php if ( empty( $accounts ) ) : ?>
-				<!-- Empty State - Instagram branded -->
-				<div class="sf-empty-state-large sf-accounts-empty sf-instagram-empty">
-					<div class="sf-empty-instagram-logo">
-						<?php echo self::get_instagram_logo_svg( 80 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					</div>
-					<h2><?php esc_html_e( 'Connect your Instagram account', 'social-feed' ); ?></h2>
-					<p><?php esc_html_e( 'Link your Instagram Business or Creator account to display your posts, reels, and profile on your website. You\'ll authorize once through Facebook — then your feed updates automatically.', 'social-feed' ); ?></p>
-					<button type="button" class="button button-primary button-hero sf-connect-account-btn">
-						<?php echo self::get_instagram_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<span><?php esc_html_e( 'Connect Instagram Account', 'social-feed' ); ?></span>
-					</button>
-				</div>
-			<?php else : ?>
-				<!-- Accounts Grid -->
-				<div class="sf-accounts-grid">
-					<?php foreach ( $accounts as $account ) : ?>
-						<?php self::render_account_card( $account ); ?>
-					<?php endforeach; ?>
-				</div>
+		<div class="sf-accounts-header">
+			<?php if ( ! empty( $accounts ) ) : ?>
+				<button type="button" class="button button-primary sf-connect-account-btn">
+					<span class="dashicons dashicons-plus-alt2"></span>
+					<?php esc_html_e( 'Connect New Account', 'social-feed' ); ?>
+				</button>
 			<?php endif; ?>
 		</div>
+
+		<?php if ( empty( $accounts ) ) : ?>
+			<!-- Empty State - Instagram branded -->
+			<div class="sf-empty-state-large sf-accounts-empty sf-instagram-empty">
+				<div class="sf-empty-instagram-logo">
+					<?php echo self::get_instagram_logo_svg( 80 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</div>
+				<h2><?php esc_html_e( 'Connect your Instagram account', 'social-feed' ); ?></h2>
+				<p><?php esc_html_e( 'Link your Instagram Business or Creator account to display your posts, reels, and profile on your website. You\'ll authorize once through Facebook — then your feed updates automatically.', 'social-feed' ); ?></p>
+				<button type="button" class="button button-primary button-hero sf-connect-account-btn">
+					<?php echo self::get_instagram_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<span><?php esc_html_e( 'Connect Instagram Account', 'social-feed' ); ?></span>
+				</button>
+			</div>
+		<?php else : ?>
+			<!-- Accounts Grid -->
+			<div class="sf-accounts-grid">
+				<?php foreach ( $accounts as $account ) : ?>
+					<?php self::render_account_card( $account ); ?>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
 		<?php
 	}
 
