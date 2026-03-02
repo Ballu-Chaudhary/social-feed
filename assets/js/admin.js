@@ -257,7 +257,7 @@
 			$(document).on('click', '.sf-filter-tab', this.handleFilterTab);
 
 			$(document).on('click', '#sf-hamburger', this.toggleSidebar);
-			$(document).on('click', '#sf-sidebar-close', this.closeSidebar);
+			$(document).on('click', '#sf-sidebar-toggle', this.toggleSidebar);
 			$(document).on('click', '#sf-sidebar-backdrop', this.closeSidebar);
 			$(document).on('keydown', this.handleSidebarKeydown);
 		},

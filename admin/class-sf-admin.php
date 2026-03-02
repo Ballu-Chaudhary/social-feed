@@ -381,8 +381,12 @@ class SF_Admin {
 						</span>
 						<span class="sf-brand-text"><?php esc_html_e( 'Social Feed', 'social-feed' ); ?></span>
 					</div>
-					<button type="button" class="sf-sidebar-close" id="sf-sidebar-close" aria-label="<?php esc_attr_e( 'Close menu', 'social-feed' ); ?>">
-						<span class="dashicons dashicons-no-alt"></span>
+					<button type="button" class="sf-sidebar-toggle" id="sf-sidebar-toggle" aria-label="<?php esc_attr_e( 'Toggle sidebar', 'social-feed' ); ?>">
+						<span class="sf-toggle-icon">
+							<span class="sf-toggle-line"></span>
+							<span class="sf-toggle-line"></span>
+							<span class="sf-toggle-line"></span>
+						</span>
 					</button>
 				</div>
 				<nav class="sf-sidebar-nav">
@@ -497,7 +501,7 @@ class SF_Admin {
 
 				<!-- Quick Actions -->
 				<div class="sf-card sf-quick-actions">
-					<h2 class="sf-card-title"><?php esc_html_e( 'Quick Actions', 'social-feed' ); ?></h2>
+					<h2 class="sf-card-title"><span class="dashicons dashicons-superhero-alt"></span><?php esc_html_e( 'Quick Actions', 'social-feed' ); ?></h2>
 					<div class="sf-card-content">
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="sf-action-btn button button-primary">
 							<span class="dashicons dashicons-plus-alt"></span>
@@ -516,12 +520,15 @@ class SF_Admin {
 
 				<!-- Error Log -->
 				<div class="sf-card sf-error-log">
-					<h2 class="sf-card-title"><?php esc_html_e( 'Recent Errors', 'social-feed' ); ?></h2>
+					<h2 class="sf-card-title"><span class="dashicons dashicons-shield-alt"></span><?php esc_html_e( 'Recent Errors', 'social-feed' ); ?></h2>
 					<div class="sf-card-content">
 						<?php if ( empty( $recent_errors ) ) : ?>
-							<div class="sf-empty-state sf-success-state">
-								<span class="dashicons dashicons-yes-alt"></span>
-								<p><?php esc_html_e( 'No errors logged. Everything is running smoothly!', 'social-feed' ); ?></p>
+							<div class="sf-empty-state sf-empty-state--success">
+								<div class="sf-empty-icon">
+									<span class="dashicons dashicons-yes-alt"></span>
+								</div>
+								<h3><?php esc_html_e( 'All Clear!', 'social-feed' ); ?></h3>
+								<p><?php esc_html_e( 'No errors logged. Everything is running smoothly.', 'social-feed' ); ?></p>
 							</div>
 						<?php else : ?>
 							<ul class="sf-error-list">
