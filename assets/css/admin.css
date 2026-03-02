@@ -50,18 +50,18 @@
 }
 
 /* ==========================================================================
-   Upgrade Banner - Compact Single-Line
+   Upgrade Banner - Slim Single-Line
    ========================================================================== */
 
 .sf-upgrade-banner {
 	display: none;
 	align-items: center;
 	justify-content: space-between;
-	height: 40px;
-	padding: 0 14px;
+	height: 32px;
+	padding: 0 12px;
 	background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-	border-radius: 6px;
-	margin-bottom: 16px;
+	border-radius: 5px;
+	margin-bottom: 12px;
 }
 
 .sf-upgrade-banner.sf-banner-visible {
@@ -71,75 +71,71 @@
 .sf-upgrade-banner-left {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 }
 
 .sf-upgrade-banner-icon {
-	width: 14px;
-	height: 14px;
 	flex-shrink: 0;
+	font-size: 11px;
+	line-height: 1;
 }
 
 .sf-upgrade-banner-icon::before {
 	content: "⭐";
-	font-size: 12px;
-	line-height: 1;
 }
 
 .sf-upgrade-banner-text {
-	font-size: 13px;
+	font-size: 12px;
 	font-weight: 400;
-	color: rgba(255, 255, 255, 0.95);
+	color: rgba(255, 255, 255, 0.9);
 	white-space: nowrap;
 }
 
 .sf-upgrade-banner-btn {
 	display: inline-block;
-	margin-left: 6px;
-	padding: 4px 10px;
-	font-size: 12px;
+	margin-left: 8px;
+	padding: 3px 8px;
+	font-size: 11px;
 	font-weight: 500;
 	color: #667eea;
 	background: #fff;
-	border-radius: 4px;
+	border-radius: 3px;
 	text-decoration: none;
 	white-space: nowrap;
-	transition: background 0.15s, color 0.15s;
+	transition: background 0.15s;
 }
 
 .sf-upgrade-banner-btn:hover {
 	background: #f0f0ff;
-	color: #5a67d8;
 }
 
 .sf-upgrade-banner-close {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 20px;
-	height: 20px;
+	width: 18px;
+	height: 18px;
 	padding: 0;
 	background: transparent;
 	border: none;
 	border-radius: 3px;
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 300;
 	line-height: 1;
-	color: rgba(255, 255, 255, 0.6);
+	color: rgba(255, 255, 255, 0.5);
 	cursor: pointer;
-	transition: background 0.15s, color 0.15s;
+	transition: color 0.15s;
 }
 
 .sf-upgrade-banner-close:hover {
-	background: rgba(255, 255, 255, 0.15);
 	color: #fff;
 }
 
 /* Mobile */
 @media (max-width: 600px) {
 	.sf-upgrade-banner {
-		height: 36px;
-		padding: 0 10px;
+		height: 28px;
+		padding: 0 8px;
 	}
 
 	.sf-upgrade-banner-text {
@@ -147,8 +143,8 @@
 	}
 
 	.sf-upgrade-banner-btn {
-		padding: 3px 8px;
-		font-size: 11px;
+		padding: 2px 6px;
+		font-size: 10px;
 	}
 }
 
