@@ -154,6 +154,42 @@
 	background: #f8fafc;
 }
 
+/* ==========================================================================
+   Back Button - Modern Figma Style
+   ========================================================================== */
+
+.sf-back-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px 8px 10px;
+	margin-bottom: 20px;
+	font-size: 13px;
+	font-weight: 500;
+	color: #64748b;
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	text-decoration: none;
+	transition: all 0.15s ease;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.sf-back-btn:hover {
+	color: #334155;
+	background: #f8fafc;
+	border-color: #cbd5e1;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.sf-back-btn:active {
+	transform: scale(0.98);
+}
+
+.sf-back-btn svg {
+	flex-shrink: 0;
+}
+
 .sf-page-content {
 	max-width: 1200px;
 }
