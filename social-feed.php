@@ -84,6 +84,8 @@ register_deactivation_hook( __FILE__, 'sf_deactivate' );
  * Initialize the plugin.
  */
 function sf_init() {
+	load_plugin_textdomain( 'social-feed', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
 	SF_Database::maybe_upgrade();
 
 	$core = SF_Core::instance();
@@ -91,3 +93,17 @@ function sf_init() {
 }
 
 add_action( 'plugins_loaded', 'sf_init' );
+
+/**
+ * Add Settings link to plugin action links.
+ *
+ * @param array $links Plugin action links.
+ * @return array Modified links.
+ */
+function sf_plugin_action_links( $links ) {
+	$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=social-feed-settings' ) ) . '">' . esc_html__( 'Settings', 'social-feed' ) . '</a>';
+	array_unshift( $links, $settings_link );
+	return $links;
+}
+
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'sf_plugin_action_links' );

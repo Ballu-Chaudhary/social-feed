@@ -60,17 +60,15 @@ class SF_Ajax {
 	}
 
 	/**
-	 * Verify AJAX request.
+	 * Verify AJAX request (nonce + capability).
 	 *
 	 * @return bool
 	 */
 	private function verify_request() {
-		if ( ! check_ajax_referer( 'sf_admin_nonce', 'nonce', false ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'social-feed' ) ), 403 );
-		}
+		check_ajax_referer( 'sf_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'social-feed' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'Unauthorized access.', 'social-feed' ) ) );
 		}
 
 		return true;
@@ -1496,10 +1494,10 @@ class SF_Ajax {
 	 * Handle dismiss upgrade banner request.
 	 */
 	public function handle_dismiss_upgrade_banner() {
-		check_ajax_referer( 'sf_dismiss_banner', 'nonce' );
+		check_ajax_referer( 'sf_admin_nonce', 'nonce' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'social-feed' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'Unauthorized access.', 'social-feed' ) ) );
 		}
 
 		$user_id = get_current_user_id();
