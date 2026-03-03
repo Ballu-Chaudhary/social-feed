@@ -1047,17 +1047,52 @@
 				e.stopPropagation();
 				e.preventDefault();
 				var $icon = $(this);
-				if ($icon.find('.sf-info-tooltip').length) {
-					$icon.find('.sf-info-tooltip').remove();
+				if ($('#sf-info-tooltip-root').length) {
+					$('#sf-info-tooltip-root').remove();
 					return;
 				}
-				$('.sf-info-tooltip').remove();
+				$('.sf-info-tooltip, #sf-info-tooltip-root').remove();
 				var text = $icon.data('info');
-				$icon.append('<div class="sf-info-tooltip">' + $('<span>').text(text).html() + '</div>');
+				if (!text) return;
+				var $tooltip = $('<div id="sf-info-tooltip-root" class="sf-info-tooltip sf-info-tooltip-fixed">' + $('<span>').text(text).html() + '</div>');
+				$('body').append($tooltip);
+
+				var iconRect = $icon[0].getBoundingClientRect();
+				var padding = 12;
+				var viewW = window.innerWidth;
+				var viewH = window.innerHeight;
+				var tooltipMaxW = Math.min(280, viewW - padding * 2);
+				$tooltip.css('max-width', tooltipMaxW + 'px');
+				var tooltipRect = $tooltip[0].getBoundingClientRect();
+				var tooltipW = tooltipRect.width;
+				var tooltipH = tooltipRect.height;
+
+				var left = iconRect.left + (iconRect.width / 2) - (tooltipW / 2);
+				var top = iconRect.top - tooltipH - 8;
+				var arrowDir = 'bottom';
+
+				if (left + tooltipW + padding > viewW) {
+					left = viewW - tooltipW - padding;
+				}
+				if (left < padding) {
+					left = padding;
+				}
+				if (top < padding) {
+					top = iconRect.bottom + 8;
+					arrowDir = 'top';
+				}
+				if (top + tooltipH + padding > viewH) {
+					top = Math.max(padding, viewH - tooltipH - padding);
+				}
+
+				$tooltip.css({
+					left: left + 'px',
+					top: top + 'px'
+				}).addClass('sf-info-tooltip-arrow-' + arrowDir);
 			});
 
 			$(document).on('click', function () {
-				$('.sf-info-tooltip').remove();
+				$('.sf-info-tooltip, #sf-info-tooltip-root').remove();
 			});
 
 			$(document).on('click', '.sf-preview-loadmore-btn', function (e) {

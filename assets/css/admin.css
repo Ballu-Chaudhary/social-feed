@@ -1825,45 +1825,77 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 }
 
 .sf-info-tooltip {
-	position: absolute;
-	bottom: calc(100% + 8px);
-	left: 50%;
-	transform: translateX(-50%);
 	background: #1e293b;
 	color: #f1f5f9;
-	padding: 8px 12px;
-	border-radius: 6px;
+	padding: 10px 14px;
+	border-radius: 8px;
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 1.5;
-	min-width: 120px;
-	max-width: 240px;
+	min-width: 160px;
+	max-width: 280px;
 	z-index: 999999;
 	pointer-events: none;
 	white-space: normal;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 	text-transform: none;
 	letter-spacing: 0;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 	animation: sfTooltipFadeIn 0.15s ease;
 }
 
-.sf-info-tooltip::before {
+/* Fixed-position tooltip (appended to body, positioned via JS) */
+.sf-info-tooltip-fixed {
+	position: fixed;
+	transform: none;
+	left: 0;
+	top: 0;
+}
+
+.sf-info-tooltip-fixed::before {
 	content: "";
 	position: absolute;
-	top: 100%;
 	left: 50%;
-	transform: translateX(-50%);
-	border: 5px solid transparent;
+	margin-left: -6px;
+	border: 6px solid transparent;
+}
+
+.sf-info-tooltip-arrow-bottom.sf-info-tooltip-fixed::before {
+	top: 100%;
 	border-top-color: #1e293b;
 }
 
+.sf-info-tooltip-arrow-top.sf-info-tooltip-fixed::before {
+	bottom: 100%;
+	border-bottom-color: #1e293b;
+}
+
 @keyframes sfTooltipFadeIn {
-	from { opacity: 0; transform: translateX(-50%) translateY(4px); }
-	to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+	from { opacity: 0; transform: translateY(4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.sf-info-tooltip-fixed {
+	animation: sfTooltipFadeInFixed 0.15s ease;
+}
+
+@keyframes sfTooltipFadeInFixed {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+/* Responsive: ensure tooltip stays in viewport on narrow screens */
+@media (max-width: 400px) {
+	.sf-info-tooltip {
+		min-width: 120px;
+		max-width: calc(100vw - 24px);
+	}
 }
 
 .sf-radio-card .sf-info-icon {
 	margin-left: auto;
+	flex-shrink: 0;
 }
 
 /* Field row - modern card layout */
@@ -2224,11 +2256,12 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 /* Layout Panel - Compact SaaS-style */
 .sf-tab-content-layout {
-	padding: 12px 14px 16px 14px;
+	padding: 12px 16px 16px 16px;
 }
 
-/* Load More & Layout tabs - ensure right padding for info icon */
+/* Load More & Layout tabs - equal left/right padding for visible corners */
 .sf-sidebar-panel-body .sf-tab-content-layout {
+	padding-left: 16px;
 	padding-right: 20px;
 }
 
@@ -2282,7 +2315,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	min-width: 0;
 	height: auto;
 	min-height: 44px;
-	padding: 10px 12px;
+	padding: 10px 14px 10px 12px;
 	gap: 10px;
 	border: 1px solid #e5e7eb;
 	border-radius: 8px;
@@ -2291,6 +2324,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	transition: all 0.15s ease;
 	background: #fff;
 	position: relative;
+	overflow: visible;
 }
 
 .sf-tab-content-layout .sf-radio-card.sf-layout-option:last-child {
