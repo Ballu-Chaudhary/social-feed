@@ -32,8 +32,7 @@ class SF_Customizer {
 
 		$defaults = self::get_defaults();
 
-		if ( ! $feed_id && ! empty( $template_id ) ) {
-			require_once SF_PLUGIN_PATH . 'admin/class-sf-templates.php';
+		if ( ! $feed_id && ! empty( $template_id ) && ! in_array( $template_id, array( 'custom', 'scratch' ), true ) ) {
 			$settings = SF_Templates::get_merged_settings( $template_id, $defaults );
 		} else {
 			$settings = wp_parse_args( $meta, $defaults );

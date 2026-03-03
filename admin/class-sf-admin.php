@@ -788,12 +788,50 @@ class SF_Admin {
 	}
 
 	/**
+	 * Render CSS mockup preview HTML for a template.
+	 *
+	 * @param string $mockup    Mockup type (grid-3, grid-3-header, etc.).
+	 * @param string $template_id Template ID (for dark mode styling).
+	 * @return string HTML.
+	 */
+	private function render_template_mockup( $mockup, $template_id ) {
+		$cells = array_fill( 0, 9, '<span class="sf-mockup-cell"></span>' );
+		$cells_html = implode( '', $cells );
+
+		if ( in_array( $mockup, array( 'grid-3', 'grid-3-dark' ), true ) ) {
+			return '<div class="sf-mockup-grid sf-mockup-grid--3x3' . ( 'grid-3-dark' === $mockup ? ' sf-mockup-grid--dark' : '' ) . '">' . $cells_html . '</div>';
+		}
+		if ( 'grid-4' === $mockup ) {
+			$c = array_fill( 0, 8, '<span class="sf-mockup-cell"></span>' );
+			return '<div class="sf-mockup-grid sf-mockup-grid--4x2">' . implode( '', $c ) . '</div>';
+		}
+		if ( 'grid-3-header' === $mockup ) {
+			return '<div class="sf-mockup-header-bar"></div><div class="sf-mockup-grid sf-mockup-grid--3x2">' . implode( '', array_fill( 0, 6, '<span class="sf-mockup-cell"></span>' ) ) . '</div>';
+		}
+		if ( 'grid-2-captions' === $mockup ) {
+			$cells = array_fill( 0, 4, '<span class="sf-mockup-cell"></span>' );
+			return '<div class="sf-mockup-grid sf-mockup-grid--2x2">' . implode( '', $cells ) . '</div>';
+		}
+		if ( 'grid-1' === $mockup ) {
+			return '<div class="sf-mockup-grid sf-mockup-grid--1col"><span class="sf-mockup-cell"></span><span class="sf-mockup-cell"></span></div>';
+		}
+		if ( 'masonry' === $mockup ) {
+			return '<div class="sf-mockup-grid sf-mockup-grid--masonry"><span class="sf-mockup-cell sf-mockup-tall"></span><span class="sf-mockup-cell"></span><span class="sf-mockup-cell sf-mockup-tall"></span><span class="sf-mockup-cell"></span><span class="sf-mockup-cell sf-mockup-tall"></span></div>';
+		}
+		if ( 'highlight' === $mockup ) {
+			return '<div class="sf-mockup-grid sf-mockup-grid--highlight"><span class="sf-mockup-cell sf-mockup-featured"></span><span class="sf-mockup-cell"></span><span class="sf-mockup-cell"></span><span class="sf-mockup-cell"></span></div>';
+		}
+
+		return '<div class="sf-mockup-grid sf-mockup-grid--3x3">' . $cells_html . '</div>';
+	}
+
+	/**
 	 * Render template selection screen (first step when creating new feed).
 	 */
 	private function render_template_selection() {
-		require_once SF_PLUGIN_PATH . 'admin/class-sf-templates.php';
 		$templates = SF_Templates::get_templates();
 		$is_pro    = function_exists( 'sf_is_pro' ) && sf_is_pro();
+		$custom_url = add_query_arg( 'template', 'custom', admin_url( 'admin.php?page=social-feed-create' ) );
 		?>
 		<div class="wrap sf-admin-wrap sf-template-selection-wrap">
 			<div class="sf-app-layout">
@@ -806,38 +844,49 @@ class SF_Admin {
 							<span><?php esc_html_e( 'Back to Dashboard', 'social-feed' ); ?></span>
 						</a>
 
-						<div class="sf-template-selection-header">
-							<h1 class="sf-template-selection-title"><?php esc_html_e( 'Choose a Template to get started', 'social-feed' ); ?></h1>
-							<p class="sf-template-selection-subtitle"><?php esc_html_e( 'You can customize everything after', 'social-feed' ); ?></p>
+						<div class="sf-template-selection-top">
+							<div class="sf-template-selection-header">
+								<h1 class="sf-template-selection-title"><?php esc_html_e( 'Choose a Template', 'social-feed' ); ?></h1>
+								<p class="sf-template-selection-subtitle"><?php esc_html_e( 'Start with a ready-made design or build your own', 'social-feed' ); ?></p>
+							</div>
+							<a href="<?php echo esc_url( $custom_url ); ?>" class="sf-template-custom-btn">
+								<span class="dashicons dashicons-admin-generic"></span>
+								<?php esc_html_e( 'Custom', 'social-feed' ); ?>
+							</a>
 						</div>
 
 						<div class="sf-template-grid">
 							<?php foreach ( $templates as $tpl ) : ?>
 								<?php
-								$locked = ! empty( $tpl['pro'] ) && ! $is_pro;
-								$url    = $locked ? '#' : add_query_arg( 'template', $tpl['id'], admin_url( 'admin.php?page=social-feed-create' ) );
+								$locked   = ! empty( $tpl['pro'] ) && ! $is_pro;
+								$url      = $locked ? '#' : add_query_arg( 'template', $tpl['id'], admin_url( 'admin.php?page=social-feed-create' ) );
+								$mockup   = isset( $tpl['mockup'] ) ? $tpl['mockup'] : 'grid-3';
 								?>
 								<div class="sf-template-card <?php echo $locked ? 'sf-template-card--locked' : ''; ?>" data-template-id="<?php echo esc_attr( $tpl['id'] ); ?>" data-locked="<?php echo $locked ? '1' : '0'; ?>">
 									<a href="<?php echo esc_url( $url ); ?>" class="sf-template-card-link" <?php echo $locked ? ' onclick="return false;"' : ''; ?>>
-										<div class="sf-template-card-thumb">
-											<img src="<?php echo esc_url( SF_Templates::get_thumbnail_url( $tpl['id'] ) ); ?>" alt="<?php echo esc_attr( $tpl['name'] ); ?>">
+										<div class="sf-template-card-thumb sf-template-mockup sf-template-mockup--<?php echo esc_attr( $mockup ); ?> <?php echo 'dark-mode' === $tpl['id'] ? 'sf-template-mockup--dark' : ''; ?>">
+											<?php
+											$thumb_url = SF_Templates::get_thumbnail_url( $tpl['id'] );
+											if ( $thumb_url ) :
+												?>
+												<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( $tpl['name'] ); ?>">
+											<?php else : ?>
+												<?php echo self::render_template_mockup( $mockup, $tpl['id'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+											<?php endif; ?>
 											<?php if ( $locked ) : ?>
+												<div class="sf-template-card-overlay">
+													<span class="sf-template-lock-icon dashicons dashicons-lock"></span>
+												</div>
 												<span class="sf-template-badge sf-template-badge--pro"><?php esc_html_e( 'PRO', 'social-feed' ); ?></span>
 											<?php else : ?>
 												<span class="sf-template-badge sf-template-badge--free"><?php esc_html_e( 'FREE', 'social-feed' ); ?></span>
 											<?php endif; ?>
+											<div class="sf-template-use-btn"><?php esc_html_e( 'Use Template', 'social-feed' ); ?></div>
 										</div>
 										<div class="sf-template-card-name"><?php echo esc_html( $tpl['name'] ); ?></div>
 									</a>
 								</div>
 							<?php endforeach; ?>
-						</div>
-
-						<div class="sf-template-selection-footer">
-							<a href="<?php echo esc_url( add_query_arg( 'template', 'scratch', admin_url( 'admin.php?page=social-feed-create' ) ) ); ?>" class="button button-secondary sf-start-from-scratch">
-								<span class="dashicons dashicons-plus-alt2"></span>
-								<?php esc_html_e( 'Start from Scratch', 'social-feed' ); ?>
-							</a>
 						</div>
 					</div>
 				</div>
@@ -849,12 +898,15 @@ class SF_Admin {
 			<div class="sf-template-pro-modal-overlay"></div>
 			<div class="sf-template-pro-modal-content">
 				<div class="sf-template-pro-modal-header">
-					<h3><?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?></h3>
+					<h3><?php esc_html_e( 'Pro Template', 'social-feed' ); ?></h3>
 					<button type="button" class="sf-template-pro-modal-close">&times;</button>
 				</div>
 				<div class="sf-template-pro-modal-body">
-					<p><?php esc_html_e( 'This template is available in Social Feed Pro. Upgrade to unlock premium templates and features.', 'social-feed' ); ?></p>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Upgrade Now', 'social-feed' ); ?></a>
+					<p><?php esc_html_e( 'This is a Pro template. Upgrade to unlock all templates and features.', 'social-feed' ); ?></p>
+					<div class="sf-template-pro-modal-actions">
+						<button type="button" class="button button-secondary sf-template-pro-modal-cancel"><?php esc_html_e( 'Cancel', 'social-feed' ); ?></button>
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
+					</div>
 				</div>
 			</div>
 		</div>

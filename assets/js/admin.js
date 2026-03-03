@@ -2027,7 +2027,7 @@
 				e.preventDefault();
 				$('#sf-template-pro-modal').show();
 			});
-			$(document).on('click', '.sf-template-pro-modal-close, .sf-template-pro-modal-overlay', function () {
+			$(document).on('click', '.sf-template-pro-modal-close, .sf-template-pro-modal-overlay, .sf-template-pro-modal-cancel', function () {
 				$('#sf-template-pro-modal').hide();
 			});
 		}
