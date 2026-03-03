@@ -161,7 +161,13 @@ class SF_Admin {
 			} elseif ( $page === self::PAGE_SLUG . '-feeds' ) {
 				$classes .= ' sf-feeds-page';
 			} elseif ( $page === self::PAGE_SLUG . '-create' ) {
-				$classes .= ' sf-customizer-page';
+				$template = isset( $_GET['template'] ) ? sanitize_key( wp_unslash( $_GET['template'] ) ) : '';
+				$feed_id  = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
+				if ( 0 === $feed_id && empty( $template ) ) {
+					$classes .= ' sf-template-selection-page';
+				} else {
+					$classes .= ' sf-customizer-page';
+				}
 			} elseif ( $page === self::PAGE_SLUG . '-accounts' ) {
 				$classes .= ' sf-accounts-page';
 			} elseif ( $page === self::PAGE_SLUG . '-settings' ) {
@@ -763,13 +769,94 @@ class SF_Admin {
 	 * Render create/edit feed page.
 	 */
 	public function render_create_feed() {
-		$feed_id = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
+		$feed_id    = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
+		$template   = isset( $_GET['template'] ) ? sanitize_key( wp_unslash( $_GET['template'] ) ) : '';
+
+		if ( 0 === $feed_id && empty( $template ) ) {
+			$this->render_template_selection();
+			return;
+		}
+
 		?>
 		<div class="wrap sf-admin-wrap sf-create-feed-wrap">
 			<?php
 			require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
-			SF_Customizer::render( $feed_id );
+			SF_Customizer::render( $feed_id, $template );
 			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render template selection screen (first step when creating new feed).
+	 */
+	private function render_template_selection() {
+		require_once SF_PLUGIN_PATH . 'admin/class-sf-templates.php';
+		$templates = SF_Templates::get_templates();
+		$is_pro    = function_exists( 'sf_is_pro' ) && sf_is_pro();
+		?>
+		<div class="wrap sf-admin-wrap sf-template-selection-wrap">
+			<div class="sf-app-layout">
+				<div class="sf-content-area">
+					<div class="sf-template-selection">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>" class="sf-back-btn">
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+							<span><?php esc_html_e( 'Back to Dashboard', 'social-feed' ); ?></span>
+						</a>
+
+						<div class="sf-template-selection-header">
+							<h1 class="sf-template-selection-title"><?php esc_html_e( 'Choose a Template to get started', 'social-feed' ); ?></h1>
+							<p class="sf-template-selection-subtitle"><?php esc_html_e( 'You can customize everything after', 'social-feed' ); ?></p>
+						</div>
+
+						<div class="sf-template-grid">
+							<?php foreach ( $templates as $tpl ) : ?>
+								<?php
+								$locked = ! empty( $tpl['pro'] ) && ! $is_pro;
+								$url    = $locked ? '#' : add_query_arg( 'template', $tpl['id'], admin_url( 'admin.php?page=social-feed-create' ) );
+								?>
+								<div class="sf-template-card <?php echo $locked ? 'sf-template-card--locked' : ''; ?>" data-template-id="<?php echo esc_attr( $tpl['id'] ); ?>" data-locked="<?php echo $locked ? '1' : '0'; ?>">
+									<a href="<?php echo esc_url( $url ); ?>" class="sf-template-card-link" <?php echo $locked ? ' onclick="return false;"' : ''; ?>>
+										<div class="sf-template-card-thumb">
+											<img src="<?php echo esc_url( SF_Templates::get_thumbnail_url( $tpl['id'] ) ); ?>" alt="<?php echo esc_attr( $tpl['name'] ); ?>">
+											<?php if ( $locked ) : ?>
+												<span class="sf-template-badge sf-template-badge--pro"><?php esc_html_e( 'PRO', 'social-feed' ); ?></span>
+											<?php else : ?>
+												<span class="sf-template-badge sf-template-badge--free"><?php esc_html_e( 'FREE', 'social-feed' ); ?></span>
+											<?php endif; ?>
+										</div>
+										<div class="sf-template-card-name"><?php echo esc_html( $tpl['name'] ); ?></div>
+									</a>
+								</div>
+							<?php endforeach; ?>
+						</div>
+
+						<div class="sf-template-selection-footer">
+							<a href="<?php echo esc_url( add_query_arg( 'template', 'scratch', admin_url( 'admin.php?page=social-feed-create' ) ) ); ?>" class="button button-secondary sf-start-from-scratch">
+								<span class="dashicons dashicons-plus-alt2"></span>
+								<?php esc_html_e( 'Start from Scratch', 'social-feed' ); ?>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Pro upgrade prompt modal -->
+		<div class="sf-template-pro-modal" id="sf-template-pro-modal" style="display:none;">
+			<div class="sf-template-pro-modal-overlay"></div>
+			<div class="sf-template-pro-modal-content">
+				<div class="sf-template-pro-modal-header">
+					<h3><?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?></h3>
+					<button type="button" class="sf-template-pro-modal-close">&times;</button>
+				</div>
+				<div class="sf-template-pro-modal-body">
+					<p><?php esc_html_e( 'This template is available in Social Feed Pro. Upgrade to unlock premium templates and features.', 'social-feed' ); ?></p>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Upgrade Now', 'social-feed' ); ?></a>
+				</div>
+			</div>
 		</div>
 		<?php
 	}

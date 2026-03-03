@@ -1147,11 +1147,11 @@
 			e.preventDefault();
 			var $btn = $(e.currentTarget);
 			var $wrap = $btn.closest('.sf-customizer-wrap');
-			var dashboardUrl = $btn.data('dashboard-url');
+			var feedId = $wrap.data('feed-id') || 0;
 
 			/* Check if we're in a section panel */
 			var $activePanel = $wrap.find('.sf-sidebar-panel.sf-panel-visible');
-			
+
 			if ($activePanel.length) {
 				/* We're inside a section - go back to main nav */
 				if (this.navHistory.length > 0) {
@@ -1159,8 +1159,12 @@
 				}
 				this.showSidebarNav($wrap);
 			} else {
-				/* We're at main nav level - go to dashboard */
-				window.location.href = dashboardUrl;
+				/* We're at main nav level - go to dashboard or template selection */
+				if (feedId === 0 || feedId === '0') {
+					window.location.href = $btn.data('template-selection-url') || $btn.data('dashboard-url');
+				} else {
+					window.location.href = $btn.data('dashboard-url');
+				}
 			}
 		},
 
@@ -2008,6 +2012,27 @@
 		}
 	};
 
+	/**
+	 * Template selection page module.
+	 */
+	var SF_TemplateSelection = {
+		init: function () {
+			if (!$('.sf-template-selection-wrap').length) {
+				return;
+			}
+			this.bindEvents();
+		},
+		bindEvents: function () {
+			$(document).on('click', '.sf-template-card--locked .sf-template-card-link', function (e) {
+				e.preventDefault();
+				$('#sf-template-pro-modal').show();
+			});
+			$(document).on('click', '.sf-template-pro-modal-close, .sf-template-pro-modal-overlay', function () {
+				$('#sf-template-pro-modal').hide();
+			});
+		}
+	};
+
 	$(function () {
 		SF_Admin.init();
 		SF_Accounts.init();
@@ -2017,6 +2042,9 @@
 
 		if ($('.sf-customizer-wrap').length) {
 			SF_Customizer.init();
+		}
+		if ($('.sf-template-selection-wrap').length) {
+			SF_TemplateSelection.init();
 		}
 	});
 

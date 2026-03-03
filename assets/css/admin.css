@@ -5933,6 +5933,247 @@ tr:hover .sf-row-actions {
 }
 
 /* ==========================================================================
+   Template Selection Screen
+   ========================================================================== */
+
+.sf-template-selection-wrap .sf-app-layout {
+	min-height: calc(100vh - 32px);
+}
+
+.sf-template-selection {
+	max-width: 900px;
+	margin: 0 auto;
+	padding: 40px 24px 60px;
+}
+
+.sf-template-selection .sf-back-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 32px;
+	padding: 8px 14px;
+	font-size: 13px;
+	color: #4f46e5;
+	background: rgba(99, 102, 241, 0.08);
+	border-radius: 8px;
+	text-decoration: none;
+	transition: all 0.2s ease;
+}
+
+.sf-template-selection .sf-back-btn:hover {
+	background: rgba(99, 102, 241, 0.12);
+	color: #4338ca;
+}
+
+.sf-template-selection-header {
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.sf-template-selection-title {
+	font-size: 28px;
+	font-weight: 700;
+	color: #1e293b;
+	margin: 0 0 8px;
+	letter-spacing: -0.02em;
+}
+
+.sf-template-selection-subtitle {
+	font-size: 15px;
+	color: #64748b;
+	margin: 0;
+}
+
+.sf-template-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
+	margin-bottom: 48px;
+}
+
+@media (max-width: 782px) {
+	.sf-template-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 480px) {
+	.sf-template-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.sf-template-card {
+	position: relative;
+	border-radius: 12px;
+	overflow: hidden;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+	transition: all 0.2s ease;
+}
+
+.sf-template-card:hover {
+	border-color: #6366f1;
+	box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.sf-template-card--locked {
+	opacity: 0.95;
+}
+
+.sf-template-card--locked:hover {
+	border-color: #e5e7eb;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.sf-template-card-link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+}
+
+.sf-template-card-thumb {
+	position: relative;
+	aspect-ratio: 4/3;
+	overflow: hidden;
+	background: #f1f5f9;
+}
+
+.sf-template-card-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.sf-template-badge {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	padding: 4px 10px;
+	font-size: 11px;
+	font-weight: 600;
+	border-radius: 6px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.sf-template-badge--free {
+	background: #22c55e;
+	color: #fff;
+}
+
+.sf-template-badge--pro {
+	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+	color: #fff;
+}
+
+.sf-template-card-name {
+	padding: 14px 16px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.sf-template-selection-footer {
+	text-align: center;
+	padding-top: 24px;
+	border-top: 1px solid #e5e7eb;
+}
+
+.sf-start-from-scratch {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 20px;
+	font-size: 14px;
+}
+
+.sf-start-from-scratch .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+/* Pro upgrade modal */
+.sf-template-pro-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+.sf-template-pro-modal-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+}
+
+.sf-template-pro-modal-content {
+	position: relative;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	max-width: 420px;
+	width: 100%;
+	overflow: hidden;
+}
+
+.sf-template-pro-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.sf-template-pro-modal-header h3 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.sf-template-pro-modal-close {
+	background: none;
+	border: none;
+	font-size: 24px;
+	line-height: 1;
+	color: #94a3b8;
+	cursor: pointer;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 6px;
+	transition: all 0.15s ease;
+}
+
+.sf-template-pro-modal-close:hover {
+	color: #1e293b;
+	background: #f1f5f9;
+}
+
+.sf-template-pro-modal-body {
+	padding: 24px;
+}
+
+.sf-template-pro-modal-body p {
+	margin: 0 0 20px;
+	color: #64748b;
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+/* ==========================================================================
    Print Styles
    ========================================================================== */
 
