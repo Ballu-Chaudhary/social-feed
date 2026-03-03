@@ -1003,6 +1003,9 @@
 					$radio.prop('checked', true);
 					$('.sf-radio-card').removeClass('active');
 					$opt.addClass('active');
+					if ($radio.attr('name') === 'loadmore_type') {
+						self.handleLoadmoreChange();
+					}
 					self.debouncePreview();
 				}
 			});
