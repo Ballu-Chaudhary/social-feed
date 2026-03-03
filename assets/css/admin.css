@@ -2274,6 +2274,9 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 	overflow: visible;
 	border: 1px solid #e5e7eb;
+	display: flow-root;
+	min-height: fit-content;
+	box-sizing: border-box;
 }
 
 .sf-tab-content-layout .sf-layout-panel-section:last-child {
@@ -2304,6 +2307,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	border-radius: 0;
 	background: transparent;
 	overflow: visible;
+	min-height: min-content;
 }
 
 /* Individual selectable card - compact style */
@@ -2325,6 +2329,8 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	background: #fff;
 	position: relative;
 	overflow: visible;
+	flex-shrink: 0;
+	box-sizing: border-box;
 }
 
 .sf-tab-content-layout .sf-radio-card.sf-layout-option:last-child {

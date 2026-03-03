@@ -734,7 +734,7 @@ class SF_Customizer {
 		<div class="sf-tab-content sf-tab-content-layout" data-tab="loadmore">
 
 			<div class="sf-section">
-				<div class="sf-section-title"><?php esc_html_e( 'Load Behavior', 'social-feed' ); ?> <span class="sf-info-icon" data-info="<?php esc_attr_e( 'Choose how more posts should load', 'social-feed' ); ?>">i</span></div>
+				<div class="sf-section-title"><?php esc_html_e( 'Load Behavior', 'social-feed' ); ?></div>
 				<div class="sf-radio-cards">
 					<?php foreach ( $behavior_options as $value => $opt ) : ?>
 				<label class="sf-radio-card sf-layout-option<?php echo $type === $value ? ' active' : ''; ?>">
@@ -742,7 +742,6 @@ class SF_Customizer {
 					<span class="sf-radio-card-radio"></span>
 					<span class="dashicons <?php echo esc_attr( $opt['icon'] ); ?>"></span>
 					<span class="sf-radio-card-label"><?php echo esc_html( $opt['label'] ); ?></span>
-					<span class="sf-info-icon" data-info="<?php echo esc_attr( $opt['desc'] ); ?>">i</span>
 				</label>
 					<?php endforeach; ?>
 				</div>
@@ -757,7 +756,7 @@ class SF_Customizer {
 			</div>
 
 			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'button' !== $type ? 'style="display:none;"' : ''; ?>>
-				<div class="sf-section-title"><?php esc_html_e( 'Button Style', 'social-feed' ); ?> <span class="sf-info-icon" data-info="<?php esc_attr_e( 'Customize button appearance', 'social-feed' ); ?>">i</span></div>
+				<div class="sf-section-title"><?php esc_html_e( 'Button Style', 'social-feed' ); ?></div>
 				<div class="sf-field">
 					<label for="sf_loadmore_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_bg_color" name="loadmore_bg_color" value="<?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>" class="sf-color-picker"></div>
