@@ -86,7 +86,7 @@ register_deactivation_hook( __FILE__, 'sf_deactivate' );
 function sf_init() {
 	SF_Database::maybe_upgrade();
 
-	$core = new SF_Core();
+	$core = SF_Core::instance();
 	$core->init();
 }
 

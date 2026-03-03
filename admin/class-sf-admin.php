@@ -231,7 +231,6 @@ class SF_Admin {
 					'no_accounts'             => __( 'No accounts connected', 'social-feed' ),
 					'connect_first'           => __( 'Connect your social media accounts to start displaying feeds on your website.', 'social-feed' ),
 					'connect_first_account'   => __( 'Connect Your First Account', 'social-feed' ),
-					'saving'                  => __( 'Saving...', 'social-feed' ),
 					'configured'              => __( 'Configured', 'social-feed' ),
 					'not_configured'          => __( 'Not Configured', 'social-feed' ),
 					'confirm_clear_cache'     => __( 'Are you sure you want to clear all cached data?', 'social-feed' ),
@@ -605,7 +604,7 @@ class SF_Admin {
 						$is_active    = 'active' === $feed['status'];
 						$status_class = $is_active ? 'sf-feed-status--active' : 'sf-feed-status--paused';
 						$status_text  = $is_active ? __( 'Active', 'social-feed' ) : __( 'Paused', 'social-feed' );
-						$created_date = date_i18n( get_option( 'date_format' ), strtotime( $feed['created_at'] ) );
+						$created_date = wp_date( get_option( 'date_format' ), strtotime( $feed['created_at'] ) );
 						$edit_url     = admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create&feed_id=' . $feed['id'] );
 						$post_count   = $this->get_feed_post_count( $feed['id'] );
 						$last_sync    = $this->get_feed_last_sync( $feed['id'] );

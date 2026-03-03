@@ -22,6 +22,11 @@ class SF_Core {
 	private static $instance = null;
 
 	/**
+	 * Private constructor to enforce singleton pattern.
+	 */
+	private function __construct() {}
+
+	/**
 	 * Get instance.
 	 *
 	 * @return SF_Core
@@ -63,24 +68,11 @@ class SF_Core {
 
 	/**
 	 * Load required files and classes.
+	 *
+	 * SF_ classes in includes/, admin/, frontend/, and platforms/ are auto-loaded.
+	 * Only load files the autoloader cannot reach (e.g. blocks/).
 	 */
 	private function load_dependencies() {
-		require_once SF_PLUGIN_PATH . 'includes/class-sf-database.php';
-		require_once SF_PLUGIN_PATH . 'includes/class-sf-helpers.php';
-		require_once SF_PLUGIN_PATH . 'includes/class-sf-cache.php';
-		require_once SF_PLUGIN_PATH . 'includes/class-sf-feed-manager.php';
-		require_once SF_PLUGIN_PATH . 'includes/class-sf-cron.php';
-		require_once SF_PLUGIN_PATH . 'includes/class-sf-license.php';
-
-		if ( is_admin() ) {
-			require_once SF_PLUGIN_PATH . 'admin/class-sf-admin.php';
-			require_once SF_PLUGIN_PATH . 'admin/class-sf-ajax.php';
-			require_once SF_PLUGIN_PATH . 'admin/class-sf-oauth.php';
-		}
-
-		require_once SF_PLUGIN_PATH . 'frontend/class-sf-renderer.php';
-		require_once SF_PLUGIN_PATH . 'frontend/class-sf-shortcode.php';
-
 		if ( file_exists( SF_PLUGIN_PATH . 'blocks/class-sf-blocks.php' ) ) {
 			require_once SF_PLUGIN_PATH . 'blocks/class-sf-blocks.php';
 		}
