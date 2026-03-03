@@ -34,6 +34,15 @@ class SF_Accounts {
 			$args['wp_user_id'] = get_current_user_id();
 		}
 		$accounts = SF_Database::get_all_accounts( $args );
+
+		// OAuth callback notices.
+		if ( isset( $_GET['sf_connected'] ) && '1' === $_GET['sf_connected'] ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Instagram account connected successfully!', 'social-feed' ) . '</p></div>';
+		}
+		if ( isset( $_GET['sf_error'] ) && '1' === $_GET['sf_error'] ) {
+			$msg = isset( $_GET['sf_msg'] ) ? sanitize_text_field( wp_unslash( $_GET['sf_msg'] ) ) : __( 'An error occurred during connection.', 'social-feed' );
+			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
+		}
 		?>
 		<!-- Back Button -->
 		<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>" class="sf-back-btn">
@@ -232,48 +241,18 @@ class SF_Accounts {
 	}
 
 	/**
-	 * Get OAuth URL for a platform.
+	 * Get OAuth login URL for Instagram.
 	 *
-	 * Uses platform-specific auth classes when available.
-	 *
-	 * @param string $platform Platform slug.
+	 * @param string $platform Platform slug (only 'instagram' supported).
 	 * @return string|WP_Error OAuth URL or error.
 	 */
 	public static function get_oauth_url( $platform ) {
 		if ( 'instagram' !== $platform ) {
 			return new WP_Error( 'unsupported', __( 'Only Instagram is supported.', 'social-feed' ) );
 		}
-		if ( class_exists( 'SF_Instagram_Auth' ) ) {
-			return SF_Instagram_Auth::get_auth_url();
+		if ( class_exists( 'SF_Instagram' ) ) {
+			return SF_Instagram::get_login_url();
 		}
-		return self::get_generic_oauth_url( $platform );
-	}
-
-	/**
-	 * Get generic OAuth URL for a platform.
-	 *
-	 * Fallback when platform-specific class is not available.
-	 *
-	 * @param string $platform Platform slug.
-	 * @return string
-	 */
-	private static function get_generic_oauth_url( $platform ) {
-		if ( 'instagram' !== $platform ) {
-			return '';
-		}
-		$redirect_uri = admin_url( 'admin.php?page=social-feed-accounts&sf_oauth_callback=1' );
-		$state        = wp_create_nonce( 'sf_oauth_instagram' );
-		$settings     = get_option( 'sf_settings', array() );
-		$app_id       = isset( $settings['instagram_app_id'] ) ? $settings['instagram_app_id'] : '';
-		return add_query_arg(
-			array(
-				'client_id'     => $app_id,
-				'redirect_uri'  => urlencode( $redirect_uri ),
-				'scope'         => 'user_profile,user_media',
-				'response_type' => 'code',
-				'state'         => $state,
-			),
-			'https://api.instagram.com/oauth/authorize'
-		);
+		return new WP_Error( 'missing_class', __( 'Instagram OAuth is not available.', 'social-feed' ) );
 	}
 }

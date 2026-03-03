@@ -161,6 +161,38 @@ class SF_Settings {
 				'description' => __( 'Keep this value private. Never share it publicly.', 'social-feed' ),
 			)
 		);
+
+		add_settings_field(
+			'instagram_redirect_uri',
+			__( 'Valid OAuth Redirect URI', 'social-feed' ),
+			array( __CLASS__, 'render_readonly_field' ),
+			'sf_settings_general',
+			'sf_instagram_api_section',
+			array(
+				'id'          => 'instagram_redirect_uri',
+				'value'       => admin_url( 'admin.php?page=social-feed-accounts&sf_oauth=instagram' ),
+				'description' => __( 'Add this exact URL to your Instagram app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard.', 'social-feed' ),
+			)
+		);
+	}
+
+	/**
+	 * Render read-only field (e.g. Redirect URI).
+	 *
+	 * @param array $args Field arguments.
+	 */
+	public static function render_readonly_field( $args ) {
+		$value = $args['value'] ?? '';
+		?>
+		<input type="text" 
+			value="<?php echo esc_attr( $value ); ?>" 
+			readonly 
+			class="regular-text"
+			onclick="this.select();">
+		<?php if ( ! empty( $args['description'] ) ) : ?>
+			<p class="description"><?php echo esc_html( $args['description'] ); ?></p>
+		<?php endif; ?>
+		<?php
 	}
 
 	/**

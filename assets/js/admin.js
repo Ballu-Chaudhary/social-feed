@@ -65,7 +65,8 @@
 				},
 				success: function (response) {
 					if (response.success && response.data.url) {
-						self.openOAuthPopup(response.data.url);
+						// Redirect to Instagram OAuth (callback returns to Accounts page).
+						window.location.href = response.data.url;
 					} else {
 						alert(response.data.message || sfAdmin.i18n.error);
 					}
@@ -74,23 +75,6 @@
 					alert(sfAdmin.i18n.error);
 				}
 			});
-		},
-
-		openOAuthPopup: function (url) {
-			var width = 600;
-			var height = 700;
-			var left = (screen.width - width) / 2;
-			var top = (screen.height - height) / 2;
-
-			this.oauthWindow = window.open(
-				url,
-				'sf_oauth_popup',
-				'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',scrollbars=yes'
-			);
-
-			if (!this.oauthWindow) {
-				alert(sfAdmin.i18n.popup_blocked || 'Please allow popups for this site.');
-			}
 		},
 
 		listenForOAuthMessages: function () {

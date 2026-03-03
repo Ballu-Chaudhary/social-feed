@@ -952,8 +952,8 @@ class SF_Ajax {
 
 		$platform = isset( $_POST['platform'] ) ? sanitize_key( $_POST['platform'] ) : '';
 
-		if ( ! in_array( $platform, array( 'instagram', 'youtube', 'facebook' ), true ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid platform.', 'social-feed' ) ) );
+		if ( 'instagram' !== $platform ) {
+			wp_send_json_error( array( 'message' => __( 'Only Instagram is supported.', 'social-feed' ) ) );
 		}
 
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
@@ -1126,6 +1126,10 @@ class SF_Ajax {
 
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
 		$url = SF_Accounts::get_oauth_url( $platform );
+
+		if ( is_wp_error( $url ) ) {
+			wp_send_json_error( array( 'message' => $url->get_error_message() ) );
+		}
 
 		if ( empty( $url ) ) {
 			wp_send_json_error(
