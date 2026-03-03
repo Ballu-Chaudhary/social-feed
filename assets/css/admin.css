@@ -1542,7 +1542,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 .sf-sidebar-panel-body .sf-customizer-content {
 	flex: 0 0 auto;
-	padding: 0;
+	padding: 0 12px 0 0;
 	background: transparent;
 }
 
@@ -1562,6 +1562,10 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	padding: 0;
 	min-height: 0;
 	background: transparent;
+}
+
+.sf-customizer-content .sf-tab-content {
+	overflow: visible;
 }
 
 /* Thin scrollbars - minimal */
@@ -1614,6 +1618,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	border-radius: 0;
 	box-shadow: none;
 	overflow: visible;
+	position: relative;
 }
 
 .sf-customizer-content .sf-section:last-child {
@@ -1768,9 +1773,11 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 /* Section title - subtle uppercase label */
 .sf-customizer-content .sf-section-title {
-	display: block;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
 	margin: 0;
-	padding: 20px 16px 8px;
+	padding: 20px 28px 8px 16px;
 	font-size: 10px;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -1778,10 +1785,16 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	color: #9ca3af;
 	background: transparent;
 	border-bottom: none;
+	overflow: visible;
+	position: relative;
 }
 
 .sf-customizer-content .sf-section-title:first-child {
 	padding-top: 8px;
+}
+
+.sf-customizer-content .sf-section-title .sf-info-icon {
+	margin-left: auto;
 }
 
 .sf-info-icon {
@@ -1803,6 +1816,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	position: relative;
 	transition: background 0.15s, color 0.15s;
 	flex-shrink: 0;
+	overflow: visible;
 }
 
 .sf-info-icon:hover {
@@ -1812,7 +1826,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 .sf-info-tooltip {
 	position: absolute;
-	top: calc(100% + 8px);
+	bottom: calc(100% + 8px);
 	left: 50%;
 	transform: translateX(-50%);
 	background: #1e293b;
@@ -1822,8 +1836,9 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 1.5;
-	width: 200px;
-	z-index: 9999;
+	min-width: 120px;
+	max-width: 240px;
+	z-index: 999999;
 	pointer-events: none;
 	white-space: normal;
 	text-transform: none;
@@ -1835,11 +1850,11 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 .sf-info-tooltip::before {
 	content: "";
 	position: absolute;
-	bottom: 100%;
+	top: 100%;
 	left: 50%;
 	transform: translateX(-50%);
 	border: 5px solid transparent;
-	border-bottom-color: #1e293b;
+	border-top-color: #1e293b;
 }
 
 @keyframes sfTooltipFadeIn {
@@ -1856,7 +1871,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	padding: 14px 16px;
+	padding: 14px 20px 14px 16px;
 	margin: 0 16px 8px;
 	gap: 8px;
 	transition: all var(--sf-customizer-transition);
@@ -1865,6 +1880,7 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	border-radius: 10px;
 	background: #fff;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+	overflow: visible;
 }
 
 .sf-customizer-content .sf-field:last-child {
@@ -2208,7 +2224,12 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 
 /* Layout Panel - Compact SaaS-style */
 .sf-tab-content-layout {
-	padding: 12px 14px 16px;
+	padding: 12px 14px 16px 14px;
+}
+
+/* Load More & Layout tabs - ensure right padding for info icon */
+.sf-sidebar-panel-body .sf-tab-content-layout {
+	padding-right: 20px;
 }
 
 /* Section wrapper - clean container with visible corners */
