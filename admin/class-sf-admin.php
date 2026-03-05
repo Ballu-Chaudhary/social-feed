@@ -163,8 +163,13 @@ class SF_Admin {
 			} elseif ( $page === self::PAGE_SLUG . '-create' ) {
 				$template = isset( $_GET['template'] ) ? sanitize_key( wp_unslash( $_GET['template'] ) ) : '';
 				$feed_id  = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
+				$step     = isset( $_GET['step'] ) ? sanitize_key( wp_unslash( $_GET['step'] ) ) : '';
 				if ( 0 === $feed_id && empty( $template ) ) {
 					$classes .= ' sf-template-selection-page';
+				} elseif ( 0 === $feed_id && 'setup' === $step ) {
+					$classes .= ' sf-setup-feed-page';
+				} elseif ( $feed_id && 'success' === $step ) {
+					$classes .= ' sf-feed-success-page';
 				} else {
 					$classes .= ' sf-customizer-page';
 				}
@@ -769,22 +774,51 @@ class SF_Admin {
 	 * Render create/edit feed page.
 	 */
 	public function render_create_feed() {
-		$feed_id    = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
-		$template   = isset( $_GET['template'] ) ? sanitize_key( wp_unslash( $_GET['template'] ) ) : '';
+		$feed_id   = isset( $_GET['feed_id'] ) ? absint( $_GET['feed_id'] ) : 0;
+		$template  = isset( $_GET['template'] ) ? sanitize_key( wp_unslash( $_GET['template'] ) ) : '';
+		$step      = isset( $_GET['step'] ) ? sanitize_key( wp_unslash( $_GET['step'] ) ) : '';
 
 		if ( 0 === $feed_id && empty( $template ) ) {
 			$this->render_template_selection();
 			return;
 		}
 
-		?>
-		<div class="wrap sf-admin-wrap sf-create-feed-wrap">
-			<?php
-			require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
-			SF_Customizer::render( $feed_id, $template );
+		if ( 0 === $feed_id && 'custom' === $template ) {
 			?>
-		</div>
-		<?php
+			<div class="wrap sf-admin-wrap sf-create-feed-wrap">
+				<?php
+				require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
+				SF_Customizer::render( 0, 'custom' );
+				?>
+			</div>
+			<?php
+			return;
+		}
+
+		if ( 0 === $feed_id && ! empty( $template ) && 'setup' === $step ) {
+			$this->render_setup_page( $template );
+			return;
+		}
+
+		if ( $feed_id && 'success' === $step ) {
+			$this->render_success_page( $feed_id );
+			return;
+		}
+
+		if ( $feed_id ) {
+			?>
+			<div class="wrap sf-admin-wrap sf-create-feed-wrap">
+				<?php
+				require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
+				SF_Customizer::render( $feed_id, '' );
+				?>
+			</div>
+			<?php
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=social-feed-create' ) );
+		exit;
 	}
 
 	/**
@@ -821,16 +855,32 @@ class SF_Admin {
 		if ( 'highlight' === $mockup ) {
 			return '<div class="sf-mockup-grid sf-mockup-grid--highlight"><span class="sf-mockup-cell sf-mockup-featured"></span><span class="sf-mockup-cell"></span><span class="sf-mockup-cell"></span><span class="sf-mockup-cell"></span></div>';
 		}
+		if ( 'grid-3-tight' === $mockup ) {
+			return '<div class="sf-mockup-grid sf-mockup-grid--3x3 sf-mockup-grid--tight">' . $cells_html . '</div>';
+		}
+		if ( 'grid-3-card' === $mockup ) {
+			return '<div class="sf-mockup-grid sf-mockup-grid--3x3 sf-mockup-grid--card">' . $cells_html . '</div>';
+		}
+		if ( 'grid-2-large' === $mockup ) {
+			$c = array_fill( 0, 4, '<span class="sf-mockup-cell"></span>' );
+			return '<div class="sf-mockup-grid sf-mockup-grid--2x2">' . implode( '', $c ) . '</div>';
+		}
+		if ( 'grid-1-tall' === $mockup ) {
+			return '<div class="sf-mockup-grid sf-mockup-grid--1col sf-mockup-grid--tall"><span class="sf-mockup-cell"></span><span class="sf-mockup-cell"></span></div>';
+		}
+		if ( 'grid-4-tight' === $mockup ) {
+			$c = array_fill( 0, 8, '<span class="sf-mockup-cell"></span>' );
+			return '<div class="sf-mockup-grid sf-mockup-grid--4x2 sf-mockup-grid--tight">' . implode( '', $c ) . '</div>';
+		}
 
 		return '<div class="sf-mockup-grid sf-mockup-grid--3x3">' . $cells_html . '</div>';
 	}
 
 	/**
-	 * Render template selection screen (first step when creating new feed).
+	 * Render template selection screen (Step 1).
 	 */
 	private function render_template_selection() {
-		$templates = SF_Templates::get_templates();
-		$is_pro    = function_exists( 'sf_is_pro' ) && sf_is_pro();
+		$templates  = SF_Templates::get_templates();
 		$custom_url = add_query_arg( 'template', 'custom', admin_url( 'admin.php?page=social-feed-create' ) );
 		?>
 		<div class="wrap sf-admin-wrap sf-template-selection-wrap">
@@ -858,13 +908,13 @@ class SF_Admin {
 						<div class="sf-template-grid">
 							<?php foreach ( $templates as $tpl ) : ?>
 								<?php
-								$locked   = ! empty( $tpl['pro'] ) && ! $is_pro;
-								$url      = $locked ? '#' : add_query_arg( 'template', $tpl['id'], admin_url( 'admin.php?page=social-feed-create' ) );
-								$mockup   = isset( $tpl['mockup'] ) ? $tpl['mockup'] : 'grid-3';
+								$url    = add_query_arg( array( 'template' => $tpl['id'], 'step' => 'setup' ), admin_url( 'admin.php?page=social-feed-create' ) );
+								$mockup = isset( $tpl['mockup'] ) ? $tpl['mockup'] : 'grid-3';
+								$desc   = isset( $tpl['description'] ) ? $tpl['description'] : '';
 								?>
-								<div class="sf-template-card <?php echo $locked ? 'sf-template-card--locked' : ''; ?>" data-template-id="<?php echo esc_attr( $tpl['id'] ); ?>" data-locked="<?php echo $locked ? '1' : '0'; ?>">
-									<a href="<?php echo esc_url( $url ); ?>" class="sf-template-card-link" <?php echo $locked ? ' onclick="return false;"' : ''; ?>>
-										<div class="sf-template-card-thumb sf-template-mockup sf-template-mockup--<?php echo esc_attr( $mockup ); ?> <?php echo 'dark-mode' === $tpl['id'] ? 'sf-template-mockup--dark' : ''; ?>">
+								<div class="sf-template-card">
+									<a href="<?php echo esc_url( $url ); ?>" class="sf-template-card-link">
+										<div class="sf-template-card-thumb sf-template-mockup sf-template-mockup--<?php echo esc_attr( $mockup ); ?> <?php echo 'dark-theme' === $tpl['id'] ? 'sf-template-mockup--dark' : ''; ?>">
 											<?php
 											$thumb_url = SF_Templates::get_thumbnail_url( $tpl['id'] );
 											if ( $thumb_url ) :
@@ -873,17 +923,14 @@ class SF_Admin {
 											<?php else : ?>
 												<?php echo self::render_template_mockup( $mockup, $tpl['id'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 											<?php endif; ?>
-											<?php if ( $locked ) : ?>
-												<div class="sf-template-card-overlay">
-													<span class="sf-template-lock-icon dashicons dashicons-lock"></span>
-												</div>
-												<span class="sf-template-badge sf-template-badge--pro"><?php esc_html_e( 'PRO', 'social-feed' ); ?></span>
-											<?php else : ?>
-												<span class="sf-template-badge sf-template-badge--free"><?php esc_html_e( 'FREE', 'social-feed' ); ?></span>
-											<?php endif; ?>
-											<div class="sf-template-use-btn"><?php esc_html_e( 'Use Template', 'social-feed' ); ?></div>
+											<span class="sf-template-select-btn"><?php esc_html_e( 'Select', 'social-feed' ); ?></span>
 										</div>
-										<div class="sf-template-card-name"><?php echo esc_html( $tpl['name'] ); ?></div>
+										<div class="sf-template-card-body">
+											<h3 class="sf-template-card-name"><?php echo esc_html( $tpl['name'] ); ?></h3>
+											<?php if ( $desc ) : ?>
+												<p class="sf-template-card-desc"><?php echo esc_html( $desc ); ?></p>
+											<?php endif; ?>
+										</div>
 									</a>
 								</div>
 							<?php endforeach; ?>
@@ -892,20 +939,122 @@ class SF_Admin {
 				</div>
 			</div>
 		</div>
+		<?php
+	}
 
-		<!-- Pro upgrade prompt modal -->
-		<div class="sf-template-pro-modal" id="sf-template-pro-modal" style="display:none;">
-			<div class="sf-template-pro-modal-overlay"></div>
-			<div class="sf-template-pro-modal-content">
-				<div class="sf-template-pro-modal-header">
-					<h3><?php esc_html_e( 'Pro Template', 'social-feed' ); ?></h3>
-					<button type="button" class="sf-template-pro-modal-close">&times;</button>
+	/**
+	 * Render setup page (Step 2).
+	 *
+	 * @param string $template_id Template ID.
+	 */
+	private function render_setup_page( $template_id ) {
+		$template = SF_Templates::get_template( $template_id );
+		if ( ! $template ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=social-feed-create' ) );
+			exit;
+		}
+
+		$account_args = array( 'is_connected' => 1 );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			$account_args['wp_user_id'] = get_current_user_id();
+		}
+		$accounts = SF_Database::get_all_accounts( $account_args );
+		$mockup   = isset( $template['mockup'] ) ? $template['mockup'] : 'grid-3';
+		?>
+		<div class="wrap sf-admin-wrap sf-setup-feed-wrap">
+			<div class="sf-app-layout">
+				<div class="sf-content-area">
+					<div class="sf-setup-feed">
+						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-create' ) ); ?>" class="sf-back-btn">
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+							<span><?php esc_html_e( 'Back', 'social-feed' ); ?></span>
+						</a>
+
+						<div class="sf-setup-feed-layout">
+							<div class="sf-setup-feed-left">
+								<div class="sf-setup-feed-preview-card">
+									<h3 class="sf-setup-feed-template-name"><?php echo esc_html( $template['name'] ); ?></h3>
+									<div class="sf-setup-feed-preview sf-template-mockup sf-template-mockup--<?php echo esc_attr( $mockup ); ?> <?php echo 'dark-theme' === $template_id ? 'sf-template-mockup--dark' : ''; ?>">
+										<?php echo self::render_template_mockup( $mockup, $template_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+									</div>
+								</div>
+							</div>
+
+							<div class="sf-setup-feed-right">
+								<h2 class="sf-setup-feed-title"><?php esc_html_e( 'Set up your feed', 'social-feed' ); ?></h2>
+								<form id="sf-setup-feed-form" class="sf-setup-feed-form">
+									<input type="hidden" name="template_id" value="<?php echo esc_attr( $template_id ); ?>">
+									<div class="sf-setup-field">
+										<label for="sf_setup_name"><?php esc_html_e( 'Feed Name', 'social-feed' ); ?> <span class="required">*</span></label>
+										<input type="text" id="sf_setup_name" name="name" required placeholder="<?php esc_attr_e( 'My Instagram Feed', 'social-feed' ); ?>" value="<?php echo esc_attr( $template['name'] ); ?>">
+									</div>
+									<div class="sf-setup-field">
+										<label for="sf_setup_account_id"><?php esc_html_e( 'Connected Instagram Account', 'social-feed' ); ?></label>
+										<select id="sf_setup_account_id" name="account_id">
+											<option value=""><?php esc_html_e( 'Select an account...', 'social-feed' ); ?></option>
+											<?php foreach ( $accounts as $account ) : ?>
+												<option value="<?php echo esc_attr( $account['id'] ); ?>"><?php echo esc_html( $account['account_name'] ); ?></option>
+											<?php endforeach; ?>
+										</select>
+										<?php if ( empty( $accounts ) ) : ?>
+											<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-accounts' ) ); ?>" class="sf-setup-link"><?php esc_html_e( '+ Connect an Instagram account', 'social-feed' ); ?></a>
+										<?php endif; ?>
+									</div>
+									<div class="sf-setup-field">
+										<label for="sf_setup_feed_type"><?php esc_html_e( 'Feed Type', 'social-feed' ); ?></label>
+										<select id="sf_setup_feed_type" name="feed_type">
+											<option value="user"><?php esc_html_e( 'User Timeline', 'social-feed' ); ?></option>
+											<option value="hashtag"><?php esc_html_e( 'Hashtag', 'social-feed' ); ?></option>
+											<option value="tagged"><?php esc_html_e( 'Tagged Posts', 'social-feed' ); ?></option>
+										</select>
+									</div>
+									<div class="sf-setup-field">
+										<label for="sf_setup_post_count"><?php esc_html_e( 'Number of Posts', 'social-feed' ); ?></label>
+										<input type="number" id="sf_setup_post_count" name="post_count" value="9" min="1" max="50">
+									</div>
+									<button type="submit" class="sf-setup-create-btn button button-primary"><?php esc_html_e( 'Create Feed', 'social-feed' ); ?></button>
+								</form>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="sf-template-pro-modal-body">
-					<p><?php esc_html_e( 'This is a Pro template. Upgrade to unlock all templates and features.', 'social-feed' ); ?></p>
-					<div class="sf-template-pro-modal-actions">
-						<button type="button" class="button button-secondary sf-template-pro-modal-cancel"><?php esc_html_e( 'Cancel', 'social-feed' ); ?></button>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="button button-primary"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render success page (Step 3).
+	 *
+	 * @param int $feed_id Feed ID.
+	 */
+	private function render_success_page( $feed_id ) {
+		$feed          = SF_Database::get_feed( $feed_id );
+		$shortcode     = '[social_feed id="' . $feed_id . '"]';
+		$customize_url = admin_url( 'admin.php?page=social-feed-create&feed_id=' . $feed_id );
+		if ( ! $feed ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=social-feed-create' ) );
+			exit;
+		}
+		?>
+		<div class="wrap sf-admin-wrap sf-feed-success-wrap">
+			<div class="sf-app-layout">
+				<div class="sf-content-area">
+					<div class="sf-feed-success">
+						<div class="sf-feed-success-icon"><span class="dashicons dashicons-yes-alt"></span></div>
+						<h1 class="sf-feed-success-title"><?php esc_html_e( 'Your feed is ready!', 'social-feed' ); ?></h1>
+						<p class="sf-feed-success-desc"><?php esc_html_e( 'Paste this shortcode in any page or post', 'social-feed' ); ?></p>
+						<div class="sf-feed-success-shortcode">
+							<code id="sf-success-shortcode"><?php echo esc_html( $shortcode ); ?></code>
+							<button type="button" class="sf-copy-btn button" data-copy="<?php echo esc_attr( $shortcode ); ?>">
+								<span class="sf-copy-icon dashicons dashicons-admin-page"></span>
+								<?php esc_html_e( 'Copy Shortcode', 'social-feed' ); ?>
+							</button>
+						</div>
+						<div class="sf-feed-success-actions">
+							<a href="<?php echo esc_url( $customize_url ); ?>" class="button button-primary"><?php esc_html_e( 'Customize Feed', 'social-feed' ); ?></a>
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-feeds' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'View All Feeds', 'social-feed' ); ?></a>
+						</div>
 					</div>
 				</div>
 			</div>
