@@ -27,6 +27,7 @@ class SF_Templates {
 				'id'          => 'classic-grid',
 				'name'        => __( 'Classic Grid', 'social-feed' ),
 				'description' => __( '3 col, clean, no header, no captions', 'social-feed' ),
+				'category'    => 'grid',
 				'mockup'      => 'grid-3',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -46,6 +47,7 @@ class SF_Templates {
 				'id'          => 'with-header',
 				'name'        => __( 'With Header', 'social-feed' ),
 				'description' => __( '3 col, profile header on top, follow button', 'social-feed' ),
+				'category'    => 'with-header',
 				'mockup'      => 'grid-3-header',
 				'settings'    => array(
 					'layout'           => 'grid',
@@ -67,6 +69,7 @@ class SF_Templates {
 				'id'          => 'captions-feed',
 				'name'        => __( 'Captions Feed', 'social-feed' ),
 				'description' => __( '2 col, captions and date below each post', 'social-feed' ),
+				'category'    => 'with-header',
 				'mockup'      => 'grid-2-captions',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -87,6 +90,7 @@ class SF_Templates {
 				'id'          => 'compact-grid',
 				'name'        => __( 'Compact Grid', 'social-feed' ),
 				'description' => __( '4 col, tight spacing, no text at all', 'social-feed' ),
+				'category'    => 'grid',
 				'mockup'      => 'grid-4',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -105,6 +109,7 @@ class SF_Templates {
 				'id'          => 'dark-theme',
 				'name'        => __( 'Dark Theme', 'social-feed' ),
 				'description' => __( '3 col, dark background, white text', 'social-feed' ),
+				'category'    => 'grid',
 				'mockup'      => 'grid-3-dark',
 				'settings'    => array(
 					'layout'           => 'grid',
@@ -124,6 +129,7 @@ class SF_Templates {
 				'id'          => 'minimal-single',
 				'name'        => __( 'Minimal Single', 'social-feed' ),
 				'description' => __( '1 col, large images, full captions', 'social-feed' ),
+				'category'    => 'single',
 				'mockup'      => 'grid-1',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -143,6 +149,7 @@ class SF_Templates {
 				'id'          => 'square-tight',
 				'name'        => __( 'Square Tight', 'social-feed' ),
 				'description' => __( '3 col, zero gap, no text', 'social-feed' ),
+				'category'    => 'grid',
 				'mockup'      => 'grid-3-tight',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -162,6 +169,7 @@ class SF_Templates {
 				'id'          => 'soft-card',
 				'name'        => __( 'Soft Card', 'social-feed' ),
 				'description' => __( '3 col, rounded corners, soft shadow on each post', 'social-feed' ),
+				'category'    => 'grid',
 				'mockup'      => 'grid-3-card',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -182,6 +190,7 @@ class SF_Templates {
 				'id'          => 'bold-magazine',
 				'name'        => __( 'Bold Magazine', 'social-feed' ),
 				'description' => __( '2 col, large thumbnails, captions with likes', 'social-feed' ),
+				'category'    => 'with-header',
 				'mockup'      => 'grid-2-large',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -201,6 +210,7 @@ class SF_Templates {
 				'id'          => 'story-style',
 				'name'        => __( 'Story Style', 'social-feed' ),
 				'description' => __( '1 col, tall portrait images, minimal design', 'social-feed' ),
+				'category'    => 'single',
 				'mockup'      => 'grid-1-tall',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -219,6 +229,7 @@ class SF_Templates {
 				'id'          => 'gallery-wall',
 				'name'        => __( 'Gallery Wall', 'social-feed' ),
 				'description' => __( '4 col, very tight grid, hover shows likes', 'social-feed' ),
+				'category'    => 'grid',
 				'mockup'      => 'grid-4-tight',
 				'settings'    => array(
 					'layout'          => 'grid',
@@ -236,6 +247,7 @@ class SF_Templates {
 				'id'          => 'profile-card',
 				'name'        => __( 'Profile Card', 'social-feed' ),
 				'description' => __( '3 col, full header with bio, styled follow button', 'social-feed' ),
+				'category'    => 'with-header',
 				'mockup'      => 'grid-3-header',
 				'settings'    => array(
 					'layout'           => 'grid',

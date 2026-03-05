@@ -2020,6 +2020,22 @@
 			if (!$('.sf-template-selection-wrap').length) {
 				return;
 			}
+			this.bindEvents();
+		},
+		bindEvents: function () {
+			$(document).on('click', '.sf-template-filter-tab', function () {
+				var filter = $(this).data('filter');
+				$('.sf-template-filter-tab').removeClass('active');
+				$(this).addClass('active');
+				$('.sf-template-card').each(function () {
+					var cat = $(this).data('category');
+					if (filter === 'all' || cat === filter) {
+						$(this).removeClass('hidden');
+					} else {
+						$(this).addClass('hidden');
+					}
+				});
+			});
 		}
 	};
 

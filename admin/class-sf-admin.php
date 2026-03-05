@@ -886,33 +886,43 @@ class SF_Admin {
 		<div class="wrap sf-admin-wrap sf-template-selection-wrap">
 			<div class="sf-app-layout">
 				<div class="sf-content-area">
-					<div class="sf-template-selection">
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>" class="sf-back-btn">
-							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-							</svg>
-							<span><?php esc_html_e( 'Back to Dashboard', 'social-feed' ); ?></span>
-						</a>
-
-						<div class="sf-template-selection-top">
-							<div class="sf-template-selection-header">
-								<h1 class="sf-template-selection-title"><?php esc_html_e( 'Choose a Template', 'social-feed' ); ?></h1>
-								<p class="sf-template-selection-subtitle"><?php esc_html_e( 'Start with a ready-made design or build your own', 'social-feed' ); ?></p>
+					<div class="sf-template-marketplace">
+						<!-- Unified header bar with gradient -->
+						<div class="sf-template-header-bar">
+							<div class="sf-template-header-inner">
+								<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>" class="sf-template-back-link">
+									<svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+									<span><?php esc_html_e( 'Back', 'social-feed' ); ?></span>
+								</a>
+								<div class="sf-template-header-center">
+									<h1 class="sf-template-header-title"><?php esc_html_e( 'Choose a Template', 'social-feed' ); ?></h1>
+									<p class="sf-template-header-subtitle"><?php esc_html_e( 'Start with a ready-made design or build your own', 'social-feed' ); ?></p>
+								</div>
+								<a href="<?php echo esc_url( $custom_url ); ?>" class="sf-template-custom-btn-header">
+									<span class="dashicons dashicons-admin-generic"></span>
+									<?php esc_html_e( 'Custom', 'social-feed' ); ?>
+								</a>
 							</div>
-							<a href="<?php echo esc_url( $custom_url ); ?>" class="sf-template-custom-btn">
-								<span class="dashicons dashicons-admin-generic"></span>
-								<?php esc_html_e( 'Custom', 'social-feed' ); ?>
-							</a>
 						</div>
 
+						<!-- Filter tabs -->
+						<div class="sf-template-filters">
+							<button type="button" class="sf-template-filter-tab active" data-filter="all"><?php esc_html_e( 'All', 'social-feed' ); ?></button>
+							<button type="button" class="sf-template-filter-tab" data-filter="grid"><?php esc_html_e( 'Grid', 'social-feed' ); ?></button>
+							<button type="button" class="sf-template-filter-tab" data-filter="single"><?php esc_html_e( 'Single Column', 'social-feed' ); ?></button>
+							<button type="button" class="sf-template-filter-tab" data-filter="with-header"><?php esc_html_e( 'With Header', 'social-feed' ); ?></button>
+						</div>
+
+						<!-- Template grid -->
 						<div class="sf-template-grid">
 							<?php foreach ( $templates as $tpl ) : ?>
 								<?php
-								$url    = add_query_arg( array( 'template' => $tpl['id'], 'step' => 'setup' ), admin_url( 'admin.php?page=social-feed-create' ) );
-								$mockup = isset( $tpl['mockup'] ) ? $tpl['mockup'] : 'grid-3';
-								$desc   = isset( $tpl['description'] ) ? $tpl['description'] : '';
+								$url      = add_query_arg( array( 'template' => $tpl['id'], 'step' => 'setup' ), admin_url( 'admin.php?page=social-feed-create' ) );
+								$mockup   = isset( $tpl['mockup'] ) ? $tpl['mockup'] : 'grid-3';
+								$desc     = isset( $tpl['description'] ) ? $tpl['description'] : '';
+								$category = isset( $tpl['category'] ) ? $tpl['category'] : 'grid';
 								?>
-								<div class="sf-template-card">
+								<div class="sf-template-card" data-category="<?php echo esc_attr( $category ); ?>">
 									<a href="<?php echo esc_url( $url ); ?>" class="sf-template-card-link">
 										<div class="sf-template-card-thumb sf-template-mockup sf-template-mockup--<?php echo esc_attr( $mockup ); ?> <?php echo 'dark-theme' === $tpl['id'] ? 'sf-template-mockup--dark' : ''; ?>">
 											<?php
@@ -923,7 +933,9 @@ class SF_Admin {
 											<?php else : ?>
 												<?php echo self::render_template_mockup( $mockup, $tpl['id'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 											<?php endif; ?>
-											<span class="sf-template-select-btn"><?php esc_html_e( 'Select', 'social-feed' ); ?></span>
+											<div class="sf-template-hover-overlay">
+												<span class="sf-template-use-btn"><?php esc_html_e( 'Use This Template', 'social-feed' ); ?></span>
+											</div>
 										</div>
 										<div class="sf-template-card-body">
 											<h3 class="sf-template-card-name"><?php echo esc_html( $tpl['name'] ); ?></h3>
