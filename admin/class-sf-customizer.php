@@ -18,11 +18,11 @@ class SF_Customizer {
 	 * Render the feed customizer page.
 	 *
 	 * @param int    $feed_id    Feed ID to edit (0 for new).
-	 * @param string $template_id Template preset ID (e.g. classic-grid, scratch) for new feeds.
+	 * @param string $template_id Unused, kept for backward compatibility.
 	 */
 	public static function render( $feed_id = 0, $template_id = '' ) {
-		$feed     = $feed_id ? SF_Database::get_feed( $feed_id ) : null;
-		$meta     = $feed_id ? SF_Database::get_all_feed_meta( $feed_id ) : array();
+		$feed         = $feed_id ? SF_Database::get_feed( $feed_id ) : null;
+		$meta         = $feed_id ? SF_Database::get_all_feed_meta( $feed_id ) : array();
 		$account_args = array( 'is_connected' => 1 );
 		if ( ! current_user_can( 'manage_options' ) ) {
 			$account_args['wp_user_id'] = get_current_user_id();
@@ -30,13 +30,8 @@ class SF_Customizer {
 		$accounts = SF_Database::get_all_accounts( $account_args );
 		$is_pro   = self::is_pro();
 
-		$defaults = self::get_defaults();
-
-		if ( ! $feed_id && ! empty( $template_id ) && ! in_array( $template_id, array( 'custom', 'scratch' ), true ) ) {
-			$settings = SF_Templates::get_merged_settings( $template_id, $defaults );
-		} else {
-			$settings = wp_parse_args( $meta, $defaults );
-		}
+		$defaults  = self::get_defaults();
+		$settings  = wp_parse_args( $meta, $defaults );
 
 		if ( $feed ) {
 			$settings['name']       = $feed['name'];
@@ -51,7 +46,7 @@ class SF_Customizer {
 		<div class="sf-customizer-wrap" data-feed-id="<?php echo esc_attr( $feed_id ); ?>">
 			<!-- Top bar -->
 			<div class="<?php echo $is_pro ? 'sf-customizer-topbar' : 'sf-customizer-upgrade-banner'; ?>">
-				<button type="button" class="sf-customizer-back-btn" title="<?php esc_attr_e( 'Back', 'social-feed' ); ?>" data-dashboard-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>" data-template-selection-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-create' ) ); ?>">
+				<button type="button" class="sf-customizer-back-btn" title="<?php esc_attr_e( 'Back', 'social-feed' ); ?>" data-dashboard-url="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>">
 					<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 					<span><?php esc_html_e( 'Back', 'social-feed' ); ?></span>
 				</button>

@@ -27,7 +27,6 @@ class SF_Ajax {
 	private function register_handlers() {
 		$actions = array(
 			'sf_preview_feed',
-			'sf_create_feed_from_template',
 			'sf_save_feed',
 			'sf_get_feed_data',
 			'sf_delete_feed',
@@ -611,77 +610,6 @@ class SF_Ajax {
 			<?php
 		endforeach;
 		return ob_get_clean();
-	}
-
-	/**
-	 * Handle create feed from template (setup flow).
-	 */
-	public function handle_create_feed_from_template() {
-		$this->verify_request();
-
-		$template_id = isset( $_POST['template_id'] ) ? sanitize_key( wp_unslash( $_POST['template_id'] ) ) : '';
-		$name        = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-		$account_id  = isset( $_POST['account_id'] ) ? absint( $_POST['account_id'] ) : 0;
-		$feed_type   = isset( $_POST['feed_type'] ) ? sanitize_key( wp_unslash( $_POST['feed_type'] ) ) : 'user';
-		$post_count  = isset( $_POST['post_count'] ) ? absint( $_POST['post_count'] ) : 9;
-
-		if ( empty( $template_id ) || empty( $name ) ) {
-			wp_send_json_error( array( 'message' => __( 'Feed name is required.', 'social-feed' ) ) );
-		}
-
-		if ( ! in_array( $feed_type, array( 'user', 'hashtag', 'tagged' ), true ) ) {
-			$feed_type = 'user';
-		}
-
-		$post_count = max( 1, min( 50, $post_count ) );
-
-		$template = SF_Templates::get_template( $template_id );
-		if ( ! $template || empty( $template['settings'] ) ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid template.', 'social-feed' ) ) );
-		}
-
-		require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
-		$defaults = SF_Customizer::get_defaults();
-		$settings = wp_parse_args( $template['settings'], $defaults );
-
-		$feed_data = array(
-			'name'       => $name,
-			'platform'   => 'instagram',
-			'account_id' => $account_id ? $account_id : null,
-			'feed_type'  => $feed_type,
-			'post_count' => $post_count,
-			'status'     => 'active',
-		);
-
-		$feed_id = SF_Database::create_feed( $feed_data );
-		if ( ! $feed_id ) {
-			wp_send_json_error( array( 'message' => __( 'Failed to create feed.', 'social-feed' ) ) );
-		}
-
-		$meta_fields = array(
-			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding', 'post_radius', 'hashtag',
-			'post_count_desktop', 'post_count_tablet', 'post_count_mobile',
-			'bg_color', 'text_color', 'border_style', 'border_color', 'border_radius',
-			'hover_effect', 'dark_mode', 'show_header', 'show_profile_pic', 'show_username',
-			'show_followers', 'show_bio', 'show_follow_btn', 'follow_btn_color', 'follow_btn_text',
-			'show_caption', 'caption_length', 'show_date', 'show_likes', 'show_comments',
-			'click_action', 'popup_style', 'loadmore_type', 'loadmore_text', 'loadmore_bg_color', 'loadmore_text_color', 'loadmore_radius',
-			'posts_per_load', 'lazy_load', 'gdpr_mode', 'show_credit',
-		);
-
-		foreach ( $meta_fields as $key ) {
-			if ( isset( $settings[ $key ] ) ) {
-				SF_Database::set_feed_meta_value( $feed_id, $key, $settings[ $key ] );
-			}
-		}
-
-		wp_send_json_success(
-			array(
-				'feed_id'   => $feed_id,
-				'shortcode' => '[social_feed id="' . $feed_id . '"]',
-				'redirect'  => admin_url( 'admin.php?page=social-feed-create&feed_id=' . $feed_id . '&step=success' ),
-			)
-		);
 	}
 
 	/**

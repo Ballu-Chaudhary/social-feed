@@ -1159,12 +1159,8 @@
 				}
 				this.showSidebarNav($wrap);
 			} else {
-				/* We're at main nav level - go to dashboard or template selection */
-				if (feedId === 0 || feedId === '0') {
-					window.location.href = $btn.data('template-selection-url') || $btn.data('dashboard-url');
-				} else {
-					window.location.href = $btn.data('dashboard-url');
-				}
+				/* We're at main nav level - go to dashboard */
+				window.location.href = $btn.data('dashboard-url');
 			}
 		},
 
@@ -2012,88 +2008,6 @@
 		}
 	};
 
-	/**
-	 * Template selection page module.
-	 */
-	var SF_TemplateSelection = {
-		init: function () {
-			if (!$('.sf-template-selection-wrap').length) {
-				return;
-			}
-			this.bindEvents();
-		},
-		bindEvents: function () {
-			$(document).on('click', '.sf-template-filter-tab', function () {
-				var filter = $(this).data('filter');
-				$('.sf-template-filter-tab').removeClass('active');
-				$(this).addClass('active');
-				$('.sf-template-card').each(function () {
-					var cat = $(this).data('category');
-					if (filter === 'all' || cat === filter) {
-						$(this).removeClass('hidden');
-					} else {
-						$(this).addClass('hidden');
-					}
-				});
-			});
-		}
-	};
-
-	/**
-	 * Setup feed page (Step 2) - create feed from template.
-	 */
-	var SF_SetupFeed = {
-		init: function () {
-			if (!$('#sf-setup-feed-form').length) {
-				return;
-			}
-			this.bindEvents();
-		},
-		bindEvents: function () {
-			var self = this;
-			$('#sf-setup-feed-form').on('submit', function (e) {
-				e.preventDefault();
-				self.submitForm();
-			});
-		},
-		submitForm: function () {
-			var $form = $('#sf-setup-feed-form');
-			var $btn = $form.find('.sf-setup-create-btn');
-			var originalText = $btn.text();
-			$btn.prop('disabled', true).text(sfAdmin.i18n.loading || 'Creating...');
-
-			$.ajax({
-				url: sfAdmin.ajaxUrl,
-				type: 'POST',
-				data: {
-					action: 'sf_create_feed_from_template',
-					nonce: sfAdmin.nonce,
-					template_id: $form.find('[name="template_id"]').val(),
-					name: $form.find('[name="name"]').val(),
-					account_id: $form.find('[name="account_id"]').val(),
-					feed_type: $form.find('[name="feed_type"]').val(),
-					post_count: $form.find('[name="post_count"]').val()
-				},
-				success: function (response) {
-					if (response.success && response.data && response.data.redirect) {
-						window.location.href = response.data.redirect;
-					} else {
-						$btn.prop('disabled', false).text(originalText);
-						alert(response.data && response.data.message ? response.data.message : sfAdmin.i18n.error);
-					}
-				},
-				error: function (xhr) {
-					var msg = sfAdmin.i18n.error;
-					if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-						msg = xhr.responseJSON.data.message;
-					}
-					$btn.prop('disabled', false).text(originalText);
-					alert(msg);
-				}
-			});
-		}
-	};
-
 	$(function () {
 		SF_Admin.init();
 		SF_Accounts.init();
@@ -2103,12 +2017,6 @@
 
 		if ($('.sf-customizer-wrap').length) {
 			SF_Customizer.init();
-		}
-		if ($('.sf-template-selection-wrap').length) {
-			SF_TemplateSelection.init();
-		}
-		if ($('.sf-setup-feed-wrap').length) {
-			SF_SetupFeed.init();
 		}
 	});
 
