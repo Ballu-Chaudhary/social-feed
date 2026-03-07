@@ -4904,6 +4904,30 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	color: #1877F2;
 }
 
+/* Header badges container */
+.sf-feed-card-header-badges {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+/* No Account warning badge */
+.sf-feed-card-badge.sf-feed-badge--no-account {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	background: #fff7ed;
+	color: #c2410c;
+	border: 1px solid #fed7aa;
+}
+
 /* Status Badge with Dot */
 .sf-feed-card-status {
 	display: inline-flex;

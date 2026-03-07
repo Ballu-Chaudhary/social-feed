@@ -615,10 +615,15 @@ class SF_Admin {
 									<div class="sf-feed-card-platform">
 										<?php echo $this->get_platform_icon( $feed['platform'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 									</div>
-									<span class="sf-feed-card-status <?php echo esc_attr( $status_class ); ?>">
-										<span class="sf-status-dot"></span>
-										<?php echo esc_html( $status_text ); ?>
-									</span>
+									<div class="sf-feed-card-header-badges">
+										<?php if ( empty( $feed['account_id'] ) ) : ?>
+											<span class="sf-feed-card-badge sf-feed-badge--no-account"><?php esc_html_e( 'No Account', 'social-feed' ); ?></span>
+										<?php endif; ?>
+										<span class="sf-feed-card-status <?php echo esc_attr( $status_class ); ?>">
+											<span class="sf-status-dot"></span>
+											<?php echo esc_html( $status_text ); ?>
+										</span>
+									</div>
 								</div>
 								<div class="sf-feed-card-body">
 									<h3 class="sf-feed-card-name"><?php echo esc_html( $feed['name'] ); ?></h3>
@@ -660,13 +665,13 @@ class SF_Admin {
 								</div>
 								<div class="sf-feed-card-actions">
 									<div class="sf-feed-card-actions-left">
-										<a href="<?php echo esc_url( $edit_url ); ?>" class="sf-feed-action sf-feed-action--edit sf-tooltip" data-tooltip="<?php esc_attr_e( 'Edit Feed', 'social-feed' ); ?>">
+										<a href="<?php echo esc_url( $edit_url ); ?>" class="sf-feed-action sf-feed-action--edit sf-tooltip" data-tooltip="<?php esc_attr_e( 'Edit', 'social-feed' ); ?>">
 											<span class="dashicons dashicons-edit"></span>
 										</a>
-										<button type="button" class="sf-feed-action sf-feed-action--duplicate sf-duplicate-feed sf-tooltip" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" data-tooltip="<?php esc_attr_e( 'Duplicate Feed', 'social-feed' ); ?>">
+										<button type="button" class="sf-feed-action sf-feed-action--duplicate sf-duplicate-feed sf-tooltip" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" data-tooltip="<?php esc_attr_e( 'Duplicate', 'social-feed' ); ?>">
 											<span class="dashicons dashicons-admin-page"></span>
 										</button>
-										<button type="button" class="sf-feed-action sf-feed-action--delete sf-delete-feed sf-tooltip" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" data-feed-name="<?php echo esc_attr( $feed['name'] ); ?>" data-tooltip="<?php esc_attr_e( 'Delete Feed', 'social-feed' ); ?>">
+										<button type="button" class="sf-feed-action sf-feed-action--delete sf-delete-feed sf-tooltip" data-feed-id="<?php echo esc_attr( $feed['id'] ); ?>" data-feed-name="<?php echo esc_attr( $feed['name'] ); ?>" data-tooltip="<?php esc_attr_e( 'Delete', 'social-feed' ); ?>">
 											<span class="dashicons dashicons-trash"></span>
 										</button>
 									</div>
