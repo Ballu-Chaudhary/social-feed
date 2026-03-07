@@ -361,7 +361,7 @@ class SF_Admin {
 		<div class="sf-page-content sf-dashboard-content">
 			<!-- Page Header -->
 			<div class="sf-page-header">
-				<h1 class="sf-page-title"><?php esc_html_e( 'Dashboard', 'social-feed' ); ?></h1>
+				<h1 class="sf-page-title"><?php esc_html_e( 'Instagram Feed', 'social-feed' ); ?></h1>
 			</div>
 
 			<div class="sf-dashboard-grid">
@@ -392,7 +392,7 @@ class SF_Admin {
 
 				<!-- Quick Actions -->
 				<div class="sf-card sf-quick-actions">
-					<h2 class="sf-card-title"><span class="dashicons dashicons-superhero-alt"></span><?php esc_html_e( 'Quick Actions', 'social-feed' ); ?></h2>
+					<h2 class="sf-card-title"><?php esc_html_e( 'Quick Actions', 'social-feed' ); ?></h2>
 					<div class="sf-card-content">
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-create' ) ); ?>" class="sf-action-btn button button-primary">
 							<span class="dashicons dashicons-plus-alt"></span>
@@ -411,7 +411,7 @@ class SF_Admin {
 
 				<!-- Error Log -->
 				<div class="sf-card sf-error-log">
-					<h2 class="sf-card-title"><span class="dashicons dashicons-shield-alt"></span><?php esc_html_e( 'Recent Errors', 'social-feed' ); ?></h2>
+					<h2 class="sf-card-title"><?php esc_html_e( 'Recent Errors', 'social-feed' ); ?></h2>
 					<div class="sf-card-content">
 						<?php if ( empty( $recent_errors ) ) : ?>
 							<div class="sf-empty-state sf-empty-state--success">
