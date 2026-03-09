@@ -249,17 +249,20 @@ class SF_Ajax {
 				min-width: 140px;
 				scroll-snap-align: start;
 			}
+			<?php
+			$preview_radius = isset( $settings['border_radius'] ) ? intval( $settings['border_radius'] ) : intval( $settings['post_radius'] ?? 8 );
+			?>
 			.sf-preview-item {
 				<?php if ( 'none' !== $settings['border_style'] ) : ?>
 				border: 1px <?php echo esc_attr( $settings['border_style'] ); ?> <?php echo esc_attr( $settings['border_color'] ); ?>;
-				border-radius: <?php echo intval( $settings['post_radius'] ); ?>px;
+				border-radius: <?php echo $preview_radius; ?>px;
 				<?php endif; ?>
 			}
 			.sf-preview-item-inner {
 				position: relative;
 				padding-bottom: 100%;
 				background: #f3f4f6;
-				border-radius: <?php echo intval( $settings['post_radius'] ); ?>px;
+				border-radius: <?php echo $preview_radius; ?>px;
 				overflow: hidden;
 			}
 			.sf-preview-item img {
