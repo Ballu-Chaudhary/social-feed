@@ -573,15 +573,15 @@ class SF_Customizer {
 		<div class="sf-tab-content" data-tab="design">
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Colors', 'social-feed' ); ?></div>
-				<div class="sf-field">
+				<div class="sf-field sf-field-color">
 					<label for="sf_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_bg_color" name="bg_color" value="<?php echo esc_attr( $settings['bg_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
-				<div class="sf-field">
+				<div class="sf-field sf-field-color">
 					<label for="sf_text_color"><?php esc_html_e( 'Text Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_text_color" name="text_color" value="<?php echo esc_attr( $settings['text_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
-				<div class="sf-field">
+				<div class="sf-field sf-field-color">
 					<label for="sf_link_color"><?php esc_html_e( 'Link Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_link_color" name="link_color" value="<?php echo esc_attr( $settings['link_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
@@ -596,7 +596,7 @@ class SF_Customizer {
 						<option value="dashed" <?php selected( $settings['border_style'], 'dashed' ); ?>><?php esc_html_e( 'Dashed', 'social-feed' ); ?></option>
 					</select>
 				</div>
-				<div class="sf-field sf-border-options" <?php echo 'none' === $settings['border_style'] ? 'style="display:none;"' : ''; ?>>
+				<div class="sf-field sf-field-color sf-border-options" <?php echo 'none' === $settings['border_style'] ? 'style="display:none;"' : ''; ?>>
 					<label for="sf_border_color"><?php esc_html_e( 'Border Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_border_color" name="border_color" value="<?php echo esc_attr( $settings['border_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
@@ -795,11 +795,11 @@ class SF_Customizer {
 
 			<div class="sf-section sf-loadmore-options sf-loadmore-button-section" <?php echo 'button' !== $type ? 'style="display:none;"' : ''; ?>>
 				<div class="sf-section-title"><?php esc_html_e( 'Button Style', 'social-feed' ); ?></div>
-				<div class="sf-field">
+				<div class="sf-field sf-field-color">
 					<label for="sf_loadmore_bg_color"><?php esc_html_e( 'Background Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_bg_color" name="loadmore_bg_color" value="<?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
-				<div class="sf-field">
+				<div class="sf-field sf-field-color">
 					<label for="sf_loadmore_text_color"><?php esc_html_e( 'Text Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_loadmore_text_color" name="loadmore_text_color" value="<?php echo esc_attr( $settings['loadmore_text_color'] ); ?>" class="sf-color-picker"></div>
 				</div>

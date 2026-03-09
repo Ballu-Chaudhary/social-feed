@@ -1171,11 +1171,7 @@
 				$wrap.find('.sf-color-swatch').css('background-color', val || 'transparent');
 				$wrap.find('.sf-color-name').text(self.getColorName(val));
 
-				$wrap.off('click.sfColorPicker').on('click.sfColorPicker', function (e) {
-					if (!$(e.target).closest('.wp-picker-clear').length && !$(e.target).closest('.iris-picker').length && !$(e.target).closest('.wp-picker-holder').length) {
-						$wrap.find('.wp-color-result').trigger('click');
-					}
-				});
+				/* Clicks handled by invisible wp-color-result overlay on trigger - no JS handler needed */
 			});
 
 			/* WP default UI hidden via CSS (Select Color, hex input, swatch button) */

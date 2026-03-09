@@ -2841,6 +2841,24 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
 }
 
+/* Color field: no outer card - label + single row only */
+.sf-customizer-content .sf-field-color {
+	padding: 0;
+	margin: 0 16px 12px;
+	border: none;
+	background: none;
+	box-shadow: none;
+}
+
+.sf-customizer-content .sf-field-color:hover {
+	border: none;
+	box-shadow: none;
+}
+
+.sf-customizer-content .sf-field-color > label:first-child {
+	margin-bottom: 6px;
+}
+
 /* Modern Color Picker - custom trigger row, no hex in main UI */
 .sf-customizer-content .sf-color-picker-wrap.sf-color-modern {
 	display: block;
@@ -2890,14 +2908,32 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	flex-shrink: 0;
 }
 
-/* Hide WP default elements - no Select Color, no hex input, no swatch button */
+/* WP color picker: overlay invisible button on trigger so clicks open picker */
 .sf-customizer-content .sf-color-modern .wp-picker-container {
-	position: relative;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
 }
 
+.sf-customizer-content .sf-color-modern .wp-picker-container .wp-color-result {
+	position: absolute !important;
+	top: 0 !important;
+	left: 0 !important;
+	width: 100% !important;
+	height: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	opacity: 0 !important;
+	pointer-events: auto !important;
+	cursor: pointer !important;
+	border: none !important;
+}
+
+/* Hide Select Color label and hex input - keep off screen */
 .sf-customizer-content .sf-color-modern .wp-picker-input-wrap,
-.sf-customizer-content .sf-color-modern .wp-picker-input-wrap *,
-.sf-customizer-content .sf-color-modern .wp-color-result {
+.sf-customizer-content .sf-color-modern .wp-picker-input-wrap * {
 	position: absolute !important;
 	width: 1px !important;
 	height: 1px !important;
