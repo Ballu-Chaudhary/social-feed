@@ -415,7 +415,7 @@ class SF_Customizer {
 		}
 		$layouts = array(
 			'grid'     => array( 'icon' => 'dashicons-grid-view', 'label' => __( 'Grid', 'social-feed' ), 'pro' => false ),
-			'carousel' => array( 'icon' => 'dashicons-slides', 'label' => __( 'Carousel', 'social-feed' ), 'pro' => true ),
+			'carousel' => array( 'icon' => 'dashicons-slides', 'label' => __( 'Carousel', 'social-feed' ), 'pro' => false ),
 			'masonry'  => array( 'icon' => 'dashicons-layout', 'label' => __( 'Masonry', 'social-feed' ), 'pro' => true ),
 			'highlight'=> array( 'icon' => 'dashicons-star-filled', 'label' => __( 'Highlight', 'social-feed' ), 'pro' => true ),
 		);
@@ -440,9 +440,21 @@ class SF_Customizer {
 						</label>
 					<?php endforeach; ?>
 				</div>
-				<div class="sf-layout-pro-message" id="sf-layout-pro-message" style="display: none;">
-					<?php esc_html_e( 'Upgrade to Pro to unlock premium layouts', 'social-feed' ); ?>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="sf-layout-pro-upgrade-link"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
+				<!-- PRO upgrade modal (Masonry / Highlight) -->
+				<div class="sf-layout-pro-modal" id="sf-layout-pro-modal" role="dialog" aria-labelledby="sf-layout-pro-modal-title" aria-hidden="true">
+					<div class="sf-layout-pro-modal-overlay"></div>
+					<div class="sf-layout-pro-modal-content">
+						<button type="button" class="sf-layout-pro-modal-close" aria-label="<?php esc_attr_e( 'Close', 'social-feed' ); ?>">&times;</button>
+						<div class="sf-layout-pro-modal-icon">
+							<span class="dashicons dashicons-awards"></span>
+						</div>
+						<h3 id="sf-layout-pro-modal-title" class="sf-layout-pro-modal-title"><?php esc_html_e( 'Unlock Premium Layouts', 'social-feed' ); ?></h3>
+						<p class="sf-layout-pro-modal-desc"><?php esc_html_e( 'Masonry and Highlight layouts are available in the Pro version. Upgrade to unlock all premium features.', 'social-feed' ); ?></p>
+						<div class="sf-layout-pro-modal-actions">
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="sf-layout-pro-modal-btn sf-layout-pro-modal-btn--primary"><?php esc_html_e( 'Upgrade to Pro', 'social-feed' ); ?></a>
+							<button type="button" class="sf-layout-pro-modal-btn sf-layout-pro-modal-btn--secondary"><?php esc_html_e( 'Maybe Later', 'social-feed' ); ?></button>
+						</div>
+					</div>
 				</div>
 			</div>
 

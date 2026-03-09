@@ -985,9 +985,10 @@
 				var $radio = $opt.find('input[type="radio"]');
 				if (!$radio.length) return;
 
-				/* PRO layout: block selection and show upgrade message if not Pro */
+				/* PRO layout: block selection and show upgrade modal if not Pro */
 				if ($opt.data('pro') && !(typeof sfAdmin !== 'undefined' && sfAdmin.isPro)) {
-					$('#sf-layout-pro-message').slideDown(200);
+					var $modal = $('#sf-layout-pro-modal');
+					$modal.addClass('sf-layout-pro-modal--visible').attr('aria-hidden', 'false');
 					var $cards = $opt.closest('.sf-radio-cards');
 					var $gridOpt = $cards.find('.sf-layout-option:not([data-pro])').first();
 					if ($gridOpt.length) {
@@ -997,9 +998,6 @@
 					}
 					return;
 				}
-
-				/* Hide PRO message when selecting free layout */
-				$('#sf-layout-pro-message').slideUp(200);
 
 				$radio.prop('checked', true);
 				$('.sf-radio-card').removeClass('active');
@@ -1046,6 +1044,11 @@
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
 			$(document).on('change', 'input[name="post_radius_preset"]', this.handlePostRadiusPreset.bind(this));
 			$(document).on('input', '#sf_post_radius', this.handlePostRadiusCustom.bind(this));
+
+			/* PRO layout upgrade modal: close on overlay, X, or Maybe Later */
+			$(document).on('click', '.sf-layout-pro-modal-overlay, .sf-layout-pro-modal-close, .sf-layout-pro-modal-btn--secondary', function () {
+				$('#sf-layout-pro-modal').removeClass('sf-layout-pro-modal--visible').attr('aria-hidden', 'true');
+			});
 
 			$(document).on('click', '.sf-info-icon', function (e) {
 				e.stopPropagation();
