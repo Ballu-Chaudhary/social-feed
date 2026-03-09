@@ -176,24 +176,25 @@ class SF_Ajax {
 			flex-shrink: 0;
 			margin-left: auto;
 		}
-		/* Center Aligned: everything stacked and centered */
+		/* Center Aligned: same inner layout as Left, but whole block centered */
 		.sf-preview-feed .sf-preview-header.sf-preview-header--center {
-			flex-direction: column;
+			flex-direction: row;
 			justify-content: center;
 			align-items: center;
-			text-align: center;
 		}
 		.sf-preview-feed .sf-preview-header--center .sf-preview-header-left {
-			flex-direction: column;
+			flex-direction: row;
 			align-items: center;
-			gap: 8px;
+			gap: 12px;
+			flex: 0 1 auto;
 		}
 		.sf-preview-feed .sf-preview-header--center .sf-preview-header-info {
-			align-items: center;
-			text-align: center;
+			align-items: flex-start;
+			text-align: left;
 		}
 		.sf-preview-feed .sf-preview-header--center .sf-preview-header-right {
 			margin-left: 0;
+			flex: 0 0 auto;
 		}
 		.sf-preview-avatar {
 			width: 48px;
