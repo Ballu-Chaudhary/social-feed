@@ -1117,7 +1117,23 @@
 		},
 
 		/**
-		 * Initialize WordPress color pickers.
+		 * Get friendly color name from hex (no hex in main UI).
+		 */
+		getColorName: function (hex) {
+			var h = (hex || '').toLowerCase().replace(/^#/, '');
+			var map = {
+				'ffffff': 'White', 'fff': 'White',
+				'000000': 'Black', '000': 'Black',
+				'transparent': 'Transparent', '': 'Transparent',
+				'212121': 'Dark', '333333': 'Dark Gray', '374151': 'Gray', '6b7280': 'Gray',
+				'0095f6': 'Blue', '6366f1': 'Indigo', '8b5cf6': 'Purple',
+				'10b981': 'Green', 'ef4444': 'Red', 'f59e0b': 'Amber', 'ec4899': 'Pink'
+			};
+			return map[h] || 'Custom';
+		},
+
+		/**
+		 * Initialize WordPress color pickers with modern UI.
 		 */
 		initColorPickers: function () {
 			var self = this;
@@ -1125,34 +1141,44 @@
 			$('.sf-color-picker').each(function () {
 				var $input = $(this);
 				var $wrap = $input.closest('.sf-color-picker-wrap');
-				var val = $input.val() || '#ffffff';
+				var val = ($input.val() || '#ffffff').trim();
 
 				$input.wpColorPicker({
 					change: function () {
-						$wrap.find('.sf-color-hex').text($input.val() || '');
+						var v = $input.val() || '';
+						$wrap.find('.sf-color-swatch').css('background-color', v || 'transparent');
+						$wrap.find('.sf-color-name').text(self.getColorName(v));
 						self.debouncePreview();
 					},
 					clear: function () {
-						$wrap.find('.sf-color-hex').text('');
+						$wrap.find('.sf-color-swatch').css('background-color', 'transparent');
+						$wrap.find('.sf-color-name').text(self.getColorName(''));
 						self.debouncePreview();
 					}
 				});
 
-				/* Add hex display and make row clickable */
-				$wrap.addClass('sf-color-row-clickable');
-				if (!$wrap.find('.sf-color-hex').length) {
-					$wrap.append('<span class="sf-color-hex">' + (val || '') + '</span>');
+				/* Build modern trigger row: swatch + name + chevron */
+				$wrap.addClass('sf-color-modern');
+				if (!$wrap.find('.sf-color-trigger').length) {
+					$wrap.prepend(
+						'<div class="sf-color-trigger">' +
+						'<span class="sf-color-swatch" style="background-color:' + (val || 'transparent') + '"></span>' +
+						'<span class="sf-color-name">' + self.getColorName(val) + '</span>' +
+						'<span class="sf-color-chevron dashicons dashicons-arrow-down-alt2"></span>' +
+						'</div>'
+					);
 				}
-				$wrap.find('.sf-color-hex').text(val || $input.val() || '');
+				$wrap.find('.sf-color-swatch').css('background-color', val || 'transparent');
+				$wrap.find('.sf-color-name').text(self.getColorName(val));
+
 				$wrap.off('click.sfColorPicker').on('click.sfColorPicker', function (e) {
-					if (!$(e.target).closest('.wp-picker-clear').length && !$(e.target).closest('.iris-picker').length) {
+					if (!$(e.target).closest('.wp-picker-clear').length && !$(e.target).closest('.iris-picker').length && !$(e.target).closest('.wp-picker-holder').length) {
 						$wrap.find('.wp-color-result').trigger('click');
 					}
 				});
 			});
 
-			/* Hide default color input, show only swatch + hex */
-			$('.sf-color-picker-wrap .wp-picker-input-wrap').hide();
+			/* WP default UI hidden via CSS (Select Color, hex input, swatch button) */
 		},
 
 		handleToplevelClick: function (e) {

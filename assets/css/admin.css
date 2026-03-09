@@ -2841,33 +2841,82 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
 }
 
-/* Modern Color Picker */
-.sf-customizer-content .sf-color-picker-wrap {
+/* Modern Color Picker - custom trigger row, no hex in main UI */
+.sf-customizer-content .sf-color-picker-wrap.sf-color-modern {
+	display: block;
+	width: 100%;
+	position: relative;
+}
+
+.sf-customizer-content .sf-color-modern .sf-color-trigger {
 	display: flex;
 	align-items: center;
 	gap: 12px;
 	width: 100%;
+	padding: 10px 14px;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: box-shadow 0.2s, border-color 0.2s;
 }
 
-.sf-customizer-content .sf-color-picker-wrap .wp-picker-container {
-	display: flex;
-	align-items: center;
-}
-
-.sf-customizer-content .sf-color-picker-wrap .wp-color-result {
-	width: 36px;
-	height: 36px;
-	min-width: 36px;
-	border-radius: var(--sf-customizer-radius-xs);
-	margin: 0;
-	border: 2px solid #e5e7eb;
-	box-shadow: var(--sf-customizer-shadow-xs);
-	transition: all var(--sf-customizer-transition);
-}
-
-.sf-customizer-content .sf-color-picker-wrap .wp-color-result:hover {
+.sf-customizer-content .sf-color-modern .sf-color-trigger:hover {
 	border-color: #d1d5db;
-	box-shadow: var(--sf-customizer-shadow-sm);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.sf-customizer-content .sf-color-modern .sf-color-swatch {
+	width: 32px;
+	height: 32px;
+	min-width: 32px;
+	border-radius: 8px;
+	border: 2px solid #e5e7eb;
+	flex-shrink: 0;
+}
+
+.sf-customizer-content .sf-color-modern .sf-color-name {
+	flex: 1;
+	font-size: 13px;
+	color: #6b7280;
+	text-align: left;
+}
+
+.sf-customizer-content .sf-color-modern .sf-color-chevron {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: #9ca3af;
+	flex-shrink: 0;
+}
+
+/* Hide WP default elements - no Select Color, no hex input, no swatch button */
+.sf-customizer-content .sf-color-modern .wp-picker-container {
+	position: relative;
+}
+
+.sf-customizer-content .sf-color-modern .wp-picker-input-wrap,
+.sf-customizer-content .sf-color-modern .wp-picker-input-wrap *,
+.sf-customizer-content .sf-color-modern .wp-color-result {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	margin: -1px !important;
+	padding: 0 !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	border: 0 !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* Iris picker pops below the field */
+.sf-customizer-content .sf-color-modern .wp-picker-holder {
+	position: absolute !important;
+	top: 100% !important;
+	left: 0 !important;
+	margin-top: 8px !important;
+	z-index: 1000;
 }
 
 /* Modern Radio Group */
