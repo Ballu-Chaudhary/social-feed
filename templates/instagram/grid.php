@@ -30,7 +30,8 @@ $has_items   = ! empty( $posts );
 ?>
 
 <?php if ( ! empty( $settings['show_header'] ) && $account ) : ?>
-	<header class="sf-feed__header">
+	<?php $header_layout = ( ! empty( $settings['header_layout'] ) && 'center' === $settings['header_layout'] ) ? 'center' : 'left'; ?>
+	<header class="sf-feed__header sf-feed__header--<?php echo esc_attr( $header_layout ); ?>">
 		<?php if ( ! empty( $settings['show_avatar'] ) ) : ?>
 			<?php
 			$avatar_url = $profile['profile_picture_url'] ?? $account['profile_pic'] ?? '';

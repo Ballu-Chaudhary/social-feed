@@ -2920,6 +2920,18 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	accent-color: var(--sf-customizer-accent);
 }
 
+.sf-header-layout-options .sf-radio-option .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	color: #6b7280;
+}
+
+.sf-header-layout-options .sf-radio-option:has(input:checked) .dashicons,
+.sf-header-layout-options .sf-radio-option.active .dashicons {
+	color: var(--sf-customizer-accent);
+}
+
 .sf-customizer-content .sf-field-desc {
 	margin: 4px 0 0 0;
 	font-size: 11px;

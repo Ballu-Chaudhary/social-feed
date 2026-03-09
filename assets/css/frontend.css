@@ -58,6 +58,18 @@
 	margin-bottom: var(--sf-gap, 10px);
 }
 
+.sf-feed__header--center {
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+}
+
+.sf-feed__header--center .sf-feed__header-info {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .sf-feed__avatar {
 	flex-shrink: 0;
 	width: 60px;

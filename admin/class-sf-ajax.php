@@ -156,6 +156,18 @@ class SF_Ajax {
 			flex-shrink: 0;
 			margin-left: auto;
 		}
+		.sf-preview-header.sf-preview-header--center {
+			flex-direction: column;
+			justify-content: center;
+			text-align: center;
+		}
+		.sf-preview-header.sf-preview-header--center .sf-preview-header-left {
+			flex-direction: column;
+			justify-content: center;
+		}
+		.sf-preview-header.sf-preview-header--center .sf-preview-header-right {
+			margin-left: 0;
+		}
 		.sf-preview-avatar {
 			width: 48px;
 			height: 48px;
@@ -344,7 +356,8 @@ class SF_Ajax {
 		<div class="sf-preview-frame">
 		<div class="sf-preview-feed">
 			<?php if ( $settings['show_header'] ) : ?>
-			<div class="sf-preview-header">
+			<?php $header_layout = isset( $settings['header_layout'] ) && 'center' === $settings['header_layout'] ? 'center' : 'left'; ?>
+			<div class="sf-preview-header sf-preview-header--<?php echo esc_attr( $header_layout ); ?>">
 				<div class="sf-preview-header-left">
 					<?php if ( $settings['show_profile_pic'] ) : ?>
 					<div class="sf-preview-avatar"></div>
@@ -659,7 +672,7 @@ class SF_Ajax {
 			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding', 'post_radius', 'hashtag',
 			'post_count_desktop', 'post_count_tablet', 'post_count_mobile',
 			'bg_color', 'text_color', 'link_color', 'border_style', 'border_color', 'border_radius',
-			'hover_effect', 'dark_mode', 'show_header', 'show_profile_pic', 'show_username',
+			'hover_effect', 'dark_mode', 'show_header', 'header_layout', 'show_profile_pic', 'show_username',
 			'show_followers', 'show_bio', 'show_follow_btn', 'follow_btn_color', 'follow_btn_text',
 			'show_caption', 'caption_length', 'show_date', 'show_likes', 'show_comments',
 			'click_action', 'popup_style', 'loadmore_type', 'loadmore_text', 'loadmore_bg_color', 'loadmore_text_color', 'loadmore_radius',
