@@ -3597,8 +3597,20 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	padding: 4px 0;
 }
 
-.sf-color-row-clickable .wp-picker-input-wrap {
-	display: none !important;
+/* Completely hide WordPress "Select Color" label and input to prevent overlap with hex */
+.sf-color-row-clickable .wp-picker-input-wrap,
+.sf-color-row-clickable .wp-picker-input-wrap label,
+.sf-color-row-clickable .wp-picker-input-wrap input {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	margin: -1px !important;
+	padding: 0 !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	border: 0 !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
 }
 
 .sf-color-row-clickable .sf-color-hex {

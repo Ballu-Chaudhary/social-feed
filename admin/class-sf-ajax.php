@@ -348,7 +348,11 @@ class SF_Ajax {
 			<?php if ( ! empty( $settings['dark_mode'] ) ) : ?>
 			.sf-preview-frame { background: #0f0f0f; }
 			.sf-preview-feed { background: #1a1a1a; color: #ffffff; }
-			.sf-preview-followers, .sf-preview-meta { color: rgba(255,255,255,0.6); }
+			.sf-preview-header { background: #1a1a1a; border-bottom-color: rgba(255,255,255,0.12); }
+			.sf-preview-username { color: #ffffff; }
+			.sf-preview-followers { color: rgba(255,255,255,0.6); }
+			.sf-preview-avatar { background: #333; }
+			.sf-preview-meta { color: rgba(255,255,255,0.6); }
 			.sf-preview-caption { color: rgba(255,255,255,0.9); }
 			<?php endif; ?>
 		</style>
