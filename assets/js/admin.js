@@ -983,15 +983,31 @@
 				e.preventDefault();
 				var $opt = $(this);
 				var $radio = $opt.find('input[type="radio"]');
-				if ($radio.length) {
-					$radio.prop('checked', true);
-					$('.sf-radio-card').removeClass('active');
-					$opt.addClass('active');
-					if ($radio.attr('name') === 'loadmore_type') {
-						self.handleLoadmoreChange();
+				if (!$radio.length) return;
+
+				/* PRO layout: block selection and show upgrade message if not Pro */
+				if ($opt.data('pro') && !(typeof sfAdmin !== 'undefined' && sfAdmin.isPro)) {
+					$('#sf-layout-pro-message').slideDown(200);
+					var $cards = $opt.closest('.sf-radio-cards');
+					var $gridOpt = $cards.find('.sf-layout-option:not([data-pro])').first();
+					if ($gridOpt.length) {
+						$gridOpt.find('input[type="radio"]').prop('checked', true);
+						$cards.find('.sf-radio-card').removeClass('active');
+						$gridOpt.addClass('active');
 					}
-					self.debouncePreview();
+					return;
 				}
+
+				/* Hide PRO message when selecting free layout */
+				$('#sf-layout-pro-message').slideUp(200);
+
+				$radio.prop('checked', true);
+				$('.sf-radio-card').removeClass('active');
+				$opt.addClass('active');
+				if ($radio.attr('name') === 'loadmore_type') {
+					self.handleLoadmoreChange();
+				}
+				self.debouncePreview();
 			});
 			$(document).on('change', '.sf-customizer-wrap input[name="layout"]', function () {
 				$('.sf-customizer-wrap .sf-radio-card').removeClass('active');

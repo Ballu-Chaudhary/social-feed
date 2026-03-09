@@ -428,7 +428,7 @@ class SF_Customizer {
 				<div class="sf-layout-panel-section-title"><?php esc_html_e( 'Layout', 'social-feed' ); ?></div>
 				<div class="sf-radio-cards">
 					<?php foreach ( $layouts as $value => $layout_data ) : ?>
-						<label class="sf-radio-card sf-layout-option <?php echo ( $layout === $value ) ? 'active' : ''; ?>">
+						<label class="sf-radio-card sf-layout-option <?php echo ( $layout === $value ) ? 'active' : ''; ?>" <?php echo ! empty( $layout_data['pro'] ) ? ' data-pro="1"' : ''; ?>>
 							<input type="radio" name="layout" value="<?php echo esc_attr( $value ); ?>" <?php checked( $layout, $value ); ?>>
 							<span class="sf-radio-card-radio"></span>
 							<span class="dashicons <?php echo esc_attr( $layout_data['icon'] ); ?>"></span>
@@ -438,6 +438,10 @@ class SF_Customizer {
 							<?php endif; ?>
 						</label>
 					<?php endforeach; ?>
+				</div>
+				<div class="sf-layout-pro-message" id="sf-layout-pro-message" style="display: none;">
+					<?php esc_html_e( 'Upgrade to Pro to unlock premium layouts', 'social-feed' ); ?>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed-license' ) ); ?>" class="sf-layout-pro-upgrade-link"><?php esc_html_e( 'Upgrade', 'social-feed' ); ?></a>
 				</div>
 			</div>
 
