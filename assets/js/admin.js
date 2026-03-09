@@ -1040,6 +1040,7 @@
 			$(document).on('change', '#sf_platform', this.handlePlatformChange);
 			$(document).on('change', 'input[name="feed_type"]', this.handleFeedTypeChange);
 			$(document).on('change', '#sf_border_style', this.handleBorderStyleChange);
+			$(document).on('change', '#sf_dark_mode', function () { self.debouncePreview(); });
 			$(document).on('change', '#sf_show_header', this.handleHeaderToggle);
 			$(document).on('change', '#sf_show_caption', this.handleCaptionToggle);
 			$(document).on('change', 'input[name="loadmore_type"]', this.handleLoadmoreChange);
@@ -1118,14 +1119,37 @@
 		initColorPickers: function () {
 			var self = this;
 
-			$('.sf-color-picker').wpColorPicker({
-				change: function () {
-					self.debouncePreview();
-				},
-				clear: function () {
-					self.debouncePreview();
+			$('.sf-color-picker').each(function () {
+				var $input = $(this);
+				var $wrap = $input.closest('.sf-color-picker-wrap');
+				var val = $input.val() || '#ffffff';
+
+				$input.wpColorPicker({
+					change: function () {
+						$wrap.find('.sf-color-hex').text($input.val() || '');
+						self.debouncePreview();
+					},
+					clear: function () {
+						$wrap.find('.sf-color-hex').text('');
+						self.debouncePreview();
+					}
+				});
+
+				/* Add hex display and make row clickable */
+				$wrap.addClass('sf-color-row-clickable');
+				if (!$wrap.find('.sf-color-hex').length) {
+					$wrap.append('<span class="sf-color-hex">' + (val || '') + '</span>');
 				}
+				$wrap.find('.sf-color-hex').text(val || $input.val() || '');
+				$wrap.off('click.sfColorPicker').on('click.sfColorPicker', function (e) {
+					if (!$(e.target).closest('.wp-picker-clear').length && !$(e.target).closest('.iris-picker').length) {
+						$wrap.find('.wp-color-result').trigger('click');
+					}
+				});
 			});
+
+			/* Hide default color input, show only swatch + hex */
+			$('.sf-color-picker-wrap .wp-picker-input-wrap').hide();
 		},
 
 		handleToplevelClick: function (e) {
@@ -1266,10 +1290,13 @@
 		 * Handle border style change.
 		 */
 		handleBorderStyleChange: function () {
-			if ($(this).val() === 'none') {
+			var isNone = $(this).val() === 'none';
+			if (isNone) {
 				$('.sf-border-options').slideUp(200);
+				$('.sf-border-radius-wrap').slideUp(200);
 			} else {
 				$('.sf-border-options').slideDown(200);
+				$('.sf-border-radius-wrap').slideDown(200);
 			}
 		},
 

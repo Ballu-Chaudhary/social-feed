@@ -3460,6 +3460,26 @@ body.sf-admin-page.sf-customizer-page .sf-create-feed-wrap {
 	line-height: 30px;
 }
 
+/* Color picker: swatch + hex in one row, whole row clickable */
+.sf-color-row-clickable {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 4px 0;
+}
+
+.sf-color-row-clickable .wp-picker-input-wrap {
+	display: none !important;
+}
+
+.sf-color-row-clickable .sf-color-hex {
+	font-size: 13px;
+	font-family: monospace;
+	color: #374151;
+	min-width: 70px;
+}
+
 /* ==========================================================================
    Range Slider
    ========================================================================== */

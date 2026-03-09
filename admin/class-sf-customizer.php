@@ -281,6 +281,7 @@ class SF_Customizer {
 			'post_radius'         => '8',
 			'bg_color'            => '#ffffff',
 			'text_color'          => '#333333',
+			'link_color'          => '#0095f6',
 			'border_style'        => 'none',
 			'border_color'        => '#e0e0e0',
 			'border_radius'       => 8,
@@ -567,6 +568,10 @@ class SF_Customizer {
 					<label for="sf_text_color"><?php esc_html_e( 'Text Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_text_color" name="text_color" value="<?php echo esc_attr( $settings['text_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
+				<div class="sf-field">
+					<label for="sf_link_color"><?php esc_html_e( 'Link Color', 'social-feed' ); ?></label>
+					<div class="sf-color-picker-wrap"><input type="text" id="sf_link_color" name="link_color" value="<?php echo esc_attr( $settings['link_color'] ); ?>" class="sf-color-picker"></div>
+				</div>
 			</div>
 			<div class="sf-section">
 				<div class="sf-section-title"><?php esc_html_e( 'Borders', 'social-feed' ); ?></div>
@@ -582,7 +587,7 @@ class SF_Customizer {
 					<label for="sf_border_color"><?php esc_html_e( 'Border Color', 'social-feed' ); ?></label>
 					<div class="sf-color-picker-wrap"><input type="text" id="sf_border_color" name="border_color" value="<?php echo esc_attr( $settings['border_color'] ); ?>" class="sf-color-picker"></div>
 				</div>
-				<div class="sf-field">
+				<div class="sf-field sf-border-radius-wrap" <?php echo 'none' === $settings['border_style'] ? 'style="display:none;"' : ''; ?>>
 					<label for="sf_border_radius"><?php esc_html_e( 'Border Radius', 'social-feed' ); ?></label>
 					<div class="sf-range-wrapper">
 						<input type="range" id="sf_border_radius" name="border_radius" value="<?php echo esc_attr( $settings['border_radius'] ); ?>" min="0" max="20">

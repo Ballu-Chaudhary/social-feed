@@ -333,9 +333,11 @@ class SF_Ajax {
 				border-color: <?php echo esc_attr( $settings['loadmore_bg_color'] ); ?>;
 			}
 			.sf-preview-page-btn:disabled { opacity: 0.5; cursor: wait; }
-			<?php if ( $settings['dark_mode'] ) : ?>
+			<?php if ( ! empty( $settings['dark_mode'] ) ) : ?>
+			.sf-preview-frame { background: #0f0f0f; }
 			.sf-preview-feed { background: #1a1a1a; color: #ffffff; }
 			.sf-preview-followers, .sf-preview-meta { color: rgba(255,255,255,0.6); }
+			.sf-preview-caption { color: rgba(255,255,255,0.9); }
 			<?php endif; ?>
 		</style>
 
@@ -656,7 +658,7 @@ class SF_Ajax {
 		$meta_fields = array(
 			'layout', 'feed_height', 'columns_desktop', 'columns_tablet', 'columns_mobile', 'image_padding', 'post_radius', 'hashtag',
 			'post_count_desktop', 'post_count_tablet', 'post_count_mobile',
-			'bg_color', 'text_color', 'border_style', 'border_color', 'border_radius',
+			'bg_color', 'text_color', 'link_color', 'border_style', 'border_color', 'border_radius',
 			'hover_effect', 'dark_mode', 'show_header', 'show_profile_pic', 'show_username',
 			'show_followers', 'show_bio', 'show_follow_btn', 'follow_btn_color', 'follow_btn_text',
 			'show_caption', 'caption_length', 'show_date', 'show_likes', 'show_comments',
