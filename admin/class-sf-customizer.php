@@ -651,12 +651,12 @@ class SF_Customizer {
 					<div class="sf-field">
 						<label class="sf-field-label"><?php esc_html_e( 'Header Layout', 'social-feed' ); ?></label>
 						<div class="sf-radio-group sf-header-layout-options">
-							<label class="sf-radio-option <?php echo ( isset( $settings['header_layout'] ) && 'center' === $settings['header_layout'] ) ? '' : 'active'; ?>">
+							<label class="sf-radio-option">
 								<input type="radio" name="header_layout" value="left" <?php checked( isset( $settings['header_layout'] ) ? $settings['header_layout'] : 'left', 'left' ); ?>>
 								<span class="dashicons dashicons-editor-alignleft"></span>
 								<span><?php esc_html_e( 'Left Aligned', 'social-feed' ); ?></span>
 							</label>
-							<label class="sf-radio-option <?php echo ( isset( $settings['header_layout'] ) && 'center' === $settings['header_layout'] ) ? 'active' : ''; ?>">
+							<label class="sf-radio-option">
 								<input type="radio" name="header_layout" value="center" <?php checked( isset( $settings['header_layout'] ) ? $settings['header_layout'] : 'left', 'center' ); ?>>
 								<span class="dashicons dashicons-editor-aligncenter"></span>
 								<span><?php esc_html_e( 'Center Aligned', 'social-feed' ); ?></span>

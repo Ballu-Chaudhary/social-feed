@@ -136,17 +136,26 @@ class SF_Ajax {
 				box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 				overflow: hidden;
 			}
-		.sf-preview-header {
+		/* Feed header - scoped to avoid conflict with preview chrome */
+		.sf-preview-feed .sf-preview-header {
+			position: static;
 			display: flex;
+			flex-direction: row;
 			justify-content: space-between;
 			align-items: center;
 			gap: 16px;
 			margin-bottom: 16px;
 			padding-bottom: 16px;
 			border-bottom: 1px solid rgba(0,0,0,0.08);
+			background: transparent;
+			box-shadow: none;
+			flex-shrink: 0;
 		}
-		/* Left Aligned (Instagram): pic left, username right of pic, followers below username, button far right */
-		.sf-preview-header-left {
+		/* Left Aligned (Instagram): [pic] [username/followers] [button] - single horizontal row */
+		.sf-preview-feed .sf-preview-header.sf-preview-header--left {
+			flex-direction: row;
+		}
+		.sf-preview-feed .sf-preview-header--left .sf-preview-header-left {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -154,11 +163,7 @@ class SF_Ajax {
 			min-width: 0;
 			flex: 1;
 		}
-		.sf-preview-header-right {
-			flex-shrink: 0;
-			margin-left: auto;
-		}
-		.sf-preview-header-info {
+		.sf-preview-feed .sf-preview-header--left .sf-preview-header-info {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
@@ -167,23 +172,27 @@ class SF_Ajax {
 			flex: 1;
 			min-width: 0;
 		}
+		.sf-preview-feed .sf-preview-header .sf-preview-header-right {
+			flex-shrink: 0;
+			margin-left: auto;
+		}
 		/* Center Aligned: everything stacked and centered */
-		.sf-preview-header.sf-preview-header--center {
+		.sf-preview-feed .sf-preview-header.sf-preview-header--center {
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 			text-align: center;
 		}
-		.sf-preview-header.sf-preview-header--center .sf-preview-header-left {
+		.sf-preview-feed .sf-preview-header--center .sf-preview-header-left {
 			flex-direction: column;
 			align-items: center;
 			gap: 8px;
 		}
-		.sf-preview-header.sf-preview-header--center .sf-preview-header-info {
+		.sf-preview-feed .sf-preview-header--center .sf-preview-header-info {
 			align-items: center;
 			text-align: center;
 		}
-		.sf-preview-header.sf-preview-header--center .sf-preview-header-right {
+		.sf-preview-feed .sf-preview-header--center .sf-preview-header-right {
 			margin-left: 0;
 		}
 		.sf-preview-avatar {
@@ -365,7 +374,7 @@ class SF_Ajax {
 			<?php if ( ! empty( $settings['dark_mode'] ) ) : ?>
 			.sf-preview-frame { background: #0f0f0f; }
 			.sf-preview-feed { background: #1a1a1a; color: #ffffff; }
-			.sf-preview-header { background: #1a1a1a; border-bottom-color: rgba(255,255,255,0.12); }
+			.sf-preview-feed .sf-preview-header { background: #1a1a1a; border-bottom-color: rgba(255,255,255,0.12); }
 			.sf-preview-username { color: #ffffff; }
 			.sf-preview-followers { color: rgba(255,255,255,0.6); }
 			.sf-preview-avatar { background: #333; }

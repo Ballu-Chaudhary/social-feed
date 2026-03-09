@@ -1012,6 +1012,11 @@
 				$('.sf-customizer-wrap input[name="layout"]:checked').closest('.sf-radio-card').addClass('active');
 			});
 
+			$(document).on('change', '.sf-customizer-wrap input[name="header_layout"]', function () {
+				$('.sf-header-layout-options .sf-radio-option').removeClass('active');
+				$('.sf-customizer-wrap input[name="header_layout"]:checked').closest('.sf-radio-option').addClass('active');
+			});
+
 			$(document).on('input change', '.sf-customizer-wrap input, .sf-customizer-wrap select, .sf-customizer-wrap textarea', function () {
 				var $el = $(this);
 				var name = $el.attr('name');
