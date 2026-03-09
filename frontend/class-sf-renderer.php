@@ -102,7 +102,8 @@ class SF_Renderer {
 			'data-columns'  => $settings['columns'] ?? 3,
 		);
 
-		if ( ! empty( $settings['enable_lightbox'] ) ) {
+		$click_action = $settings['click_action'] ?? ( ! empty( $settings['enable_lightbox'] ) ? 'popup' : 'link' );
+		if ( 'popup' === $click_action ) {
 			$data_attrs['data-lightbox'] = 'true';
 		}
 
@@ -367,8 +368,10 @@ class SF_Renderer {
 		$permalink = $item['permalink'] ?? '#';
 		$thumbnail = $item['thumbnail'] ?? $item['media_url'] ?? '';
 
-		$link_target = ! empty( $settings['open_links_new_tab'] ) ? '_blank' : '_self';
-		$link_rel    = ! empty( $settings['open_links_new_tab'] ) ? 'noopener noreferrer' : '';
+		$click_action = isset( $settings['click_action'] ) ? $settings['click_action'] : ( ! empty( $settings['enable_lightbox'] ) ? 'popup' : 'link' );
+		$link_target  = 'link' === $click_action ? '_blank' : '_self';
+		$link_rel     = 'link' === $click_action ? 'noopener noreferrer' : '';
+		$use_link     = 'none' !== $click_action;
 
 		ob_start();
 		?>

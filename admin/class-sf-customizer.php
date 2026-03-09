@@ -301,7 +301,7 @@ class SF_Customizer {
 			'show_date'           => true,
 			'show_likes'          => true,
 			'show_comments'       => true,
-			'click_action'        => 'popup',
+			'click_action'        => 'link',
 			'popup_style'         => 'minimal',
 			'loadmore_type'       => 'button',
 			'loadmore_text'       => 'Load More',
@@ -743,11 +743,28 @@ class SF_Customizer {
 					</label>
 				</div>
 				<div class="sf-field sf-toggle-field">
-					<label for="sf_show_date"><?php esc_html_e( 'Show Time', 'social-feed' ); ?></label>
+					<label for="sf_show_date"><?php esc_html_e( 'Show Post Time', 'social-feed' ); ?></label>
 					<label class="sf-toggle">
 						<input type="checkbox" id="sf_show_date" name="show_date" value="1" <?php checked( $settings['show_date'] ); ?>>
 						<span class="sf-toggle-slider"></span>
 					</label>
+				</div>
+				<div class="sf-field">
+					<label class="sf-field-label"><?php esc_html_e( 'Click Action', 'social-feed' ); ?></label>
+					<div class="sf-radio-group">
+						<label class="sf-radio-option">
+							<input type="radio" name="click_action" value="link" <?php checked( ( isset( $settings['click_action'] ) ? $settings['click_action'] : 'link' ), 'link' ); ?>>
+							<span><?php esc_html_e( 'Open Link', 'social-feed' ); ?></span>
+						</label>
+						<label class="sf-radio-option">
+							<input type="radio" name="click_action" value="popup" <?php checked( ( isset( $settings['click_action'] ) ? $settings['click_action'] : 'link' ), 'popup' ); ?>>
+							<span><?php esc_html_e( 'Lightbox', 'social-feed' ); ?></span>
+						</label>
+						<label class="sf-radio-option">
+							<input type="radio" name="click_action" value="none" <?php checked( ( isset( $settings['click_action'] ) ? $settings['click_action'] : 'link' ), 'none' ); ?>>
+							<span><?php esc_html_e( 'None', 'social-feed' ); ?></span>
+						</label>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -95,10 +95,13 @@ $has_items   = ! empty( $posts );
 			$comments    = $item['comments'] ?? 0;
 			$timestamp   = $item['timestamp'] ?? '';
 
-			$link_target = ! empty( $settings['open_links_new_tab'] ) ? '_blank' : '_self';
-			$use_lightbox = ! empty( $settings['enable_lightbox'] );
+			$click_action  = isset( $settings['click_action'] ) ? $settings['click_action'] : ( ! empty( $settings['enable_lightbox'] ) ? 'popup' : 'link' );
+			$use_lightbox  = 'popup' === $click_action;
+			$link_target   = 'link' === $click_action ? '_blank' : '_self';
+			$use_link      = 'none' !== $click_action;
 			?>
 			<article class="sf-feed__item sf-feed__item--<?php echo esc_attr( $type ); ?>" data-item-id="<?php echo esc_attr( $item['id'] ); ?>">
+				<?php if ( $use_link ) : ?>
 				<a href="<?php echo esc_url( $permalink ); ?>" 
 				   class="sf-feed__item-link<?php echo $use_lightbox ? ' sf-lightbox-trigger' : ''; ?>" 
 				   target="<?php echo esc_attr( $link_target ); ?>" 
@@ -154,6 +157,47 @@ $has_items   = ! empty( $posts );
 						</div>
 					<?php endif; ?>
 				</a>
+				<?php else : ?>
+				<div class="sf-feed__item-link sf-feed__item-link--no-action">
+					<div class="sf-feed__item-media">
+						<?php if ( $thumbnail ) : ?>
+							<img src="<?php echo esc_url( $thumbnail ); ?>" 
+								 alt="<?php echo esc_attr( wp_strip_all_tags( $caption ) ); ?>" 
+								 loading="lazy" 
+								 class="sf-feed__item-image">
+						<?php endif; ?>
+						<?php if ( $is_video ) : ?>
+							<div class="sf-feed__item-play" aria-hidden="true">
+								<svg viewBox="0 0 24 24" width="40" height="40">
+									<circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.5)"/>
+									<path fill="#fff" d="M9.5 7.5v9l7-4.5z"/>
+								</svg>
+							</div>
+						<?php endif; ?>
+						<?php if ( $is_carousel ) : ?>
+							<div class="sf-feed__item-carousel-icon" aria-hidden="true">
+								<svg viewBox="0 0 24 24" width="20" height="20">
+									<path fill="currentColor" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/>
+								</svg>
+							</div>
+						<?php endif; ?>
+					</div>
+					<?php if ( ! empty( $settings['show_hover_overlay'] ) ) : ?>
+						<div class="sf-feed__item-overlay">
+							<div class="sf-feed__item-stats">
+								<span class="sf-feed__stat sf-feed__stat--likes">
+									<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+									<?php echo esc_html( SF_Helpers::sf_format_number( $likes ) ); ?>
+								</span>
+								<span class="sf-feed__stat sf-feed__stat--comments">
+									<svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+									<?php echo esc_html( SF_Helpers::sf_format_number( $comments ) ); ?>
+								</span>
+							</div>
+						</div>
+					<?php endif; ?>
+				</div>
+				<?php endif; ?>
 
 				<?php if ( ! empty( $settings['show_caption'] ) && $caption ) : ?>
 					<div class="sf-feed__item-caption">
