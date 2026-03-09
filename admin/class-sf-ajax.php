@@ -145,8 +145,10 @@ class SF_Ajax {
 			padding-bottom: 16px;
 			border-bottom: 1px solid rgba(0,0,0,0.08);
 		}
+		/* Left Aligned (Instagram): pic left, username right of pic, followers below username, button far right */
 		.sf-preview-header-left {
 			display: flex;
+			flex-direction: row;
 			align-items: center;
 			gap: 12px;
 			min-width: 0;
@@ -156,14 +158,30 @@ class SF_Ajax {
 			flex-shrink: 0;
 			margin-left: auto;
 		}
+		.sf-preview-header-info {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: flex-start;
+			text-align: left;
+			flex: 1;
+			min-width: 0;
+		}
+		/* Center Aligned: everything stacked and centered */
 		.sf-preview-header.sf-preview-header--center {
 			flex-direction: column;
 			justify-content: center;
+			align-items: center;
 			text-align: center;
 		}
 		.sf-preview-header.sf-preview-header--center .sf-preview-header-left {
 			flex-direction: column;
-			justify-content: center;
+			align-items: center;
+			gap: 8px;
+		}
+		.sf-preview-header.sf-preview-header--center .sf-preview-header-info {
+			align-items: center;
+			text-align: center;
 		}
 		.sf-preview-header.sf-preview-header--center .sf-preview-header-right {
 			margin-left: 0;
@@ -175,10 +193,6 @@ class SF_Ajax {
 			border-radius: 50%;
 			background: #e5e7eb;
 			object-fit: cover;
-		}
-		.sf-preview-header-info {
-			flex: 1;
-			min-width: 0;
 		}
 		.sf-preview-username { font-weight: 700; font-size: 14px; margin: 0 0 2px; }
 		.sf-preview-followers { font-size: 12px; color: rgba(0,0,0,0.5); margin: 0; }
