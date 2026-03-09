@@ -176,25 +176,33 @@ class SF_Ajax {
 			flex-shrink: 0;
 			margin-left: auto;
 		}
-		/* Center Aligned: same inner layout as Left, but whole block centered */
+		/* Center Aligned: pic+info centered in middle, Follow button stays far right (same as Left) */
 		.sf-preview-feed .sf-preview-header.sf-preview-header--center {
 			flex-direction: row;
-			justify-content: center;
+			justify-content: space-between;
 			align-items: center;
 		}
 		.sf-preview-feed .sf-preview-header--center .sf-preview-header-left {
+			display: flex;
 			flex-direction: row;
 			align-items: center;
 			gap: 12px;
-			flex: 0 1 auto;
+			flex: 1;
+			justify-content: center;
+			min-width: 0;
 		}
 		.sf-preview-feed .sf-preview-header--center .sf-preview-header-info {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 			align-items: flex-start;
 			text-align: left;
+			flex: 0 1 auto;
+			min-width: 0;
 		}
 		.sf-preview-feed .sf-preview-header--center .sf-preview-header-right {
-			margin-left: 0;
-			flex: 0 0 auto;
+			margin-left: auto;
+			flex-shrink: 0;
 		}
 		.sf-preview-avatar {
 			width: 48px;
