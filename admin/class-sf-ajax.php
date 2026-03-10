@@ -1010,6 +1010,17 @@ class SF_Ajax {
 			wp_send_json_error( array( 'message' => __( 'Only Instagram is supported.', 'social-feed' ) ) );
 		}
 
+		$settings   = get_option( 'sf_settings', array() );
+		$app_id     = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
+		$app_secret = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
+
+		if ( empty( $app_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Instagram App ID is not configured. Please add it in Settings.', 'social-feed' ) ) );
+		}
+		if ( empty( $app_secret ) ) {
+			wp_send_json_error( array( 'message' => __( 'Instagram App Secret is not configured. Please add it in Settings.', 'social-feed' ) ) );
+		}
+
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
 		$url = SF_Accounts::get_oauth_url( $platform );
 

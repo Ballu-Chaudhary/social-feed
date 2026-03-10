@@ -1,4 +1,4 @@
-<?php
++<?php
 /**
  * Connected Accounts page for Social Feed plugin.
  *
@@ -44,6 +44,7 @@ class SF_Accounts {
 			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
 		}
 		?>
+		<div class="sf-accounts-wrap">
 		<!-- Back Button -->
 		<a href="<?php echo esc_url( admin_url( 'admin.php?page=social-feed' ) ); ?>" class="sf-back-btn">
 			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -82,6 +83,7 @@ class SF_Accounts {
 				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>
+		</div><!-- .sf-accounts-wrap -->
 		<?php
 	}
 
