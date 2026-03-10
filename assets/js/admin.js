@@ -57,6 +57,7 @@
 			$.ajax({
 				url: sfAdmin.ajaxUrl,
 				type: 'POST',
+				dataType: 'json',
 				data: {
 					action: self.reconnectAccountId ? 'sf_reconnect_account' : 'sf_get_oauth_url',
 					nonce: sfAdmin.nonce,
@@ -64,15 +65,28 @@
 					account_id: self.reconnectAccountId
 				},
 				success: function (response) {
-					if (response.success && response.data.url) {
+					var msg;
+					if (response && response.success && response.data && response.data.url) {
 						// Redirect to Instagram OAuth (callback returns to Accounts page).
 						window.location.href = response.data.url;
-					} else {
-						alert(response.data.message || sfAdmin.i18n.error);
+						return;
 					}
+					msg = (response && response.data && response.data.message) ? response.data.message : sfAdmin.i18n.error;
+					alert(msg);
 				},
-				error: function () {
-					alert(sfAdmin.i18n.error);
+				error: function (xhr, textStatus, errorThrown) {
+					var msg = sfAdmin.i18n.error;
+					if (xhr && xhr.status === 403) {
+						msg = (sfAdmin.i18n && sfAdmin.i18n.session_expired) ? sfAdmin.i18n.session_expired : 'Session expired or invalid. Please refresh the page and try again.';
+					} else if (xhr && xhr.responseText) {
+						try {
+							var data = JSON.parse(xhr.responseText);
+							if (data && data.data && data.data.message) {
+								msg = data.data.message;
+							}
+						} catch (e) {}
+					}
+					alert(msg);
 				}
 			});
 		},

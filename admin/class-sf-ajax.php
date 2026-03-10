@@ -1004,21 +1004,33 @@ class SF_Ajax {
 	public function handle_get_oauth_url() {
 		$this->verify_request();
 
-		$platform = isset( $_POST['platform'] ) ? sanitize_key( $_POST['platform'] ) : '';
+		$platform = isset( $_POST['platform'] ) ? sanitize_key( wp_unslash( $_POST['platform'] ) ) : '';
 
 		if ( 'instagram' !== $platform ) {
 			wp_send_json_error( array( 'message' => __( 'Only Instagram is supported.', 'social-feed' ) ) );
 		}
 
-		$settings   = get_option( 'sf_settings', array() );
-		$app_id     = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
-		$app_secret = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
+		$settings = get_option( 'sf_settings', array() );
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+		$settings   = wp_parse_args( $settings, array( 'instagram_app_id' => '', 'instagram_app_secret' => '' ) );
+		$app_id     = isset( $settings['instagram_app_id'] ) ? trim( (string) $settings['instagram_app_id'] ) : '';
+		$app_secret = isset( $settings['instagram_app_secret'] ) ? trim( (string) $settings['instagram_app_secret'] ) : '';
 
 		if ( empty( $app_id ) ) {
-			wp_send_json_error( array( 'message' => __( 'Instagram App ID is not configured. Please add it in Settings.', 'social-feed' ) ) );
+			wp_send_json_error(
+				array(
+					'message' => __( 'Instagram App ID is not configured. Please add it in Settings → General → Instagram API Credentials.', 'social-feed' ),
+				)
+			);
 		}
 		if ( empty( $app_secret ) ) {
-			wp_send_json_error( array( 'message' => __( 'Instagram App Secret is not configured. Please add it in Settings.', 'social-feed' ) ) );
+			wp_send_json_error(
+				array(
+					'message' => __( 'Instagram App Secret is not configured. Please add it in Settings → General → Instagram API Credentials.', 'social-feed' ),
+				)
+			);
 		}
 
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
@@ -1031,7 +1043,7 @@ class SF_Ajax {
 		if ( empty( $url ) ) {
 			wp_send_json_error(
 				array(
-					'message' => __( 'API credentials not configured. Please add your API keys in Settings.', 'social-feed' ),
+					'message' => __( 'API credentials not configured. Please add your App ID and App Secret in Settings → General.', 'social-feed' ),
 				)
 			);
 		}

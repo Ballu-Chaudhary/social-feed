@@ -245,6 +245,7 @@ class SF_Admin {
 					'confirm_deactivate'      => __( 'Are you sure you want to deactivate your license?', 'social-feed' ),
 					'save_feed'               => __( 'Save Feed', 'social-feed' ),
 					'unsaved_leave'           => __( 'You have unsaved changes. Are you sure you want to leave?', 'social-feed' ),
+					'session_expired'        => __( 'Session expired or invalid. Please refresh the page and try again.', 'social-feed' ),
 				),
 			)
 		);

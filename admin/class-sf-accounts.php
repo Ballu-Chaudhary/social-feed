@@ -43,6 +43,21 @@ class SF_Accounts {
 			$msg = isset( $_GET['sf_msg'] ) ? sanitize_text_field( wp_unslash( $_GET['sf_msg'] ) ) : __( 'An error occurred during connection.', 'social-feed' );
 			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
 		}
+
+		// Prompt to configure API credentials if missing.
+		$settings   = get_option( 'sf_settings', array() );
+		$settings   = is_array( $settings ) ? wp_parse_args( $settings, array( 'instagram_app_id' => '', 'instagram_app_secret' => '' ) ) : array();
+		$app_id     = ! empty( $settings['instagram_app_id'] ) ? trim( (string) $settings['instagram_app_id'] ) : '';
+		$app_secret = ! empty( $settings['instagram_app_secret'] ) ? trim( (string) $settings['instagram_app_secret'] ) : '';
+		if ( empty( $app_id ) || empty( $app_secret ) ) {
+			$settings_url = admin_url( 'admin.php?page=social-feed-settings&tab=general' );
+			printf(
+				'<div class="notice notice-warning is-dismissible"><p>%s <a href="%s">%s</a></p></div>',
+				esc_html__( 'To connect Instagram, add your App ID and App Secret first.', 'social-feed' ),
+				esc_url( $settings_url ),
+				esc_html__( 'Go to Settings', 'social-feed' )
+			);
+		}
 		?>
 		<div class="sf-accounts-wrap">
 		<!-- Back Button -->
