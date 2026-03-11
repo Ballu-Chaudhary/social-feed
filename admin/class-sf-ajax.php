@@ -1002,11 +1002,16 @@ class SF_Ajax {
 	 * Handle get OAuth URL request.
 	 */
 	public function handle_get_oauth_url() {
+		error_log( '[SF OAuth] handle_get_oauth_url: START' );
+
 		$this->verify_request();
+		error_log( '[SF OAuth] handle_get_oauth_url: Nonce verified' );
 
 		$platform = isset( $_POST['platform'] ) ? sanitize_key( wp_unslash( $_POST['platform'] ) ) : '';
+		error_log( '[SF OAuth] handle_get_oauth_url: platform=' . $platform );
 
 		if ( 'instagram' !== $platform ) {
+			error_log( '[SF OAuth] handle_get_oauth_url: ERROR - unsupported platform' );
 			wp_send_json_error( array( 'message' => __( 'Only Instagram is supported.', 'social-feed' ) ) );
 		}
 
@@ -1017,8 +1022,10 @@ class SF_Ajax {
 		$settings   = wp_parse_args( $settings, array( 'instagram_app_id' => '', 'instagram_app_secret' => '' ) );
 		$app_id     = isset( $settings['instagram_app_id'] ) ? trim( (string) $settings['instagram_app_id'] ) : '';
 		$app_secret = isset( $settings['instagram_app_secret'] ) ? trim( (string) $settings['instagram_app_secret'] ) : '';
+		error_log( '[SF OAuth] handle_get_oauth_url: app_id=' . ( $app_id ? substr( $app_id, 0, 6 ) . '...' : 'empty' ) . ', app_secret=' . ( $app_secret ? 'set' : 'empty' ) );
 
 		if ( empty( $app_id ) ) {
+			error_log( '[SF OAuth] handle_get_oauth_url: ERROR - App ID empty' );
 			wp_send_json_error(
 				array(
 					'message' => __( 'Instagram App ID is not configured. Please add it in Settings → General → Instagram API Credentials.', 'social-feed' ),
@@ -1026,6 +1033,7 @@ class SF_Ajax {
 			);
 		}
 		if ( empty( $app_secret ) ) {
+			error_log( '[SF OAuth] handle_get_oauth_url: ERROR - App Secret empty' );
 			wp_send_json_error(
 				array(
 					'message' => __( 'Instagram App Secret is not configured. Please add it in Settings → General → Instagram API Credentials.', 'social-feed' ),
@@ -1035,12 +1043,15 @@ class SF_Ajax {
 
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-accounts.php';
 		$url = SF_Accounts::get_oauth_url( $platform );
+		error_log( '[SF OAuth] handle_get_oauth_url: get_oauth_url returned: ' . ( is_wp_error( $url ) ? 'WP_Error: ' . $url->get_error_message() : ( is_string( $url ) ? substr( $url, 0, 100 ) . '...' : 'empty' ) ) );
 
 		if ( is_wp_error( $url ) ) {
+			error_log( '[SF OAuth] handle_get_oauth_url: ERROR - ' . $url->get_error_message() );
 			wp_send_json_error( array( 'message' => $url->get_error_message() ) );
 		}
 
 		if ( empty( $url ) ) {
+			error_log( '[SF OAuth] handle_get_oauth_url: ERROR - URL empty' );
 			wp_send_json_error(
 				array(
 					'message' => __( 'API credentials not configured. Please add your App ID and App Secret in Settings → General.', 'social-feed' ),
@@ -1048,6 +1059,7 @@ class SF_Ajax {
 			);
 		}
 
+		error_log( '[SF OAuth] handle_get_oauth_url: SUCCESS, redirecting to OAuth URL' );
 		wp_send_json_success( array( 'url' => $url ) );
 	}
 

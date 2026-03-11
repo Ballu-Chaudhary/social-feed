@@ -31,10 +31,14 @@ class SF_Instagram {
 	 * @return string|WP_Error Login URL or error if credentials missing.
 	 */
 	public static function get_login_url() {
+		$redirect_uri = self::get_redirect_uri();
+		error_log( '[SF OAuth] SF_Instagram::get_login_url - Valid OAuth Redirect URI (add this to Meta): ' . $redirect_uri );
+
 		$settings = get_option( 'sf_settings', array() );
 		$app_id   = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
 
 		if ( empty( $app_id ) ) {
+			error_log( '[SF OAuth] SF_Instagram::get_login_url - App ID empty' );
 			return new WP_Error(
 				'missing_credentials',
 				__( 'Instagram App ID is not configured. Please add it in Settings.', 'social-feed' )
@@ -42,17 +46,18 @@ class SF_Instagram {
 		}
 
 		$state = wp_create_nonce( 'sf_oauth_instagram' );
-
-		return add_query_arg(
+		$url   = add_query_arg(
 			array(
 				'client_id'     => $app_id,
-				'redirect_uri'  => self::get_redirect_uri(),
+				'redirect_uri'  => $redirect_uri,
 				'scope'         => 'user_profile,user_media',
 				'response_type' => 'code',
 				'state'         => $state,
 			),
 			'https://api.instagram.com/oauth/authorize'
 		);
+		error_log( '[SF OAuth] SF_Instagram::get_login_url - OAuth URL built, length=' . strlen( $url ) );
+		return $url;
 	}
 
 	/**

@@ -53,28 +53,40 @@
 
 		startOAuth: function () {
 			var self = this;
+			var action = self.reconnectAccountId ? 'sf_reconnect_account' : 'sf_get_oauth_url';
+			console.log('[SF OAuth] startOAuth called, action:', action, 'platform:', self.selectedPlatform);
 
 			$.ajax({
 				url: sfAdmin.ajaxUrl,
 				type: 'POST',
 				dataType: 'json',
 				data: {
-					action: self.reconnectAccountId ? 'sf_reconnect_account' : 'sf_get_oauth_url',
+					action: action,
 					nonce: sfAdmin.nonce,
 					platform: self.selectedPlatform,
 					account_id: self.reconnectAccountId
 				},
 				success: function (response) {
+					console.log('[SF OAuth] AJAX success, full response:', response, 'type:', typeof response);
 					var msg;
-					if (response && response.success && response.data && response.data.url) {
-						// Redirect to Instagram OAuth (callback returns to Accounts page).
+					if (response && typeof response === 'object' && response.success && response.data && response.data.url) {
+						console.log('[SF OAuth] Redirecting to:', response.data.url);
 						window.location.href = response.data.url;
 						return;
 					}
-					msg = (response && response.data && response.data.message) ? response.data.message : sfAdmin.i18n.error;
+					if (response && typeof response === 'object' && response.data && response.data.message) {
+						msg = response.data.message;
+					} else if (response && typeof response !== 'object') {
+						msg = 'Invalid server response. Try refreshing the page and connecting again.';
+						console.log('[SF OAuth] Response was not an object (possibly nonce failure):', response);
+					} else {
+						msg = sfAdmin.i18n.error;
+					}
+					console.log('[SF OAuth] No URL in response, showing error:', msg);
 					alert(msg);
 				},
 				error: function (xhr, textStatus, errorThrown) {
+					console.log('[SF OAuth] AJAX error:', { status: xhr && xhr.status, statusText: xhr && xhr.statusText, textStatus: textStatus, errorThrown: errorThrown, responseText: xhr && xhr.responseText ? xhr.responseText.substring(0, 500) : 'none' });
 					var msg = sfAdmin.i18n.error;
 					if (xhr && xhr.status === 403) {
 						msg = (sfAdmin.i18n && sfAdmin.i18n.session_expired) ? sfAdmin.i18n.session_expired : 'Session expired or invalid. Please refresh the page and try again.';
@@ -84,7 +96,9 @@
 							if (data && data.data && data.data.message) {
 								msg = data.data.message;
 							}
-						} catch (e) {}
+						} catch (e) {
+							console.log('[SF OAuth] JSON parse failed:', e);
+						}
 					}
 					alert(msg);
 				}
