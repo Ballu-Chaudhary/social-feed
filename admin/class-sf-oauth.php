@@ -22,9 +22,27 @@ class SF_OAuth {
 	}
 
 	/**
-	 * Handle OAuth callback when sf_oauth=instagram and code are present.
+	 * Handle OAuth init (redirect to Instagram) and callback.
 	 */
 	public function handle_callback() {
+		// Init: redirect to Instagram OAuth when user clicks Connect.
+		$oauth_init = isset( $_GET['sf_oauth_init'] ) && '1' === $_GET['sf_oauth_init'];
+		if ( $oauth_init && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'sf_oauth_init' ) ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_die( esc_html__( 'Unauthorized access.', 'social-feed' ) );
+			}
+			if ( class_exists( 'SF_Instagram' ) ) {
+				$url = SF_Instagram::get_login_url();
+				if ( ! is_wp_error( $url ) && ! empty( $url ) ) {
+					wp_safe_redirect( $url );
+					exit;
+				}
+			}
+			wp_safe_redirect( add_query_arg( array( 'page' => 'social-feed-accounts', 'sf_error' => '1', 'sf_msg' => rawurlencode( __( 'Could not build OAuth URL. Check App ID and App Secret in Settings.', 'social-feed' ) ) ), admin_url( 'admin.php' ) ) );
+			exit;
+		}
+
+		// Callback: handle return from Instagram with code.
 		$oauth_param = isset( $_GET['sf_oauth'] ) ? sanitize_key( $_GET['sf_oauth'] ) : '';
 		if ( 'instagram' !== $oauth_param ) {
 			return;

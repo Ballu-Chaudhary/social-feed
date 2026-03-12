@@ -61,6 +61,17 @@ class SF_Accounts {
 			$redirect_uri = admin_url( 'admin.php?page=social-feed-accounts&sf_oauth=instagram' );
 			echo '<div class="notice notice-info is-dismissible" style="margin-bottom:12px"><p><strong>' . esc_html__( 'Meta redirect URI (add exactly to your app):', 'social-feed' ) . '</strong><br><code style="word-break:break-all">' . esc_html( $redirect_uri ) . '</code></p></div>';
 		}
+
+		$oauth_init_url = ( ! empty( $app_id ) && ! empty( $app_secret ) )
+			? add_query_arg(
+				array(
+					'page'      => 'social-feed-accounts',
+					'sf_oauth_init' => '1',
+					'_wpnonce'  => wp_create_nonce( 'sf_oauth_init' ),
+				),
+				admin_url( 'admin.php' )
+			)
+			: admin_url( 'admin.php?page=social-feed-settings&tab=general' );
 		?>
 		<div class="sf-accounts-wrap">
 		<!-- Back Button -->
@@ -73,10 +84,10 @@ class SF_Accounts {
 
 		<div class="sf-accounts-header">
 			<?php if ( ! empty( $accounts ) ) : ?>
-				<button type="button" class="button button-primary sf-connect-account-btn">
+				<a href="<?php echo esc_url( $oauth_init_url ); ?>" class="button button-primary sf-connect-account-btn">
 					<span class="dashicons dashicons-plus-alt2"></span>
 					<?php esc_html_e( 'Connect New Account', 'social-feed' ); ?>
-				</button>
+				</a>
 			<?php endif; ?>
 		</div>
 
@@ -88,10 +99,10 @@ class SF_Accounts {
 				</div>
 				<h2><?php esc_html_e( 'Connect your Instagram account', 'social-feed' ); ?></h2>
 				<p><?php esc_html_e( 'Link your Instagram Business or Creator account to display your posts, reels, and profile on your website. You\'ll authorize once through Facebook — then your feed updates automatically.', 'social-feed' ); ?></p>
-				<button type="button" class="button button-primary button-hero sf-connect-account-btn">
+				<a href="<?php echo esc_url( $oauth_init_url ); ?>" class="button button-primary button-hero sf-connect-account-btn">
 					<?php echo self::get_instagram_logo_svg( 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<span><?php esc_html_e( 'Connect Instagram Account', 'social-feed' ); ?></span>
-				</button>
+				</a>
 			</div>
 		<?php else : ?>
 			<!-- Accounts Grid -->
