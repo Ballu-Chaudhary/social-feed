@@ -26,19 +26,19 @@ class SF_Instagram {
 	}
 
 	/**
-	 * Get Instagram Basic Display API authorization URL.
+	 * Get Instagram API (Business Login) authorization URL.
+	 *
+	 * Uses Instagram API with Instagram Login (2025+) - requires Business/Creator accounts.
 	 *
 	 * @return string|WP_Error Login URL or error if credentials missing.
 	 */
 	public static function get_login_url() {
 		$redirect_uri = self::get_redirect_uri();
-		error_log( '[SF OAuth] SF_Instagram::get_login_url - Valid OAuth Redirect URI (add this to Meta): ' . $redirect_uri );
 
 		$settings = get_option( 'sf_settings', array() );
 		$app_id   = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
 
 		if ( empty( $app_id ) ) {
-			error_log( '[SF OAuth] SF_Instagram::get_login_url - App ID empty' );
 			return new WP_Error(
 				'missing_credentials',
 				__( 'Instagram App ID is not configured. Please add it in Settings.', 'social-feed' )
@@ -46,17 +46,20 @@ class SF_Instagram {
 		}
 
 		$state = wp_create_nonce( 'sf_oauth_instagram' );
-		$url   = add_query_arg(
+		$scope = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights';
+
+		$url = add_query_arg(
 			array(
-				'client_id'     => $app_id,
-				'redirect_uri'  => $redirect_uri,
-				'scope'         => 'user_profile,user_media',
-				'response_type' => 'code',
-				'state'         => $state,
+				'force_reauth'   => 'true',
+				'client_id'      => $app_id,
+				'redirect_uri'   => $redirect_uri,
+				'response_type'  => 'code',
+				'scope'          => $scope,
+				'state'          => $state,
 			),
-			'https://api.instagram.com/oauth/authorize'
+			'https://www.instagram.com/oauth/authorize'
 		);
-		error_log( '[SF OAuth] SF_Instagram::get_login_url - OAuth URL built, length=' . strlen( $url ) );
+
 		return $url;
 	}
 
@@ -105,11 +108,14 @@ class SF_Instagram {
 			return new WP_Error( 'token_exchange_failed', $message );
 		}
 
-		if ( empty( $body['access_token'] ) || empty( $body['user_id'] ) ) {
+		// New API returns data array; legacy returns flat access_token, user_id.
+		$token_data = isset( $body['data'][0] ) ? $body['data'][0] : $body;
+		$short_token = isset( $token_data['access_token'] ) ? $token_data['access_token'] : '';
+		$user_id     = isset( $token_data['user_id'] ) ? $token_data['user_id'] : '';
+
+		if ( empty( $short_token ) || empty( $user_id ) ) {
 			return new WP_Error( 'invalid_response', __( 'Invalid response from Instagram. Missing access_token or user_id.', 'social-feed' ) );
 		}
-
-		$short_token = $body['access_token'];
 
 		// Exchange for long-lived token (60 days).
 		$long_url = add_query_arg(
@@ -127,7 +133,7 @@ class SF_Instagram {
 			return array(
 				'access_token' => $short_token,
 				'expires_in'   => 3600,
-				'user_id'      => $body['user_id'],
+				'user_id'      => $user_id,
 			);
 		}
 
@@ -136,7 +142,7 @@ class SF_Instagram {
 		return array(
 			'access_token' => isset( $long_body['access_token'] ) ? $long_body['access_token'] : $short_token,
 			'expires_in'   => isset( $long_body['expires_in'] ) ? (int) $long_body['expires_in'] : 5184000,
-			'user_id'      => $body['user_id'],
+			'user_id'      => $user_id,
 		);
 	}
 
