@@ -36,7 +36,7 @@ class SF_OAuth {
 			if ( class_exists( 'SF_Instagram' ) ) {
 				$url = SF_Instagram::get_login_url();
 				if ( ! is_wp_error( $url ) && ! empty( $url ) ) {
-					wp_safe_redirect( $url );
+					wp_redirect( $url );
 					exit;
 				}
 			}
