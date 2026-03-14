@@ -182,9 +182,13 @@ class SF_Database {
 	 * dbDelta handles adding missing columns without data loss.
 	 */
 	public static function maybe_upgrade() {
-		$installed = get_option( 'sf_db_version', '0' );
+		global $wpdb;
 
-		if ( version_compare( $installed, self::DB_VERSION, '<' ) ) {
+		$installed = get_option( 'sf_db_version', '0' );
+		$table     = self::get_table( 'accounts' );
+		$existing  = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+
+		if ( version_compare( $installed, self::DB_VERSION, '<' ) || $table !== $existing ) {
 			self::create_tables();
 		}
 	}
@@ -361,6 +365,18 @@ class SF_Database {
 
 		$data   = wp_parse_args( $data, $defaults );
 		$result = $wpdb->insert( self::get_table( 'accounts' ), $data );
+
+		if ( false === $result ) {
+			SF_Helpers::sf_log_error(
+				'Failed to create account record: ' . $wpdb->last_error,
+				$data['platform'] ?? 'instagram',
+				null,
+				array(
+					'table'          => self::get_table( 'accounts' ),
+					'account_id_ext' => $data['account_id_ext'] ?? '',
+				)
+			);
+		}
 
 		return $result ? $wpdb->insert_id : false;
 	}

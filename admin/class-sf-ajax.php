@@ -115,6 +115,7 @@ class SF_Ajax {
 		}
 
 		$items = $this->get_preview_items( $settings, $device );
+		$has_items = ! empty( $items );
 
 		$feed_height_style = '';
 		if ( ! empty( $settings['feed_height'] ) && is_numeric( $settings['feed_height'] ) ) {
@@ -394,21 +395,14 @@ class SF_Ajax {
 
 		<div class="sf-preview-frame">
 		<div class="sf-preview-feed">
-			<?php if ( $settings['show_header'] ) : ?>
+			<?php if ( $has_items && $settings['show_header'] ) : ?>
 			<?php $header_layout = isset( $settings['header_layout'] ) && 'center' === $settings['header_layout'] ? 'center' : 'left'; ?>
 			<div class="sf-preview-header sf-preview-header--<?php echo esc_attr( $header_layout ); ?>">
 				<div class="sf-preview-header-left">
 					<?php if ( $settings['show_profile_pic'] ) : ?>
 					<div class="sf-preview-avatar"></div>
 					<?php endif; ?>
-					<div class="sf-preview-header-info">
-						<?php if ( $settings['show_username'] ) : ?>
-						<div class="sf-preview-username">@username</div>
-						<?php endif; ?>
-						<?php if ( $settings['show_followers'] ) : ?>
-						<div class="sf-preview-followers">12.5K followers</div>
-						<?php endif; ?>
-					</div>
+					<div class="sf-preview-header-info"></div>
 				</div>
 				<?php if ( $settings['show_follow_btn'] ) : ?>
 				<div class="sf-preview-header-right">
@@ -418,67 +412,62 @@ class SF_Ajax {
 			</div>
 			<?php endif; ?>
 
-			<div class="sf-preview-<?php echo esc_attr( $layout ); ?>">
-				<?php foreach ( $items as $item ) : ?>
-				<div class="sf-preview-item">
-					<div class="sf-preview-item-inner">
-						<img src="<?php echo esc_url( $item['image'] ); ?>" alt="">
-						<?php if ( $settings['show_likes'] || $settings['show_comments'] ) : ?>
-						<div class="sf-preview-overlay">
-							<?php if ( $settings['show_likes'] ) : ?>
-							<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
+			<?php if ( $has_items ) : ?>
+				<div class="sf-preview-<?php echo esc_attr( $layout ); ?>">
+					<?php foreach ( $items as $item ) : ?>
+					<div class="sf-preview-item">
+						<div class="sf-preview-item-inner">
+							<img src="<?php echo esc_url( $item['image'] ); ?>" alt="">
+							<?php if ( $settings['show_likes'] || $settings['show_comments'] ) : ?>
+							<div class="sf-preview-overlay">
+								<?php if ( $settings['show_likes'] ) : ?>
+								<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
+								<?php endif; ?>
+								<?php if ( $settings['show_comments'] ) : ?>
+								<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
+								<?php endif; ?>
+							</div>
 							<?php endif; ?>
-							<?php if ( $settings['show_comments'] ) : ?>
-							<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
+						</div>
+						<?php if ( $settings['show_caption'] || $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
+						<div class="sf-preview-content">
+							<?php if ( $settings['show_caption'] ) : ?>
+							<div class="sf-preview-caption"><?php echo esc_html( SF_Helpers::sf_truncate_text( $item['caption'], intval( $settings['caption_length'] ) ) ); ?></div>
+							<?php endif; ?>
+							<?php if ( $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
+							<div class="sf-preview-meta">
+								<?php if ( $settings['show_likes'] ) : ?>
+								<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
+								<?php endif; ?>
+								<?php if ( $settings['show_comments'] ) : ?>
+								<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
+								<?php endif; ?>
+								<?php if ( $settings['show_date'] ) : ?>
+								<span><?php echo esc_html( $item['date'] ); ?></span>
+								<?php endif; ?>
+							</div>
 							<?php endif; ?>
 						</div>
 						<?php endif; ?>
 					</div>
-					<?php if ( $settings['show_caption'] || $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
-					<div class="sf-preview-content">
-						<?php if ( $settings['show_caption'] ) : ?>
-						<div class="sf-preview-caption"><?php echo esc_html( SF_Helpers::sf_truncate_text( $item['caption'], intval( $settings['caption_length'] ) ) ); ?></div>
-						<?php endif; ?>
-						<?php if ( $settings['show_likes'] || $settings['show_comments'] || $settings['show_date'] ) : ?>
-						<div class="sf-preview-meta">
-							<?php if ( $settings['show_likes'] ) : ?>
-							<span>♥ <?php echo esc_html( SF_Helpers::sf_format_number( $item['likes'] ) ); ?></span>
-							<?php endif; ?>
-							<?php if ( $settings['show_comments'] ) : ?>
-							<span>💬 <?php echo esc_html( $item['comments'] ); ?></span>
-							<?php endif; ?>
-							<?php if ( $settings['show_date'] ) : ?>
-							<span><?php echo esc_html( $item['date'] ); ?></span>
-							<?php endif; ?>
-						</div>
-						<?php endif; ?>
-					</div>
+					<?php endforeach; ?>
+				</div>
+
+				<?php
+				$lm_type    = $settings['loadmore_type'];
+				$item_count = count( $items );
+				if ( 'none' !== $lm_type ) :
+				?>
+				<div class="sf-preview-loadmore" data-offset="<?php echo $item_count; ?>">
+					<?php if ( 'button' === $lm_type ) : ?>
+					<button type="button" class="sf-preview-loadmore-btn"><?php echo esc_html( $settings['loadmore_text'] ); ?></button>
+					<?php elseif ( 'scroll' === $lm_type ) : ?>
+					<div class="sf-preview-scroll-trigger"><span class="sf-preview-loader"></span></div>
 					<?php endif; ?>
 				</div>
-				<?php endforeach; ?>
-			</div>
-
-			<?php
-			$lm_type    = $settings['loadmore_type'];
-			$item_count = count( $items );
-			$per_load   = max( 1, absint( $settings['posts_per_load'] ) );
-			$total_demo = $item_count + $per_load * 3;
-			if ( 'none' !== $lm_type ) :
-			?>
-			<div class="sf-preview-loadmore" data-offset="<?php echo $item_count; ?>">
-				<?php if ( 'button' === $lm_type ) : ?>
-				<button type="button" class="sf-preview-loadmore-btn"><?php echo esc_html( $settings['loadmore_text'] ); ?></button>
-				<?php elseif ( 'scroll' === $lm_type ) : ?>
-				<div class="sf-preview-scroll-trigger"><span class="sf-preview-loader"></span></div>
-				<?php elseif ( 'pagination' === $lm_type ) : ?>
-				<?php $total_pages = (int) ceil( $total_demo / $per_load ); ?>
-				<div class="sf-preview-pagination" data-total-pages="<?php echo $total_pages; ?>">
-					<?php for ( $p = 1; $p <= $total_pages; $p++ ) : ?>
-					<button type="button" class="sf-preview-page-btn<?php echo 1 === $p ? ' active' : ''; ?>" data-page="<?php echo $p; ?>"><?php echo $p; ?></button>
-					<?php endfor; ?>
-				</div>
 				<?php endif; ?>
-			</div>
+			<?php else : ?>
+				<?php echo $this->render_preview_empty_state(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<?php endif; ?>
 		</div>
 		</div>
@@ -494,38 +483,7 @@ class SF_Ajax {
 	 * @return array
 	 */
 	private function get_preview_items( $settings, $device = 'desktop' ) {
-		$count_key = 'post_count_' . $device;
-		if ( isset( $settings[ $count_key ] ) && is_numeric( $settings[ $count_key ] ) ) {
-			$count = min( max( 1, intval( $settings[ $count_key ] ) ), 50 );
-		} elseif ( isset( $settings['post_count_desktop'] ) && is_numeric( $settings['post_count_desktop'] ) ) {
-			$count = min( max( 1, intval( $settings['post_count_desktop'] ) ), 50 );
-		} elseif ( isset( $settings['post_count'] ) && is_numeric( $settings['post_count'] ) ) {
-			$count = min( max( 1, intval( $settings['post_count'] ) ), 12 );
-		} else {
-			$count = 9;
-		}
-		$items = array();
-
-		$captions = array(
-			'Beautiful sunset at the beach today! 🌅',
-			'Coffee time ☕️ #morningvibes',
-			'Exploring new places and making memories',
-			'Just living my best life 🎉',
-			'Nature photography is my passion',
-			'City lights and late nights ✨',
-		);
-
-		for ( $i = 0; $i < $count; $i++ ) {
-			$items[] = array(
-				'image'    => 'https://picsum.photos/seed/' . ( $i + 1 ) . '/400/400',
-				'caption'  => $captions[ $i % count( $captions ) ],
-				'likes'    => rand( 100, 50000 ),
-				'comments' => rand( 5, 500 ),
-				'date'     => rand( 1, 7 ) . 'd ago',
-			);
-		}
-
-		return $items;
+		return array();
 	}
 
 	/**
@@ -549,70 +507,14 @@ class SF_Ajax {
 		$defaults = SF_Customizer::get_defaults();
 		$settings = wp_parse_args( $settings, $defaults );
 
-		$per_load   = max( 1, absint( $settings['posts_per_load'] ) );
-		$initial    = $per_load;
-		$total      = $initial + $per_load * 3;
-		$is_paging  = 'pagination' === $settings['loadmore_type'];
-
-		if ( $is_paging ) {
-			$offset     = ( $page - 1 ) * $per_load;
-			$total_pages = (int) ceil( $total / $per_load );
-		}
-
-		if ( $offset >= $total ) {
-			wp_send_json_success( array(
+		wp_send_json_success(
+			array(
 				'html'     => '',
 				'has_more' => false,
 				'offset'   => $offset,
-			) );
-		}
-
-		$end   = min( $offset + $per_load, $total );
-		$items = $this->generate_demo_items( $offset, $end );
-		$html  = $this->render_preview_items( $items, $settings );
-
-		$response = array(
-			'html'     => $html,
-			'has_more' => $end < $total,
-			'offset'   => $end,
+				'current'  => $page,
+			)
 		);
-
-		if ( $is_paging ) {
-			$response['total_pages'] = $total_pages;
-			$response['current']     = $page;
-		}
-
-		wp_send_json_success( $response );
-	}
-
-	/**
-	 * Generate demo items for a range.
-	 *
-	 * @param int $start Start index.
-	 * @param int $end   End index (exclusive).
-	 * @return array
-	 */
-	private function generate_demo_items( $start, $end ) {
-		$captions = array(
-			'Beautiful sunset at the beach today!',
-			'Coffee time — morning vibes',
-			'Exploring new places and making memories',
-			'Just living my best life',
-			'Nature photography is my passion',
-			'City lights and late nights',
-		);
-
-		$items = array();
-		for ( $i = $start; $i < $end; $i++ ) {
-			$items[] = array(
-				'image'    => 'https://picsum.photos/seed/sf' . $i . '/400/400',
-				'caption'  => $captions[ $i % count( $captions ) ],
-				'likes'    => wp_rand( 100, 50000 ),
-				'comments' => wp_rand( 5, 500 ),
-				'date'     => wp_rand( 1, 7 ) . 'd ago',
-			);
-		}
-		return $items;
 	}
 
 	/**
@@ -623,6 +525,10 @@ class SF_Ajax {
 	 * @return string
 	 */
 	private function render_preview_items( $items, $settings ) {
+		if ( empty( $items ) ) {
+			return '';
+		}
+
 		ob_start();
 		foreach ( $items as $item ) :
 			?>
@@ -664,6 +570,15 @@ class SF_Ajax {
 			<?php
 		endforeach;
 		return ob_get_clean();
+	}
+
+	/**
+	 * Render empty state for admin preview.
+	 *
+	 * @return string
+	 */
+	private function render_preview_empty_state() {
+		return '<div class="sf-feed__empty"><div class="sf-feed__empty-icon"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M4 4h7V2H4c-1.1 0-2 .9-2 2v7h2V4zm6 9l-4 5h12l-3-4-2.03 2.71L10 13zm7-4.5c0-.83-.67-1.5-1.5-1.5S14 7.67 14 8.5s.67 1.5 1.5 1.5S17 9.33 17 8.5zM20 2h-7v2h7v7h2V4c0-1.1-.9-2-2-2zm0 18h-7v2h7c1.1 0 2-.9 2-2v-7h-2v7zM4 13H2v7c0 1.1.9 2 2 2h7v-2H4v-7z"/></svg></div><p class="sf-feed__empty-text">' . esc_html__( 'No posts found. Please connect your Instagram account.', 'social-feed' ) . '</p></div>';
 	}
 
 	/**

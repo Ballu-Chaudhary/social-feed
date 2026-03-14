@@ -248,7 +248,7 @@ $has_items   = ! empty( $posts );
 			</svg>
 		</div>
 		<p class="sf-feed__empty-text">
-			<?php echo esc_html( $settings['empty_message'] ?? __( 'No posts to display.', 'social-feed' ) ); ?>
+			<?php echo esc_html( $settings['empty_message'] ?? __( 'No posts found. Please connect your Instagram account.', 'social-feed' ) ); ?>
 		</p>
 	</div>
 <?php endif; ?>

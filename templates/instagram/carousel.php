@@ -13,11 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $renderer = new SF_Renderer();
+$posts    = isset( $posts ) && is_array( $posts ) ? $posts : array();
 ?>
-<div class="sf-feed__carousel">
-	<div class="sf-feed__carousel-track">
-		<?php foreach ( $posts as $post ) : ?>
-			<?php echo $renderer->render_post_item( $post, 'instagram' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		<?php endforeach; ?>
+<?php if ( empty( $posts ) ) : ?>
+	<?php echo SF_Renderer::render_empty_state( $settings ?? array() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+<?php else : ?>
+	<div class="sf-feed__carousel">
+		<div class="sf-feed__carousel-track">
+			<?php foreach ( $posts as $post ) : ?>
+				<?php echo $renderer->render_post_item( $post, 'instagram' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php endforeach; ?>
+		</div>
 	</div>
-</div>
+<?php endif; ?>
