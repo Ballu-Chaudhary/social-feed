@@ -25,6 +25,8 @@ class SF_OAuth {
 	 * Handle OAuth init (redirect to Instagram) and callback.
 	 */
 	public function handle_callback() {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
 		// Init: redirect to Instagram OAuth when user clicks Connect.
 		$oauth_init = isset( $_GET['sf_oauth_init'] ) && '1' === $_GET['sf_oauth_init'];
 		if ( $oauth_init && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'sf_oauth_init' ) ) {
@@ -38,13 +40,13 @@ class SF_OAuth {
 					exit;
 				}
 			}
-			wp_safe_redirect( add_query_arg( array( 'page' => 'social-feed-accounts', 'sf_error' => '1', 'sf_msg' => rawurlencode( __( 'Could not build OAuth URL. Check App ID and App Secret in Settings.', 'social-feed' ) ) ), admin_url( 'admin.php' ) ) );
+			wp_safe_redirect( add_query_arg( array( 'page' => 'social-feed-create', 'sf_error' => '1', 'sf_msg' => rawurlencode( __( 'Could not build OAuth URL. Check App ID and App Secret in Settings.', 'social-feed' ) ) ), admin_url( 'admin.php' ) ) );
 			exit;
 		}
 
 		// Callback: handle return from Instagram with code.
-		$oauth_param = isset( $_GET['sf_oauth'] ) ? sanitize_key( $_GET['sf_oauth'] ) : '';
-		if ( 'instagram' !== $oauth_param ) {
+		$is_oauth_callback = 'social-feed-create' === $page && ( isset( $_GET['code'] ) || isset( $_GET['error'] ) );
+		if ( ! $is_oauth_callback ) {
 			return;
 		}
 
@@ -54,7 +56,6 @@ class SF_OAuth {
 		}
 
 		$code     = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
-		$state    = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
 		$error    = isset( $_GET['error'] ) ? sanitize_text_field( wp_unslash( $_GET['error'] ) ) : '';
 		$error_msg = isset( $_GET['error_description'] ) ? sanitize_text_field( wp_unslash( $_GET['error_description'] ) ) : '';
 
@@ -63,13 +64,8 @@ class SF_OAuth {
 			return;
 		}
 
-		if ( empty( $code ) || empty( $state ) ) {
+		if ( empty( $code ) ) {
 			$this->redirect_with_error( __( 'Invalid callback parameters.', 'social-feed' ) );
-			return;
-		}
-
-		if ( ! wp_verify_nonce( $state, 'sf_oauth_instagram' ) ) {
-			$this->redirect_with_error( __( 'Invalid state parameter. Please try again.', 'social-feed' ) );
 			return;
 		}
 
@@ -136,8 +132,9 @@ class SF_OAuth {
 
 		$redirect_url = add_query_arg(
 			array(
-				'page'         => 'social-feed-accounts',
+				'page'         => 'social-feed-create',
 				'sf_connected' => '1',
+				'account_id'   => $account_id,
 			),
 			admin_url( 'admin.php' )
 		);
@@ -154,7 +151,7 @@ class SF_OAuth {
 	private function redirect_with_error( $message ) {
 		$redirect_url = add_query_arg(
 			array(
-				'page'        => 'social-feed-accounts',
+				'page'        => 'social-feed-create',
 				'sf_error'    => '1',
 				'sf_msg'      => rawurlencode( $message ),
 			),

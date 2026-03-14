@@ -781,6 +781,13 @@ class SF_Admin {
 		?>
 		<div class="wrap sf-admin-wrap sf-create-feed-wrap">
 			<?php
+			if ( isset( $_GET['sf_connected'] ) && '1' === $_GET['sf_connected'] ) {
+				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Instagram account connected successfully. You can now create your feed.', 'social-feed' ) . '</p></div>';
+			}
+			if ( isset( $_GET['sf_error'] ) && '1' === $_GET['sf_error'] ) {
+				$msg = isset( $_GET['sf_msg'] ) ? sanitize_text_field( wp_unslash( $_GET['sf_msg'] ) ) : __( 'An error occurred during connection.', 'social-feed' );
+				echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
+			}
 			require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
 			SF_Customizer::render( $feed_id, '' );
 			?>

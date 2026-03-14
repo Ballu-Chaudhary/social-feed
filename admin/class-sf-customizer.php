@@ -39,6 +39,8 @@ class SF_Customizer {
 			$settings['account_id'] = $feed['account_id'];
 			$settings['feed_type']  = $feed['feed_type'];
 			$settings['post_count'] = $feed['post_count'];
+		} elseif ( isset( $_GET['account_id'] ) ) {
+			$settings['account_id'] = absint( wp_unslash( $_GET['account_id'] ) );
 		}
 		$feed_name_display = ! empty( $settings['name'] ) ? $settings['name'] : ( $feed_id ? __( 'Edit Feed', 'social-feed' ) : __( 'Create Feed', 'social-feed' ) );
 		$shortcode          = $feed_id ? '[social_feed id="' . (int) $feed_id . '"]' : '';

@@ -31,7 +31,11 @@
 		bindEvents: function () {
 			var self = this;
 
-			$(document).on('click', '.sf-connect-account-btn', function () {
+			$(document).on('click', '.sf-connect-account-btn', function (e) {
+				var href = $(this).attr('href');
+				if (href) {
+					return;
+				}
 				self.selectedPlatform = 'instagram';
 				self.reconnectAccountId = null;
 				self.startOAuth();

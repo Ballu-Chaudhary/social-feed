@@ -58,14 +58,14 @@ class SF_Accounts {
 				esc_html__( 'Go to Settings', 'social-feed' )
 			);
 		} else {
-			$redirect_uri = admin_url( 'admin.php?page=social-feed-accounts&sf_oauth=instagram' );
+			$redirect_uri = admin_url( 'admin.php?page=social-feed-create' );
 			echo '<div class="notice notice-info is-dismissible" style="margin-bottom:12px"><p><strong>' . esc_html__( 'Meta redirect URI (add exactly to your app):', 'social-feed' ) . '</strong><br><code style="word-break:break-all">' . esc_html( $redirect_uri ) . '</code></p></div>';
 		}
 
 		$oauth_init_url = ( ! empty( $app_id ) && ! empty( $app_secret ) )
 			? add_query_arg(
 				array(
-					'page'      => 'social-feed-accounts',
+					'page'         => 'social-feed-create',
 					'sf_oauth_init' => '1',
 					'_wpnonce'  => wp_create_nonce( 'sf_oauth_init' ),
 				),

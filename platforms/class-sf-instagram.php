@@ -22,7 +22,7 @@ class SF_Instagram {
 	 * @return string
 	 */
 	public static function get_redirect_uri() {
-		return admin_url( 'admin.php?page=social-feed-accounts&sf_oauth=instagram' );
+		return admin_url( 'admin.php?page=social-feed-create' );
 	}
 
 	/**
@@ -45,7 +45,6 @@ class SF_Instagram {
 			);
 		}
 
-		$state = wp_create_nonce( 'sf_oauth_instagram' );
 		$scope = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights';
 
 		$url = add_query_arg(
@@ -55,7 +54,6 @@ class SF_Instagram {
 				'redirect_uri'   => $redirect_uri,
 				'response_type'  => 'code',
 				'scope'          => $scope,
-				'state'          => $state,
 			),
 			'https://www.instagram.com/oauth/authorize'
 		);
