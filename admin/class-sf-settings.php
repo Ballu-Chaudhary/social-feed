@@ -170,7 +170,7 @@ class SF_Settings {
 			'sf_instagram_api_section',
 			array(
 				'id'          => 'instagram_redirect_uri',
-				'value'       => admin_url( 'admin.php?page=social-feed-create' ),
+				'value'       => admin_url( 'admin.php' ),
 				'description' => __( 'Add this exact URL to your Instagram app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard.', 'social-feed' ),
 			)
 		);

@@ -58,7 +58,7 @@ class SF_Accounts {
 				esc_html__( 'Go to Settings', 'social-feed' )
 			);
 		} else {
-			$redirect_uri = admin_url( 'admin.php?page=social-feed-create' );
+			$redirect_uri = admin_url( 'admin.php' );
 			echo '<div class="notice notice-info is-dismissible" style="margin-bottom:12px"><p><strong>' . esc_html__( 'Meta redirect URI (add exactly to your app):', 'social-feed' ) . '</strong><br><code style="word-break:break-all">' . esc_html( $redirect_uri ) . '</code></p></div>';
 		}
 

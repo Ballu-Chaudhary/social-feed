@@ -25,7 +25,8 @@ class SF_OAuth {
 	 * Handle OAuth init (redirect to Instagram) and callback.
 	 */
 	public function handle_callback() {
-		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		$page  = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		$state = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
 
 		// Init: redirect to Instagram OAuth when user clicks Connect.
 		$oauth_init = isset( $_GET['sf_oauth_init'] ) && '1' === $_GET['sf_oauth_init'];
@@ -45,7 +46,16 @@ class SF_OAuth {
 		}
 
 		// Callback: handle return from Instagram with code.
-		$is_oauth_callback = 'social-feed-create' === $page && ( isset( $_GET['code'] ) || isset( $_GET['error'] ) );
+		$has_oauth_response = isset( $_GET['code'] ) || isset( $_GET['error'] );
+		if ( empty( $page ) && $has_oauth_response ) {
+			$page = 'social-feed-create';
+		}
+
+		if ( ! empty( $state ) && 'social-feed-create' !== $state && $has_oauth_response ) {
+			return;
+		}
+
+		$is_oauth_callback = 'social-feed-create' === $page && $has_oauth_response;
 		if ( ! $is_oauth_callback ) {
 			return;
 		}
