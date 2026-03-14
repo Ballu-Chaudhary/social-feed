@@ -102,7 +102,7 @@ class SF_OAuth {
 		$account_name   = $profile['username'] ?? $account_id_ext;
 		$access_token   = $token_data['access_token'];
 		$expires_in     = isset( $token_data['expires_in'] ) ? (int) $token_data['expires_in'] : 0;
-		$profile_pic    = $profile['profile_picture_url'] ?? '';
+		$profile_pic    = ! empty( $profile['profile_picture_url'] ) ? esc_url_raw( $profile['profile_picture_url'] ) : '';
 
 		$encrypted_token = SF_Helpers::sf_encrypt( $access_token );
 		$token_expires   = $expires_in > 0 ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null;
