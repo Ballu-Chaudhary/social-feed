@@ -155,11 +155,14 @@ class SF_Renderer {
 	/**
 	 * Get feed items from cache or API.
 	 *
+	 * When the API returns an error, WP_Error is returned with the full Instagram
+	 * error message so the renderer can show it to admin users (see render_feed).
+	 *
 	 * @param int   $feed_id  Feed ID.
 	 * @param array $feed     Feed data.
 	 * @param array $account  Account data.
 	 * @param array $settings Feed settings.
-	 * @return array|WP_Error Feed data or error.
+	 * @return array|WP_Error Feed data or error (error message surfaces to admins).
 	 */
 	private static function get_feed_items( $feed_id, $feed, $account, $settings ) {
 		return SF_Cache::get_or_fetch( $feed_id );

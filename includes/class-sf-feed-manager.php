@@ -67,6 +67,7 @@ class SF_Feed_Manager {
 
 		if ( is_wp_error( $result ) ) {
 			self::log_fetch_error( $feed_id, $account, $result );
+			// Return WP_Error so it bubbles up to cache, renderer, and admin preview with full API message.
 			return $result;
 		}
 

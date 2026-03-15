@@ -88,6 +88,8 @@ class SF_Ajax {
 
 		$settings = SF_Helpers::sf_sanitize_array( $settings );
 		$device   = isset( $_POST['device'] ) ? sanitize_key( $_POST['device'] ) : 'desktop';
+		$feed_id  = isset( $_POST['feed_id'] ) ? absint( $_POST['feed_id'] ) : 0;
+		$settings['_feed_id'] = $feed_id;
 
 		require_once SF_PLUGIN_PATH . 'admin/class-sf-customizer.php';
 		$defaults = SF_Customizer::get_defaults();
@@ -114,7 +116,12 @@ class SF_Ajax {
 			$columns = $settings['columns_mobile'];
 		}
 
+		$preview_error_message = null;
 		$items = $this->get_preview_items( $settings, $device );
+		if ( is_wp_error( $items ) ) {
+			$preview_error_message = $items->get_error_message();
+			$items = array();
+		}
 		$has_items = ! empty( $items );
 
 		$feed_height_style = '';
@@ -467,7 +474,7 @@ class SF_Ajax {
 				</div>
 				<?php endif; ?>
 			<?php else : ?>
-				<?php echo $this->render_preview_empty_state(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php echo $this->render_preview_empty_state( isset( $preview_error_message ) ? $preview_error_message : null ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<?php endif; ?>
 		</div>
 		</div>
@@ -476,14 +483,36 @@ class SF_Ajax {
 	}
 
 	/**
-	 * Get preview items.
+	 * Get preview items from API when feed_id is set, so admin sees real data or API errors.
 	 *
-	 * @param array  $settings Settings.
+	 * @param array  $settings Settings. May include _feed_id for live fetch.
 	 * @param string $device   Current device (desktop, tablet, mobile).
-	 * @return array
+	 * @return array|WP_Error List of items for preview, or WP_Error with full Instagram API message.
 	 */
 	private function get_preview_items( $settings, $device = 'desktop' ) {
-		return array();
+		$feed_id = isset( $settings['_feed_id'] ) ? absint( $settings['_feed_id'] ) : 0;
+		if ( $feed_id < 1 ) {
+			return array();
+		}
+
+		$result = SF_Feed_Manager::fetch_from_api( $feed_id );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		$raw_items = isset( $result['items'] ) ? $result['items'] : array();
+		$items    = array();
+		foreach ( $raw_items as $item ) {
+			$items[] = array(
+				'image'   => ! empty( $item['thumbnail'] ) ? $item['thumbnail'] : ( $item['media_url'] ?? '' ),
+				'caption' => $item['caption'] ?? '',
+				'likes'   => isset( $item['likes'] ) ? (int) $item['likes'] : 0,
+				'comments' => isset( $item['comments'] ) ? (int) $item['comments'] : 0,
+				'date'    => ! empty( $item['timestamp'] ) ? gmdate( 'M j, Y', strtotime( $item['timestamp'] ) ) : '',
+			);
+		}
+
+		return $items;
 	}
 
 	/**
@@ -575,10 +604,12 @@ class SF_Ajax {
 	/**
 	 * Render empty state for admin preview.
 	 *
+	 * @param string|null $message Optional message (e.g. Instagram API error). If null, shows generic empty message.
 	 * @return string
 	 */
-	private function render_preview_empty_state() {
-		return '<div class="sf-feed__empty"><div class="sf-feed__empty-icon"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M4 4h7V2H4c-1.1 0-2 .9-2 2v7h2V4zm6 9l-4 5h12l-3-4-2.03 2.71L10 13zm7-4.5c0-.83-.67-1.5-1.5-1.5S14 7.67 14 8.5s.67 1.5 1.5 1.5S17 9.33 17 8.5zM20 2h-7v2h7v7h2V4c0-1.1-.9-2-2-2zm0 18h-7v2h7c1.1 0 2-.9 2-2v-7h-2v7zM4 13H2v7c0 1.1.9 2 2 2h7v-2H4v-7z"/></svg></div><p class="sf-feed__empty-text">' . esc_html__( 'No posts found. Please connect your Instagram account.', 'social-feed' ) . '</p></div>';
+	private function render_preview_empty_state( $message = null ) {
+		$text = ( null !== $message && '' !== $message ) ? $message : __( 'No posts found. Please connect your Instagram account.', 'social-feed' );
+		return '<div class="sf-feed__empty"><div class="sf-feed__empty-icon"><svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M4 4h7V2H4c-1.1 0-2 .9-2 2v7h2V4zm6 9l-4 5h12l-3-4-2.03 2.71L10 13zm7-4.5c0-.83-.67-1.5-1.5-1.5S14 7.67 14 8.5s.67 1.5 1.5 1.5S17 9.33 17 8.5zM20 2h-7v2h7v7h2V4c0-1.1-.9-2-2-2zm0 18h-7v2h7c1.1 0 2-.9 2-2v-7h-2v7zM4 13H2v7c0 1.1.9 2 2 2h7v-2H4v-7z"/></svg></div><p class="sf-feed__empty-text">' . esc_html( $text ) . '</p></div>';
 	}
 
 	/**

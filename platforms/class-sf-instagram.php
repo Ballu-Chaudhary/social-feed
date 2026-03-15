@@ -828,19 +828,14 @@ class SF_Instagram_API {
 			$error_msg = isset( $body['error']['message'] ) ? $body['error']['message'] : __( 'Access token has expired.', 'social-feed' );
 			SF_Helpers::sf_log_error( 'Instagram 401 Unauthorized: ' . $error_msg, 'instagram' );
 
-			return new WP_Error(
-				'token_expired',
-				__( 'Instagram access token has expired. Please reconnect your account.', 'social-feed' )
-			);
+			return new WP_Error( 'token_expired', $error_msg );
 		}
 
 		if ( 429 === $status_code ) {
-			SF_Helpers::sf_log_warning( 'Instagram rate limit exceeded.', 'instagram' );
+			$error_msg = isset( $body['error']['message'] ) ? $body['error']['message'] : __( 'Instagram API rate limit exceeded. Please try again later.', 'social-feed' );
+			SF_Helpers::sf_log_warning( 'Instagram rate limit: ' . $error_msg, 'instagram' );
 
-			return new WP_Error(
-				'rate_limit',
-				__( 'Instagram API rate limit exceeded. Please try again later.', 'social-feed' )
-			);
+			return new WP_Error( 'rate_limit', $error_msg );
 		}
 
 		if ( $status_code < 200 || $status_code >= 300 ) {

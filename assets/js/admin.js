@@ -1632,6 +1632,7 @@
 			$('.sf-preview-loading').addClass('active');
 			$('.sf-preview-content').css('visibility', 'hidden');
 
+			var feedId = $('.sf-customizer-wrap').data('feed-id') || 0;
 			$.ajax({
 				url: sfAdmin.ajaxUrl,
 				type: 'POST',
@@ -1639,6 +1640,7 @@
 					action: 'sf_preview_feed',
 					nonce: sfAdmin.nonce,
 					settings: settings,
+					feed_id: feedId,
 					device: this.currentDevice
 				},
 				success: function (response) {
