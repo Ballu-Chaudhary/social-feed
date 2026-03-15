@@ -66,6 +66,11 @@ class SF_Renderer {
 
 		$items = $feed_data['items'] ?? array();
 
+		// For empty feeds, let admins see the account's last API error if any.
+		if ( empty( $items ) && current_user_can( 'manage_options' ) && $account && ! empty( $account['last_error'] ) ) {
+			$settings['admin_error'] = $account['last_error'];
+		}
+
 		/**
 		 * Filter feed items before display.
 		 *
@@ -558,10 +563,19 @@ class SF_Renderer {
 	/**
 	 * Render empty state.
 	 *
-	 * @param array $settings Feed settings.
+	 * For logged-in admins, shows the actual API error (e.g. from settings['admin_error'])
+	 * when present so they can see what went wrong. Non-admin users always see the
+	 * generic empty message.
+	 *
+	 * @param array $settings Feed settings. May include 'admin_error' for admin-only display.
 	 * @return string HTML.
 	 */
 	public static function render_empty_state( $settings ) {
+		$message = $settings['empty_message'] ?? __( 'No posts found. Please connect your Instagram account.', 'social-feed' );
+		if ( current_user_can( 'manage_options' ) && ! empty( $settings['admin_error'] ) ) {
+			$message = $settings['admin_error'];
+		}
+
 		ob_start();
 		?>
 		<div class="sf-feed__empty">
@@ -569,7 +583,7 @@ class SF_Renderer {
 				<svg viewBox="0 0 24 24" width="48" height="48"><path fill="currentColor" d="M4 4h7V2H4c-1.1 0-2 .9-2 2v7h2V4zm6 9l-4 5h12l-3-4-2.03 2.71L10 13zm7-4.5c0-.83-.67-1.5-1.5-1.5S14 7.67 14 8.5s.67 1.5 1.5 1.5S17 9.33 17 8.5zM20 2h-7v2h7v7h2V4c0-1.1-.9-2-2-2zm0 18h-7v2h7c1.1 0 2-.9 2-2v-7h-2v7zM4 13H2v7c0 1.1.9 2 2 2h7v-2H4v-7z"/></svg>
 			</div>
 			<p class="sf-feed__empty-text">
-				<?php echo esc_html( $settings['empty_message'] ?? __( 'No posts found. Please connect your Instagram account.', 'social-feed' ) ); ?>
+				<?php echo esc_html( $message ); ?>
 			</p>
 		</div>
 		<?php
