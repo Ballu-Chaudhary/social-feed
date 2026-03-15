@@ -155,10 +155,10 @@ class SF_Instagram {
 	public static function get_user_profile( $access_token ) {
 		$url = add_query_arg(
 			array(
-				'fields'       => 'id,username,account_type,profile_picture_url',
+				'fields'       => 'id,username,profile_picture_url,followers_count',
 				'access_token' => $access_token,
 			),
-			'https://graph.instagram.com/me'
+			'https://graph.instagram.com/v25.0/me'
 		);
 
 		$response = wp_remote_get( $url, array( 'timeout' => 15 ) );
@@ -184,6 +184,7 @@ class SF_Instagram {
 			'username'             => $body['username'],
 			'account_type'         => isset( $body['account_type'] ) ? $body['account_type'] : '',
 			'profile_picture_url'  => isset( $body['profile_picture_url'] ) ? $body['profile_picture_url'] : '',
+			'followers_count'      => isset( $body['followers_count'] ) ? (int) $body['followers_count'] : 0,
 		);
 	}
 }
@@ -213,7 +214,7 @@ class SF_Instagram_Auth {
 	/**
 	 * API version.
 	 */
-	const API_VERSION = 'v18.0';
+	const API_VERSION = 'v25.0';
 
 	/**
 	 * Get Instagram App ID from settings.
@@ -547,7 +548,7 @@ class SF_Instagram_API {
 	/**
 	 * API version.
 	 */
-	const API_VERSION = 'v18.0';
+	const API_VERSION = 'v25.0';
 
 	/**
 	 * Access token.
@@ -557,12 +558,21 @@ class SF_Instagram_API {
 	private $access_token;
 
 	/**
+	 * Instagram user ID (account_id_ext).
+	 *
+	 * @var string
+	 */
+	private $user_id;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $access_token Instagram access token.
+	 * @param string $user_id      Instagram user ID (account_id_ext). Required for get_media().
 	 */
-	public function __construct( $access_token ) {
+	public function __construct( $access_token, $user_id = '' ) {
 		$this->access_token = $access_token;
+		$this->user_id      = $user_id ? (string) $user_id : '';
 	}
 
 	/**
@@ -574,8 +584,8 @@ class SF_Instagram_API {
 		$fields = array(
 			'id',
 			'username',
-			'account_type',
-			'media_count',
+			'profile_picture_url',
+			'followers_count',
 		);
 
 		$url = add_query_arg(
@@ -583,7 +593,7 @@ class SF_Instagram_API {
 				'fields'       => implode( ',', $fields ),
 				'access_token' => $this->access_token,
 			),
-			self::GRAPH_URL . '/me'
+			self::GRAPH_URL . '/' . self::API_VERSION . '/me'
 		);
 
 		$response = $this->make_api_request( $url );
@@ -603,6 +613,13 @@ class SF_Instagram_API {
 	 * @return array|WP_Error Media data with pagination info or error.
 	 */
 	public function get_media( $limit = 20, $after_cursor = null ) {
+		if ( empty( $this->user_id ) ) {
+			return new WP_Error(
+				'missing_user_id',
+				__( 'Instagram user ID is required to fetch media. Pass account_id_ext when creating the API instance.', 'social-feed' )
+			);
+		}
+
 		$limit = min( absint( $limit ), 100 );
 
 		$fields = array(
@@ -627,7 +644,7 @@ class SF_Instagram_API {
 			$params['after'] = $after_cursor;
 		}
 
-		$url = add_query_arg( $params, self::GRAPH_URL . '/me/media' );
+		$url = add_query_arg( $params, self::GRAPH_URL . '/' . self::API_VERSION . '/' . $this->user_id . '/media' );
 
 		$response = $this->make_api_request( $url );
 
@@ -675,7 +692,7 @@ class SF_Instagram_API {
 				'q'            => $hashtag,
 				'access_token' => $this->access_token,
 			),
-			self::GRAPH_URL . '/ig_hashtag_search'
+			self::GRAPH_URL . '/' . self::API_VERSION . '/ig_hashtag_search'
 		);
 
 		$search_response = $this->make_api_request( $search_url );
@@ -715,7 +732,7 @@ class SF_Instagram_API {
 				'limit'        => $limit,
 				'access_token' => $this->access_token,
 			),
-			self::GRAPH_URL . '/' . $hashtag_id . '/top_media'
+			self::GRAPH_URL . '/' . self::API_VERSION . '/' . $hashtag_id . '/top_media'
 		);
 
 		$media_response = $this->make_api_request( $media_url );

@@ -113,7 +113,8 @@ class SF_Feed_Manager {
 			return new WP_Error( 'class_missing', __( 'Instagram API class not found.', 'social-feed' ) );
 		}
 
-		$api = new SF_Instagram_API( $access_token );
+		$user_id = isset( $account['account_id_ext'] ) ? $account['account_id_ext'] : '';
+		$api     = new SF_Instagram_API( $access_token, $user_id );
 
 		$profile = $api->get_profile();
 		if ( is_wp_error( $profile ) ) {
@@ -457,8 +458,9 @@ class SF_Feed_Manager {
 
 		switch ( $feed['platform'] ) {
 			case 'instagram':
-				$api   = new SF_Instagram_API( $access_token );
-				$media = $api->get_media( $limit, $cursor );
+				$user_id = isset( $account['account_id_ext'] ) ? $account['account_id_ext'] : '';
+				$api     = new SF_Instagram_API( $access_token, $user_id );
+				$media   = $api->get_media( $limit, $cursor );
 
 				if ( is_wp_error( $media ) ) {
 					return $media;
