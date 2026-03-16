@@ -33,15 +33,6 @@ function sf_autoloader( $class_name ) {
 		return;
 	}
 
-	// SF_Instagram_API lives in class-sf-instagram.php, not class-sf-instagram-api.php.
-	if ( 'SF_Instagram_API' === $class_name ) {
-		$path = SF_PLUGIN_PATH . 'platforms/class-sf-instagram.php';
-		if ( file_exists( $path ) ) {
-			require_once $path;
-		}
-		return;
-	}
-
 	$class_file = 'class-' . strtolower( str_replace( '_', '-', $class_name ) ) . '.php';
 
 	$paths = array(

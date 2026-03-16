@@ -152,138 +152,38 @@ class SF_Feed_Manager {
 	}
 
 	/**
-	 * Fetch YouTube feed data.
+	 * Refresh an Instagram long-lived token.
 	 *
-	 * @param array $account  Account data.
-	 * @param array $settings Feed settings.
-	 * @param int   $limit    Number of items.
+	 * @param string $token Current long-lived token.
 	 * @return array|WP_Error
 	 */
-	private static function fetch_youtube( $account, $settings, $limit ) {
-		if ( ! class_exists( 'SF_YouTube_API' ) ) {
-			return new WP_Error( 'class_missing', __( 'YouTube API class not found.', 'social-feed' ) );
+	private static function refresh_instagram_token( $token ) {
+		$url = add_query_arg(
+			array(
+				'grant_type'   => 'ig_refresh_token',
+				'access_token' => $token,
+			),
+			'https://graph.instagram.com/refresh_access_token'
+		);
+
+		$response = wp_remote_get( $url, array( 'timeout' => 15 ) );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
-		$api_key = self::get_youtube_api_key();
+		$status_code = wp_remote_retrieve_response_code( $response );
+		$body        = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		if ( empty( $api_key ) ) {
-			return new WP_Error( 'no_api_key', __( 'YouTube API key is not configured.', 'social-feed' ) );
-		}
-
-		$api        = new SF_YouTube_API( $api_key );
-		$channel_id = $account['account_id_ext'];
-		$feed_type  = $settings['youtube_source'] ?? 'channel';
-
-		$channel = $api->get_channel( $channel_id );
-		if ( is_wp_error( $channel ) ) {
-			$channel = array();
-		}
-
-		if ( 'playlist' === $feed_type && ! empty( $settings['youtube_playlist'] ) ) {
-			$videos = $api->get_playlist_videos( $settings['youtube_playlist'], $limit );
-		} elseif ( 'search' === $feed_type && ! empty( $settings['youtube_search'] ) ) {
-			$videos = $api->search_videos( $settings['youtube_search'], $channel_id, $limit );
-		} else {
-			$videos = $api->get_channel_videos( $channel_id, $limit );
-		}
-
-		if ( is_wp_error( $videos ) ) {
-			return $videos;
-		}
-
-		$items = array();
-		if ( ! empty( $videos['items'] ) ) {
-			foreach ( $videos['items'] as $video ) {
-				$items[] = $api->normalize_video( $video );
-			}
+		if ( 200 !== $status_code || empty( $body['access_token'] ) ) {
+			$message = isset( $body['error']['message'] ) ? $body['error']['message'] : __( 'Failed to refresh Instagram token.', 'social-feed' );
+			return new WP_Error( 'token_refresh_failed', $message );
 		}
 
 		return array(
-			'profile'     => $channel,
-			'items'       => $items,
-			'next_cursor' => $videos['next_page_token'] ?? '',
-			'has_more'    => ! empty( $videos['next_page_token'] ),
+			'access_token' => $body['access_token'],
+			'expires_in'   => isset( $body['expires_in'] ) ? (int) $body['expires_in'] : 5184000,
 		);
-	}
-
-	/**
-	 * Fetch Facebook feed data.
-	 *
-	 * @param array  $account      Account data.
-	 * @param string $access_token Access token.
-	 * @param array  $settings     Feed settings.
-	 * @param int    $limit        Number of items.
-	 * @return array|WP_Error
-	 */
-	private static function fetch_facebook( $account, $access_token, $settings, $limit ) {
-		if ( ! class_exists( 'SF_Facebook_API' ) ) {
-			return new WP_Error( 'class_missing', __( 'Facebook API class not found.', 'social-feed' ) );
-		}
-
-		$page_id = $account['account_id_ext'];
-		$api     = new SF_Facebook_API( $page_id, $access_token );
-
-		$page_info = $api->get_page_info();
-		if ( is_wp_error( $page_info ) ) {
-			$page_info = array();
-		}
-
-		$content_type = $settings['facebook_content'] ?? 'posts';
-
-		switch ( $content_type ) {
-			case 'photos':
-				$content = $api->get_photos( $limit );
-				break;
-
-			case 'videos':
-				$content = $api->get_videos( $limit );
-				break;
-
-			case 'events':
-				$content = $api->get_events( $limit );
-				break;
-
-			case 'reviews':
-				$content = $api->get_reviews( $limit );
-				break;
-
-			default:
-				$content = $api->get_posts( $limit );
-		}
-
-		if ( is_wp_error( $content ) ) {
-			return $content;
-		}
-
-		$items = array();
-		if ( ! empty( $content['items'] ) ) {
-			foreach ( $content['items'] as $item ) {
-				$items[] = $api->normalize_post( $item );
-			}
-		}
-
-		return array(
-			'profile'     => $page_info,
-			'items'       => $items,
-			'next_cursor' => $content['next_cursor'] ?? '',
-			'has_more'    => ! empty( $content['next_cursor'] ),
-		);
-	}
-
-	/**
-	 * Get YouTube API key from settings.
-	 *
-	 * @return string API key or empty string.
-	 */
-	private static function get_youtube_api_key() {
-		$settings = get_option( 'sf_settings', array() );
-
-		if ( ! empty( $settings['youtube_api_key'] ) ) {
-			$key = SF_Helpers::sf_decrypt( $settings['youtube_api_key'] );
-			return $key ? $key : $settings['youtube_api_key'];
-		}
-
-		return '';
 	}
 
 	/**
@@ -374,27 +274,11 @@ class SF_Feed_Manager {
 			return new WP_Error( 'no_token', __( 'No token to refresh.', 'social-feed' ) );
 		}
 
-		$new_token_data = null;
-
-		switch ( $account['platform'] ) {
-			case 'instagram':
-				if ( class_exists( 'SF_Instagram_Auth' ) ) {
-					$new_token_data = SF_Instagram_Auth::refresh_token( $current_token );
-				}
-				break;
-
-			case 'youtube':
-				if ( class_exists( 'SF_YouTube_Auth' ) ) {
-					$refresh_token = SF_Database::get_account_meta( $account_id, 'refresh_token' );
-					if ( $refresh_token ) {
-						$new_token_data = SF_YouTube_Auth::refresh_token( $refresh_token );
-					}
-				}
-				break;
-
-			case 'facebook':
-				break;
+		if ( 'instagram' !== $account['platform'] ) {
+			return new WP_Error( 'unsupported_platform', __( 'Only Instagram tokens can be refreshed.', 'social-feed' ) );
 		}
+
+		$new_token_data = self::refresh_instagram_token( $current_token );
 
 		if ( is_wp_error( $new_token_data ) ) {
 			SF_Database::update_account(
@@ -457,68 +341,27 @@ class SF_Feed_Manager {
 		$settings     = SF_Database::get_all_feed_meta( $feed_id );
 		$limit        = absint( $settings['posts_per_page'] ?? 20 );
 
-		switch ( $feed['platform'] ) {
-			case 'instagram':
-				$user_id = isset( $account['account_id_ext'] ) ? $account['account_id_ext'] : '';
-				$api     = new SF_Instagram_API( $access_token, $user_id );
-				$media   = $api->get_media( $limit, $cursor );
-
-				if ( is_wp_error( $media ) ) {
-					return $media;
-				}
-
-				$items = array();
-				foreach ( $media['items'] ?? array() as $item ) {
-					$items[] = $api->normalize_item( $item );
-				}
-
-				return array(
-					'items'       => $items,
-					'next_cursor' => $media['next_cursor'] ?? '',
-					'has_more'    => ! empty( $media['next_cursor'] ),
-				);
-
-			case 'youtube':
-				$api_key = self::get_youtube_api_key();
-				$api     = new SF_YouTube_API( $api_key );
-				$videos  = $api->get_channel_videos( $account['account_id_ext'], $limit, $cursor );
-
-				if ( is_wp_error( $videos ) ) {
-					return $videos;
-				}
-
-				$items = array();
-				foreach ( $videos['items'] ?? array() as $video ) {
-					$items[] = $api->normalize_video( $video );
-				}
-
-				return array(
-					'items'       => $items,
-					'next_cursor' => $videos['next_page_token'] ?? '',
-					'has_more'    => ! empty( $videos['next_page_token'] ),
-				);
-
-			case 'facebook':
-				$api     = new SF_Facebook_API( $account['account_id_ext'], $access_token );
-				$content = $api->get_posts( $limit, $cursor );
-
-				if ( is_wp_error( $content ) ) {
-					return $content;
-				}
-
-				$items = array();
-				foreach ( $content['items'] ?? array() as $item ) {
-					$items[] = $api->normalize_post( $item );
-				}
-
-				return array(
-					'items'       => $items,
-					'next_cursor' => $content['next_cursor'] ?? '',
-					'has_more'    => ! empty( $content['next_cursor'] ),
-				);
-
-			default:
-				return new WP_Error( 'unknown_platform', __( 'Unknown platform.', 'social-feed' ) );
+		if ( 'instagram' !== $feed['platform'] ) {
+			return new WP_Error( 'unknown_platform', __( 'This plugin supports Instagram feeds only.', 'social-feed' ) );
 		}
+
+		$user_id = isset( $account['account_id_ext'] ) ? $account['account_id_ext'] : '';
+		$api     = new SF_Instagram_API( $access_token, $user_id );
+		$media   = $api->get_media( $limit, $cursor );
+
+		if ( is_wp_error( $media ) ) {
+			return $media;
+		}
+
+		$items = array();
+		foreach ( $media['items'] ?? array() as $item ) {
+			$items[] = $api->normalize_item( $item );
+		}
+
+		return array(
+			'items'       => $items,
+			'next_cursor' => $media['next_cursor'] ?? '',
+			'has_more'    => ! empty( $media['next_cursor'] ),
+		);
 	}
 }
