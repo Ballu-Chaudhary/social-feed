@@ -35,8 +35,13 @@ class SF_OAuth {
 				wp_die( esc_html__( 'Unauthorized access.', 'social-feed' ) );
 			}
 			if ( class_exists( 'SF_Instagram' ) ) {
-				$url = SF_Instagram::get_login_url();
-				if ( ! is_wp_error( $url ) && ! empty( $url ) ) {
+				$redirect_uri = SF_Instagram::get_redirect_uri();
+				$this->store_redirect_uri_for_exchange( $redirect_uri );
+				$url = SF_Instagram::get_login_url( $redirect_uri );
+				if ( is_wp_error( $url ) ) {
+					$this->redirect_with_error( $url->get_error_message() );
+				}
+				if ( ! empty( $url ) ) {
 					wp_redirect( $url );
 					exit;
 				}
@@ -65,9 +70,9 @@ class SF_OAuth {
 			return;
 		}
 
-		$code     = isset( $_GET['code'] ) ? sanitize_text_field( wp_unslash( $_GET['code'] ) ) : '';
-		$error    = isset( $_GET['error'] ) ? sanitize_text_field( wp_unslash( $_GET['error'] ) ) : '';
-		$error_msg = isset( $_GET['error_description'] ) ? sanitize_text_field( wp_unslash( $_GET['error_description'] ) ) : '';
+		$code      = isset( $_GET['code'] ) ? trim( (string) wp_unslash( $_GET['code'] ) ) : '';
+		$error     = isset( $_GET['error'] ) ? trim( (string) wp_unslash( $_GET['error'] ) ) : '';
+		$error_msg = isset( $_GET['error_description'] ) ? trim( (string) wp_unslash( $_GET['error_description'] ) ) : '';
 
 		if ( ! empty( $error ) ) {
 			$this->redirect_with_error( ! empty( $error_msg ) ? $error_msg : $error );
@@ -84,7 +89,8 @@ class SF_OAuth {
 			return;
 		}
 
-		$token_data = SF_Instagram::get_access_token( $code );
+		$redirect_uri = $this->consume_redirect_uri_for_exchange();
+		$token_data   = SF_Instagram::get_access_token( $code, $redirect_uri );
 		if ( is_wp_error( $token_data ) ) {
 			SF_Helpers::sf_log_error( 'Instagram OAuth: ' . $token_data->get_error_message(), 'instagram' );
 			$this->redirect_with_error( $token_data->get_error_message() );
@@ -139,7 +145,9 @@ class SF_OAuth {
 		}
 
 		if ( ! $result && ! $account_id ) {
-			$this->redirect_with_error( __( 'Failed to save account to database.', 'social-feed' ) );
+			global $wpdb;
+			$db_error = ( isset( $wpdb->last_error ) && '' !== $wpdb->last_error ) ? $wpdb->last_error : __( 'Unknown database error.', 'social-feed' );
+			$this->redirect_with_error( sprintf( __( 'Failed to save account to database: %s', 'social-feed' ), $db_error ) );
 			return;
 		}
 
@@ -178,5 +186,44 @@ class SF_OAuth {
 
 		wp_safe_redirect( $redirect_url );
 		exit;
+	}
+
+	/**
+	 * Store the exact redirect URI used in OAuth URL.
+	 *
+	 * @param string $redirect_uri Redirect URI.
+	 */
+	private function store_redirect_uri_for_exchange( $redirect_uri ) {
+		if ( empty( $redirect_uri ) ) {
+			return;
+		}
+
+		set_transient( $this->get_redirect_uri_transient_key(), (string) $redirect_uri, 15 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Get and clear stored redirect URI, ensuring token exchange uses exact same value.
+	 *
+	 * @return string
+	 */
+	private function consume_redirect_uri_for_exchange() {
+		$key          = $this->get_redirect_uri_transient_key();
+		$redirect_uri = get_transient( $key );
+		delete_transient( $key );
+
+		if ( ! empty( $redirect_uri ) ) {
+			return (string) $redirect_uri;
+		}
+
+		return class_exists( 'SF_Instagram' ) ? SF_Instagram::get_redirect_uri() : admin_url( 'admin.php' );
+	}
+
+	/**
+	 * Get per-user transient key for redirect URI.
+	 *
+	 * @return string
+	 */
+	private function get_redirect_uri_transient_key() {
+		return 'sf_oauth_redirect_uri_' . get_current_user_id();
 	}
 }

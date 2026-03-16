@@ -32,8 +32,8 @@ class SF_Instagram {
 	 *
 	 * @return string|WP_Error Login URL or error if credentials missing.
 	 */
-	public static function get_login_url() {
-		$redirect_uri = self::get_redirect_uri();
+	public static function get_login_url( $redirect_uri = '' ) {
+		$redirect_uri = ! empty( $redirect_uri ) ? (string) $redirect_uri : self::get_redirect_uri();
 
 		$settings = get_option( 'sf_settings', array() );
 		$app_id   = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
@@ -69,11 +69,11 @@ class SF_Instagram {
 	 * @param string $code Authorization code from OAuth callback.
 	 * @return array|WP_Error Token data (access_token, expires_in) or error.
 	 */
-	public static function get_access_token( $code ) {
+	public static function get_access_token( $code, $redirect_uri = '' ) {
 		$settings    = get_option( 'sf_settings', array() );
 		$app_id      = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
 		$app_secret  = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
-		$redirect_uri = self::get_redirect_uri();
+		$redirect_uri = ! empty( $redirect_uri ) ? (string) $redirect_uri : self::get_redirect_uri();
 
 		if ( empty( $app_id ) || empty( $app_secret ) ) {
 			return new WP_Error(
@@ -104,7 +104,7 @@ class SF_Instagram {
 		$body   = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( 200 !== $status ) {
-			$message = isset( $body['error_message'] ) ? $body['error_message'] : __( 'Failed to exchange code for token.', 'social-feed' );
+			$message = self::extract_instagram_error_message( $body, __( 'Failed to exchange code for token.', 'social-feed' ) );
 			return new WP_Error( 'token_exchange_failed', $message );
 		}
 
@@ -128,19 +128,20 @@ class SF_Instagram {
 		);
 
 		$long_response = wp_remote_get( $long_url, array( 'timeout' => 15 ) );
-
 		if ( is_wp_error( $long_response ) ) {
-			return array(
-				'access_token' => $short_token,
-				'expires_in'   => 3600,
-				'user_id'      => $user_id,
-			);
+			return new WP_Error( 'long_lived_token_exchange_failed', $long_response->get_error_message() );
 		}
 
-		$long_body = json_decode( wp_remote_retrieve_body( $long_response ), true );
+		$long_status = wp_remote_retrieve_response_code( $long_response );
+		$long_body   = json_decode( wp_remote_retrieve_body( $long_response ), true );
+
+		if ( 200 !== $long_status || empty( $long_body['access_token'] ) ) {
+			$message = self::extract_instagram_error_message( $long_body, __( 'Failed to exchange for long-lived token.', 'social-feed' ) );
+			return new WP_Error( 'long_lived_token_exchange_failed', $message );
+		}
 
 		return array(
-			'access_token' => isset( $long_body['access_token'] ) ? $long_body['access_token'] : $short_token,
+			'access_token' => $long_body['access_token'],
 			'expires_in'   => isset( $long_body['expires_in'] ) ? (int) $long_body['expires_in'] : 5184000,
 			'user_id'      => $user_id,
 		);
@@ -171,7 +172,7 @@ class SF_Instagram {
 		$body   = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $status < 200 || $status >= 300 ) {
-			$message = isset( $body['error']['message'] ) ? $body['error']['message'] : __( 'Failed to fetch user profile.', 'social-feed' );
+			$message = self::extract_instagram_error_message( $body, __( 'Failed to fetch user profile.', 'social-feed' ) );
 			return new WP_Error( 'profile_fetch_failed', $message );
 		}
 
@@ -186,5 +187,28 @@ class SF_Instagram {
 			'profile_picture_url'  => isset( $body['profile_picture_url'] ) ? $body['profile_picture_url'] : '',
 			'followers_count'      => isset( $body['followers_count'] ) ? (int) $body['followers_count'] : 0,
 		);
+	}
+
+	/**
+	 * Extract the most specific Instagram error message from an API payload.
+	 *
+	 * @param mixed  $body    Decoded response body.
+	 * @param string $default Fallback message.
+	 * @return string
+	 */
+	private static function extract_instagram_error_message( $body, $default ) {
+		if ( is_array( $body ) ) {
+			if ( ! empty( $body['error']['message'] ) ) {
+				return (string) $body['error']['message'];
+			}
+			if ( ! empty( $body['error_message'] ) ) {
+				return (string) $body['error_message'];
+			}
+			if ( ! empty( $body['message'] ) ) {
+				return (string) $body['message'];
+			}
+		}
+
+		return (string) $default;
 	}
 }

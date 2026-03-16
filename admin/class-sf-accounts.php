@@ -1,4 +1,4 @@
-+<?php
+<?php
 /**
  * Connected Accounts page for Social Feed plugin.
  *
@@ -40,7 +40,7 @@ class SF_Accounts {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Instagram account connected successfully!', 'social-feed' ) . '</p></div>';
 		}
 		if ( isset( $_GET['sf_error'] ) && '1' === $_GET['sf_error'] ) {
-			$msg = isset( $_GET['sf_msg'] ) ? sanitize_text_field( wp_unslash( $_GET['sf_msg'] ) ) : __( 'An error occurred during connection.', 'social-feed' );
+			$msg = isset( $_GET['sf_msg'] ) ? (string) wp_unslash( $_GET['sf_msg'] ) : __( 'An error occurred during connection.', 'social-feed' );
 			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $msg ) . '</p></div>';
 		}
 
