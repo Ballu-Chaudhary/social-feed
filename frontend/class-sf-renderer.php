@@ -30,8 +30,19 @@ class SF_Renderer {
 			return self::render_error( __( 'Feed not found.', 'social-feed' ) );
 		}
 
+		// Ensure feeds being previewed in the admin customizer are active.
 		if ( 'active' !== $feed['status'] ) {
-			return '';
+			if ( is_admin() && current_user_can( 'manage_options' ) ) {
+				SF_Database::update_feed(
+					$feed_id,
+					array(
+						'status' => 'active',
+					)
+				);
+				$feed['status'] = 'active';
+			} else {
+				return '';
+			}
 		}
 
 		$settings = SF_Database::get_all_feed_meta( $feed_id );
@@ -66,9 +77,19 @@ class SF_Renderer {
 
 		$items = $feed_data['items'] ?? array();
 
-		// For empty feeds, let admins see the account's last API error if any.
-		if ( empty( $items ) && current_user_can( 'manage_options' ) && $account && ! empty( $account['last_error'] ) ) {
-			$settings['admin_error'] = $account['last_error'];
+		// If feed data is empty with no error, surface a helpful message for admins.
+		if ( empty( $feed_data ) || empty( $items ) ) {
+			if ( current_user_can( 'manage_options' ) ) {
+				$message = '';
+				if ( $account && ! empty( $account['last_error'] ) ) {
+					$message = $account['last_error'];
+				} else {
+					$message = __( 'Feed is empty or still loading.', 'social-feed' );
+				}
+				return self::render_error( $message );
+			}
+			// Non-admins still see the standard empty state.
+			return self::render_empty_state( $settings );
 		}
 
 		/**

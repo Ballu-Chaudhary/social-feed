@@ -495,7 +495,8 @@ class SF_Ajax {
 			return array();
 		}
 
-		$result = SF_Feed_Manager::fetch_from_api( $feed_id );
+		// Always bypass cache for preview so admins see the latest API response.
+		$result = SF_Cache::get_or_fetch( $feed_id, true );
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}

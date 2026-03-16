@@ -129,8 +129,6 @@ class SF_Cache {
 			return $items;
 		}
 
-		self::set( $feed_id, $items );
-
 		return $items;
 	}
 
