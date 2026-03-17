@@ -59,6 +59,9 @@ class SF_Ajax {
 		}
 
 		add_action( 'wp_ajax_nopriv_sf_load_more', array( $this, 'handle_load_more' ) );
+
+		// OAuth callback: must work for both logged-in and not (Instagram redirects without WP auth).
+		add_action( 'wp_ajax_nopriv_sf_instagram_oauth_callback', array( $this, 'handle_instagram_oauth_callback' ) );
 	}
 
 	/**
