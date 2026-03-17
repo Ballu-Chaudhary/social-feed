@@ -20,17 +20,20 @@ class SF_Instagram {
 	 * OAuth redirect URI.
 	 *
 	 * Uses the value from plugin settings (OAuth Redirect URI) if set,
-	 * otherwise falls back to admin_url( 'admin.php' ).
+	 * otherwise falls back to a stable admin-ajax endpoint so the URL
+	 * is not affected by admin_url() variations.
 	 *
 	 * @return string
 	 */
 	public static function get_redirect_uri() {
-		$settings       = get_option( 'sf_settings', array() );
-		$redirect_uri   = isset( $settings['instagram_redirect_uri'] ) ? trim( (string) $settings['instagram_redirect_uri'] ) : '';
+		$settings     = get_option( 'sf_settings', array() );
+		$redirect_uri = isset( $settings['instagram_redirect_uri'] ) ? trim( (string) $settings['instagram_redirect_uri'] ) : '';
 		if ( ! empty( $redirect_uri ) ) {
 			return esc_url_raw( $redirect_uri );
 		}
-		return admin_url( 'admin.php' );
+
+		// Default: dedicated AJAX callback endpoint.
+		return admin_url( 'admin-ajax.php?action=sf_instagram_oauth_callback' );
 	}
 
 	/**
