@@ -19,9 +19,17 @@ class SF_Instagram {
 	/**
 	 * OAuth redirect URI.
 	 *
+	 * Uses the value from plugin settings (OAuth Redirect URI) if set,
+	 * otherwise falls back to admin_url( 'admin.php' ).
+	 *
 	 * @return string
 	 */
 	public static function get_redirect_uri() {
+		$settings       = get_option( 'sf_settings', array() );
+		$redirect_uri   = isset( $settings['instagram_redirect_uri'] ) ? trim( (string) $settings['instagram_redirect_uri'] ) : '';
+		if ( ! empty( $redirect_uri ) ) {
+			return esc_url_raw( $redirect_uri );
+		}
 		return admin_url( 'admin.php' );
 	}
 

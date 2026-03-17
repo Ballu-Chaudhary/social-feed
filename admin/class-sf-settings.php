@@ -164,14 +164,14 @@ class SF_Settings {
 
 		add_settings_field(
 			'instagram_redirect_uri',
-			__( 'Valid OAuth Redirect URI', 'social-feed' ),
-			array( __CLASS__, 'render_readonly_field' ),
+			__( 'OAuth Redirect URI', 'social-feed' ),
+			array( __CLASS__, 'render_text_field' ),
 			'sf_settings_general',
 			'sf_instagram_api_section',
 			array(
 				'id'          => 'instagram_redirect_uri',
-				'value'       => admin_url( 'admin.php' ),
-				'description' => __( 'Add this exact URL to your Instagram app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard.', 'social-feed' ),
+				'placeholder' => admin_url( 'admin.php' ),
+				'description' => __( 'Exact URL used for OAuth. Add this to your Instagram app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard. Leave empty to use the default (recommended).', 'social-feed' ),
 			)
 		);
 	}
@@ -431,6 +431,7 @@ class SF_Settings {
 			'load_assets_conditionally' => '1',
 			'instagram_app_id'         => '',
 			'instagram_app_secret'     => '',
+			'instagram_redirect_uri'   => '',
 		);
 	}
 
@@ -461,6 +462,8 @@ class SF_Settings {
 		$sanitized['load_assets_conditionally'] = isset( $input['load_assets_conditionally'] ) ? '1' : '0';
 		$sanitized['instagram_app_id']          = sanitize_text_field( $input['instagram_app_id'] ?? '' );
 		$sanitized['instagram_app_secret']      = sanitize_text_field( $input['instagram_app_secret'] ?? '' );
+		$raw_uri                                 = trim( (string) ( $input['instagram_redirect_uri'] ?? '' ) );
+		$sanitized['instagram_redirect_uri']    = ! empty( $raw_uri ) ? esc_url_raw( $raw_uri ) : '';
 
 		return $sanitized;
 	}
