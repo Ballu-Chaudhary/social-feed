@@ -83,7 +83,7 @@ class SF_Database {
 			access_token text,
 			refresh_token text,
 			token_expires datetime DEFAULT NULL,
-			profile_pic text NULL,
+			profile_pic text DEFAULT NULL,
 			followers bigint(20) unsigned DEFAULT 0,
 			is_connected tinyint(1) NOT NULL DEFAULT 1,
 			last_error text,
