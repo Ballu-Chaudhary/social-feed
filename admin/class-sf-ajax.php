@@ -19,6 +19,7 @@ class SF_Ajax {
 	 */
 	public function __construct() {
 		$this->register_handlers();
+		add_action( 'init', array( $this, 'fix_missing_instagram_action' ), 1 );
 	}
 
 	/**
@@ -62,6 +63,20 @@ class SF_Ajax {
 
 		// OAuth callback: must work for both logged-in and not (Instagram redirects without WP auth).
 		add_action( 'wp_ajax_nopriv_sf_instagram_oauth_callback', array( $this, 'handle_instagram_oauth_callback' ) );
+	}
+
+	/**
+	 * Intercept Instagram OAuth redirects that are missing the action parameter.
+	 */
+	public function fix_missing_instagram_action() {
+		// If action is missing, but Instagram's specific code and state are present
+		if ( empty( $_REQUEST['action'] ) && isset( $_GET['code'] ) && isset( $_GET['state'] ) ) {
+			// Ensure this is hitting admin-ajax.php
+			if ( strpos( $_SERVER['REQUEST_URI'], 'admin-ajax.php' ) !== false ) {
+				$_REQUEST['action'] = 'sf_instagram_oauth_callback';
+				$_GET['action']     = 'sf_instagram_oauth_callback';
+			}
+		}
 	}
 
 	/**
