@@ -20,7 +20,7 @@ class SF_Instagram {
 	 * OAuth redirect URI.
 	 *
 	 * Uses the value from plugin settings (OAuth Redirect URI) if set,
-	 * otherwise falls back to a stable admin-ajax endpoint so the URL
+	 * otherwise falls back to a stable REST endpoint so the URL
 	 * is not affected by admin_url() variations.
 	 *
 	 * @return string
@@ -32,8 +32,8 @@ class SF_Instagram {
 			return esc_url_raw( $redirect_uri );
 		}
 
-		// Default: dedicated AJAX callback endpoint.
-		return admin_url( 'admin-ajax.php?action=sf_instagram_oauth_callback' );
+		// Default: dedicated REST callback endpoint.
+		return rest_url( 'social-feed/v1/instagram-callback' );
 	}
 
 	/**

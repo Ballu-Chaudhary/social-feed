@@ -19,7 +19,6 @@ class SF_Ajax {
 	 */
 	public function __construct() {
 		$this->register_handlers();
-		add_action( 'init', array( $this, 'fix_missing_instagram_action' ), 1 );
 	}
 
 	/**
@@ -66,38 +65,32 @@ class SF_Ajax {
 	}
 
 	/**
-	 * Intercept Instagram OAuth redirects that are missing the action parameter.
-	 */
-	public function fix_missing_instagram_action() {
-		// If action is missing, but Instagram's specific code and state are present
-		if ( empty( $_REQUEST['action'] ) && isset( $_GET['code'] ) && isset( $_GET['state'] ) ) {
-			// Ensure this is hitting admin-ajax.php
-			if ( strpos( $_SERVER['REQUEST_URI'], 'admin-ajax.php' ) !== false ) {
-				$_REQUEST['action'] = 'sf_instagram_oauth_callback';
-				$_GET['action']     = 'sf_instagram_oauth_callback';
-			}
-		}
-	}
-
-	/**
-	 * Handle Instagram OAuth callback via admin-ajax.php.
+	 * Handle Instagram OAuth callback.
 	 *
 	 * This acts as a relay endpoint (redirect_uri) for Instagram. It performs
 	 * the server-side token exchange, saves/updates the account, then redirects
 	 * the admin back to the Create Feed screen with success or error notice.
 	 *
 	 * Expected redirect URI in Meta app:
-	 *   https://yoursite.com/wp-admin/admin-ajax.php?action=sf_instagram_oauth_callback
+	 *   https://yoursite.com/wp-json/social-feed/v1/instagram-callback
 	 */
-	public function handle_instagram_oauth_callback() {
+	public function handle_instagram_oauth_callback( $request = null ) {
 		// No nonce here: this endpoint is called by Instagram, not via our JS.
 		$page        = 'social-feed-create';
 		$redirect_to = admin_url( 'admin.php?page=' . $page );
 
-		$code       = isset( $_GET['code'] ) ? trim( (string) wp_unslash( $_GET['code'] ) ) : '';
-		$error      = isset( $_GET['error'] ) ? trim( (string) wp_unslash( $_GET['error'] ) ) : '';
-		$error_msg  = isset( $_GET['error_description'] ) ? trim( (string) wp_unslash( $_GET['error_description'] ) ) : '';
-		$state = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
+		$query_params = array();
+		if ( is_object( $request ) && method_exists( $request, 'get_query_params' ) ) {
+			$query_params = $request->get_query_params();
+		} else {
+			// Backwards-compatible: admin-ajax passes values via $_GET.
+			$query_params = $_GET;
+		}
+
+		$code      = isset( $query_params['code'] ) ? trim( (string) wp_unslash( $query_params['code'] ) ) : '';
+		$error     = isset( $query_params['error'] ) ? trim( (string) wp_unslash( $query_params['error'] ) ) : '';
+		$error_msg = isset( $query_params['error_description'] ) ? trim( (string) wp_unslash( $query_params['error_description'] ) ) : '';
+		$state     = isset( $query_params['state'] ) ? sanitize_text_field( wp_unslash( $query_params['state'] ) ) : '';
 
 		// CSRF protection: validate one-time OAuth state token.
 		$saved_state = get_transient( 'sf_instagram_oauth_state' );

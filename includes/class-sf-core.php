@@ -52,6 +52,24 @@ class SF_Core {
 	 */
 	private function init_hooks() {
 		add_filter( 'sf_feed_items', array( $this, 'filter_feed_items' ), 10, 3 );
+
+		add_action(
+			'rest_api_init',
+			function () {
+				register_rest_route(
+					'social-feed/v1',
+					'/instagram-callback',
+					array(
+						'methods'  => 'GET',
+						'callback' => function ( $request ) {
+							$ajax = new SF_Ajax();
+							return $ajax->handle_instagram_oauth_callback( $request );
+						},
+						'permission_callback' => '__return_true', // Validation happens inside via state token.
+					)
+				);
+			}
+		);
 	}
 
 	/**

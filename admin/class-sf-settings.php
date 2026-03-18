@@ -170,8 +170,8 @@ class SF_Settings {
 			'sf_instagram_api_section',
 			array(
 				'id'          => 'instagram_redirect_uri',
-				'placeholder' => admin_url( 'admin-ajax.php?action=sf_instagram_oauth_callback' ),
-				'description' => __( 'Exact URL used for OAuth. Add this to your Instagram app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard (e.g. https://yoursite.com/wp-admin/admin-ajax.php?action=sf_instagram_oauth_callback). Leave empty to use the default.', 'social-feed' ),
+				'placeholder' => esc_url_raw( rest_url( 'social-feed/v1/instagram-callback' ) ),
+				'description' => __( 'Exact URL used for OAuth. Add this to your Instagram app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard (e.g. https://yoursite.com/wp-json/social-feed/v1/instagram-callback). Leave empty to use the default.', 'social-feed' ),
 			)
 		);
 	}
