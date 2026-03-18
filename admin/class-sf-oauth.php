@@ -56,8 +56,14 @@ class SF_OAuth {
 			$page = 'social-feed-create';
 		}
 
-		if ( ! empty( $state ) && 'social-feed-create' !== $state && $has_oauth_response ) {
-			return;
+		if ( $has_oauth_response ) {
+			$saved_state = get_transient( 'sf_instagram_oauth_state' );
+			delete_transient( 'sf_instagram_oauth_state' );
+
+			if ( empty( $state ) || $state !== $saved_state ) {
+				$this->redirect_with_error( __( 'Invalid or expired OAuth state. Please retry the connection from the WordPress admin.', 'social-feed' ) );
+				return;
+			}
 		}
 
 		$is_oauth_callback = 'social-feed-create' === $page && $has_oauth_response;
@@ -131,14 +137,6 @@ class SF_OAuth {
 			$result     = SF_Database::update_account( $existing['id'], $account_data );
 			$account_id = $existing['id'];
 		} else {
-			global $wpdb;
-
-			$accounts_table = SF_Database::get_table( 'accounts' );
-			$table_exists   = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $accounts_table ) );
-			if ( $accounts_table !== $table_exists ) {
-				SF_Database::create_tables();
-			}
-
 			$account_data['wp_user_id'] = get_current_user_id();
 			$account_id = SF_Database::create_account( $account_data );
 			$result     = $account_id ? true : false;

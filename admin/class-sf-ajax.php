@@ -85,12 +85,15 @@ class SF_Ajax {
 		$state = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
 
 		// CSRF protection: validate one-time OAuth state token.
-		if ( empty( $state ) ) {
+		$saved_state = get_transient( 'sf_instagram_oauth_state' );
+		delete_transient( 'sf_instagram_oauth_state' );
+
+		if ( empty( $state ) || $state !== $saved_state ) {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'sf_error' => '1',
-						'sf_msg'   => rawurlencode( __( 'Missing OAuth state. Please retry the connection from the WordPress admin.', 'social-feed' ) ),
+						'sf_msg'   => rawurlencode( __( 'Invalid or expired OAuth state. Please retry the connection from the WordPress admin.', 'social-feed' ) ),
 					),
 					$redirect_to
 				)

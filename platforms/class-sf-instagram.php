@@ -57,7 +57,20 @@ class SF_Instagram {
 		}
 
 		$scope = 'instagram_business_basic';
-		$state = self::issue_oauth_state();
+		$state = wp_generate_password( 24, false );
+
+		// One-time OAuth CSRF token (validated in the AJAX callback).
+		set_transient( 'sf_instagram_oauth_state', $state, HOUR_IN_SECONDS );
+
+		// Store the calling WP user id for account association.
+		set_transient(
+			'sf_ig_oauth_state_' . $state,
+			array(
+				'issued_at' => time(),
+				'user_id'   => get_current_user_id(),
+			),
+			15 * MINUTE_IN_SECONDS
+		);
 
 		$url = add_query_arg(
 			array(
