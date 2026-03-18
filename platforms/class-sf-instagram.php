@@ -75,6 +75,19 @@ class SF_Instagram {
 	}
 
 	/**
+	 * Get OAuth login URL for Instagram.
+	 *
+	 * Wrapper around get_login_url() so callers can use a semantically clear method name.
+	 * This also ensures a one-time transient state token is issued (handled inside get_login_url()).
+	 *
+	 * @param string $redirect_uri Optional redirect URI override.
+	 * @return string|WP_Error
+	 */
+	public static function get_oauth_url( $redirect_uri = '' ) {
+		return self::get_login_url( $redirect_uri );
+	}
+
+	/**
 	 * Issue a one-time OAuth state token and store it temporarily.
 	 *
 	 * @return string
