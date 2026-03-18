@@ -82,21 +82,40 @@ class SF_Ajax {
 		$code       = isset( $_GET['code'] ) ? trim( (string) wp_unslash( $_GET['code'] ) ) : '';
 		$error      = isset( $_GET['error'] ) ? trim( (string) wp_unslash( $_GET['error'] ) ) : '';
 		$error_msg  = isset( $_GET['error_description'] ) ? trim( (string) wp_unslash( $_GET['error_description'] ) ) : '';
-		$state      = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
+		$state = isset( $_GET['state'] ) ? sanitize_text_field( wp_unslash( $_GET['state'] ) ) : '';
 
-		// Optional: basic CSRF/state check.
-		if ( ! empty( $state ) && 'social-feed-create' !== $state ) {
+		// CSRF protection: validate one-time OAuth state token.
+		if ( empty( $state ) ) {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'sf_error' => '1',
-						'sf_msg'   => rawurlencode( __( 'Invalid OAuth state received.', 'social-feed' ) ),
+						'sf_msg'   => rawurlencode( __( 'Missing OAuth state. Please retry the connection from the WordPress admin.', 'social-feed' ) ),
 					),
 					$redirect_to
 				)
 			);
 			exit;
 		}
+
+		$state_key  = 'sf_ig_oauth_state_' . $state;
+		$state_data = get_transient( $state_key );
+		delete_transient( $state_key );
+
+		if ( empty( $state_data ) || ! is_array( $state_data ) ) {
+			wp_safe_redirect(
+				add_query_arg(
+					array(
+						'sf_error' => '1',
+						'sf_msg'   => rawurlencode( __( 'Invalid or expired OAuth state. Please retry the connection from the WordPress admin.', 'social-feed' ) ),
+					),
+					$redirect_to
+				)
+			);
+			exit;
+		}
+
+		$state_user_id = isset( $state_data['user_id'] ) ? absint( $state_data['user_id'] ) : 0;
 
 		if ( ! empty( $error ) ) {
 			wp_safe_redirect(
@@ -197,15 +216,7 @@ class SF_Ajax {
 			$result     = SF_Database::update_account( $existing['id'], $account_data );
 			$account_id = $existing['id'];
 		} else {
-			global $wpdb;
-
-			$accounts_table = SF_Database::get_table( 'accounts' );
-			$table_exists   = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $accounts_table ) );
-			if ( $accounts_table !== $table_exists ) {
-				SF_Database::create_tables();
-			}
-
-			$account_data['wp_user_id'] = get_current_user_id();
+			$account_data['wp_user_id'] = $state_user_id ? $state_user_id : get_current_user_id();
 			$account_id                 = SF_Database::create_account( $account_data );
 			$result                     = $account_id ? true : false;
 		}
@@ -300,9 +311,12 @@ class SF_Ajax {
 		}
 
 		$preview_error_message = null;
-		$items = $this->get_preview_items( $settings, $device );
+		$items                 = $this->get_preview_items( $settings, $device );
 		if ( is_wp_error( $items ) ) {
 			$preview_error_message = $items->get_error_message();
+			$items = array();
+		}
+		if ( ! is_array( $items ) ) {
 			$items = array();
 		}
 		$has_items = ! empty( $items );
@@ -815,13 +829,24 @@ class SF_Ajax {
 		$defaults = SF_Customizer::get_defaults();
 		$settings = wp_parse_args( $settings, $defaults );
 
-		$post_count = isset( $settings['post_count_desktop'] ) ? absint( $settings['post_count_desktop'] ) : absint( $settings['post_count'] );
+		// Keep post counts consistent across devices and main feed table.
+		$fallback_post_count = isset( $settings['post_count'] ) ? absint( $settings['post_count'] ) : 10;
+		$post_count_desktop  = isset( $settings['post_count_desktop'] ) ? absint( $settings['post_count_desktop'] ) : $fallback_post_count;
+		$post_count_tablet   = isset( $settings['post_count_tablet'] ) ? absint( $settings['post_count_tablet'] ) : $post_count_desktop;
+		$post_count_mobile   = isset( $settings['post_count_mobile'] ) ? absint( $settings['post_count_mobile'] ) : $post_count_desktop;
+
+		// Normalize back into settings so meta saves consistently.
+		$settings['post_count_desktop'] = $post_count_desktop;
+		$settings['post_count_tablet']  = $post_count_tablet;
+		$settings['post_count_mobile']  = $post_count_mobile;
+		$settings['post_count']         = $post_count_desktop;
+
 		$feed_data = array(
 			'name'       => ! empty( $settings['name'] ) ? $settings['name'] : __( 'Untitled Feed', 'social-feed' ),
 			'platform'   => $settings['platform'],
 			'account_id' => ! empty( $settings['account_id'] ) ? absint( $settings['account_id'] ) : null,
 			'feed_type'  => $settings['feed_type'],
-			'post_count' => $post_count,
+			'post_count' => $post_count_desktop,
 			'status'     => 'active',
 		);
 

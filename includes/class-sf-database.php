@@ -83,7 +83,7 @@ class SF_Database {
 			access_token text,
 			refresh_token text,
 			token_expires datetime DEFAULT NULL,
-			profile_pic text,
+			profile_pic text NULL,
 			followers bigint(20) unsigned DEFAULT 0,
 			is_connected tinyint(1) NOT NULL DEFAULT 1,
 			last_error text,
@@ -173,9 +173,6 @@ class SF_Database {
 		foreach ( $sql as $query ) {
 			dbDelta( $query );
 		}
-
-		$accounts_table = self::get_table( 'accounts' );
-		$wpdb->query( "ALTER TABLE {$accounts_table} MODIFY profile_pic TEXT NULL" );
 
 		update_option( 'sf_db_version', self::DB_VERSION );
 	}

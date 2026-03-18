@@ -57,7 +57,7 @@ class SF_Instagram {
 		}
 
 		$scope = 'instagram_business_basic';
-		$state = 'social-feed-create';
+		$state = self::issue_oauth_state();
 
 		$url = add_query_arg(
 			array(
@@ -72,6 +72,26 @@ class SF_Instagram {
 		);
 
 		return $url;
+	}
+
+	/**
+	 * Issue a one-time OAuth state token and store it temporarily.
+	 *
+	 * @return string
+	 */
+	private static function issue_oauth_state() {
+		$token = wp_generate_password( 24, false, false );
+
+		set_transient(
+			'sf_ig_oauth_state_' . $token,
+			array(
+				'issued_at' => time(),
+				'user_id'   => get_current_user_id(),
+			),
+			15 * MINUTE_IN_SECONDS
+		);
+
+		return $token;
 	}
 
 	/**

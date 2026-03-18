@@ -56,9 +56,6 @@ spl_autoload_register( 'sf_autoloader' );
  * Plugin activation.
  */
 function sf_activate() {
-	require_once SF_PLUGIN_PATH . 'includes/class-sf-database.php';
-	require_once SF_PLUGIN_PATH . 'includes/class-sf-cron.php';
-
 	SF_Database::create_tables();
 	SF_Cron::schedule_events();
 
@@ -71,8 +68,6 @@ register_activation_hook( __FILE__, 'sf_activate' );
  * Plugin deactivation.
  */
 function sf_deactivate() {
-	require_once SF_PLUGIN_PATH . 'includes/class-sf-cron.php';
-
 	SF_Cron::clear_events();
 
 	flush_rewrite_rules();
