@@ -89,39 +89,26 @@ class SF_Ajax {
 		$error_msg = trim( (string) wp_unslash( $error_msg ) );
 		$state     = sanitize_text_field( wp_unslash( $state ) );
 
-		// CSRF protection: validate one-time OAuth state token.
-		$saved_state = get_transient( 'sf_instagram_oauth_state' );
-		delete_transient( 'sf_instagram_oauth_state' );
-
-		if ( empty( $state ) || $state !== $saved_state ) {
-			wp_safe_redirect(
-				add_query_arg(
-					array(
-						'sf_error' => '1',
-						'sf_msg'   => rawurlencode( __( 'Invalid or expired OAuth state. Please retry the connection from the WordPress admin.', 'social-feed' ) ),
-					),
-					$redirect_to
-				)
-			);
-			exit;
-		}
-
+		// CSRF protection: validate the unique one-time OAuth state token.
 		$state_key  = 'sf_ig_oauth_state_' . $state;
 		$state_data = get_transient( $state_key );
-		delete_transient( $state_key );
 
-		if ( empty( $state_data ) || ! is_array( $state_data ) ) {
+		if ( empty( $state ) || empty( $state_data ) || ! is_array( $state_data ) ) {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'sf_error' => '1',
-						'sf_msg'   => rawurlencode( __( 'Invalid or expired OAuth state. Please retry the connection from the WordPress admin.', 'social-feed' ) ),
+						'sf_msg'   => rawurlencode( __( 'Invalid or expired OAuth state. Please retry the connection.', 'social-feed' ) ),
 					),
 					$redirect_to
 				)
 			);
 			exit;
 		}
+
+		// Token is valid, delete it so it cannot be reused (Replay Attack Prevention).
+		delete_transient( $state_key );
+		delete_transient( 'sf_instagram_oauth_state' ); // Clean up the old unused global transient just in case.
 
 		$state_user_id = isset( $state_data['user_id'] ) ? absint( $state_data['user_id'] ) : 0;
 
