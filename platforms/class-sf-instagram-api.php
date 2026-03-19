@@ -99,8 +99,6 @@ class SF_Instagram_API {
 			'thumbnail_url',
 			'permalink',
 			'timestamp',
-			'like_count',
-			'comments_count',
 		);
 
 		$params = array(
@@ -187,8 +185,6 @@ class SF_Instagram_API {
 			'media_url',
 			'permalink',
 			'timestamp',
-			'like_count',
-			'comments_count',
 		);
 
 		$media_url = add_query_arg(
