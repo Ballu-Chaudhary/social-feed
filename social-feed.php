@@ -116,3 +116,67 @@ function sf_plugin_action_links( $links ) {
 }
 
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'sf_plugin_action_links' );
+
+// --- TEMPORARY INSTAGRAM API DEBUGGER ---
+add_action(
+	'admin_notices',
+	function () {
+		// Only run if we pass ?sf_debug_api=1 in the URL.
+		if ( ! isset( $_GET['sf_debug_api'] ) || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		global $wpdb;
+
+		// Guessing the accounts table name based on standard prefixing.
+		$table_name     = $wpdb->prefix . 'sf_accounts';
+		$table_name_sql = esc_sql( $table_name );
+
+		// Check if table exists.
+		$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
+		if ( $table_exists !== $table_name ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Debug: Accounts table not found.', 'social-feed' ) . '</p></div>';
+			return;
+		}
+
+		// Get the first connected Instagram account.
+		$account = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$table_name_sql} WHERE platform = %s LIMIT 1",
+				'instagram'
+			)
+		);
+
+		echo '<div class="notice notice-warning" style="background: #fff; padding: 20px; border-left: 4px solid #ffb900;">';
+		echo '<h3 style="margin-top:0;">Instagram API Debug Result</h3>';
+
+		if ( ! $account ) {
+			echo '<p>No connected Instagram account found in the database.</p>';
+		} else {
+			if ( ! class_exists( 'SF_Instagram_API' ) ) {
+				require_once plugin_dir_path( __FILE__ ) . 'platforms/class-sf-instagram-api.php';
+			}
+
+			$access_token_encrypted = isset( $account->access_token ) ? (string) $account->access_token : '';
+			$access_token           = ! empty( $access_token_encrypted ) ? SF_Helpers::sf_decrypt( $access_token_encrypted ) : '';
+			$access_token           = false !== $access_token ? (string) $access_token : '';
+
+			$account_id = isset( $account->account_id_ext ) ? (string) $account->account_id_ext : '';
+
+			$api   = new SF_Instagram_API( $access_token, $account_id );
+			$media = $api->get_media( 3 ); // Try to fetch 3 posts.
+
+			if ( is_wp_error( $media ) ) {
+				echo '<p style="color:red;"><strong>API ERROR:</strong><br>';
+				echo esc_html( $media->get_error_message() ) . '</p>';
+				echo '<p><strong>Error Code:</strong> ' . esc_html( (string) $media->get_error_code() ) . '</p>';
+			} else {
+				echo '<p style="color:green;"><strong>SUCCESS: API returned posts.</strong></p>';
+				echo '<pre style="background:#f0f0f0; padding:10px; overflow:auto; max-height:300px;">' . esc_html( print_r( $media, true ) ) . '</pre>';
+			}
+		}
+
+		echo '</div>';
+	}
+);
+// ----------------------------------------
