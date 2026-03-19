@@ -78,11 +78,11 @@ class SF_Ajax {
 		$page        = 'social-feed-create';
 		$redirect_to = admin_url( 'admin.php?page=' . $page );
 
-		// Handle both traditional $_GET and REST API $request object
-		$code      = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'code' ) : ( isset( $_GET['code'] ) ? $_GET['code'] : '' );
-		$error     = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'error' ) : ( isset( $_GET['error'] ) ? $_GET['error'] : '' );
-		$error_msg = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'error_description' ) : ( isset( $_GET['error_description'] ) ? $_GET['error_description'] : '' );
-		$state     = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'state' ) : ( isset( $_GET['state'] ) ? $_GET['state'] : '' );
+		// Safely extract parameters whether it's a REST request or a direct GET
+		$code      = ( $request instanceof WP_REST_Request ) ? $request->get_param( 'code' ) : ( isset( $_GET['code'] ) ? $_GET['code'] : '' );
+		$error     = ( $request instanceof WP_REST_Request ) ? $request->get_param( 'error' ) : ( isset( $_GET['error'] ) ? $_GET['error'] : '' );
+		$error_msg = ( $request instanceof WP_REST_Request ) ? $request->get_param( 'error_description' ) : ( isset( $_GET['error_description'] ) ? $_GET['error_description'] : '' );
+		$state     = ( $request instanceof WP_REST_Request ) ? $request->get_param( 'state' ) : ( isset( $_GET['state'] ) ? $_GET['state'] : '' );
 
 		$code      = trim( (string) wp_unslash( $code ) );
 		$error     = trim( (string) wp_unslash( $error ) );
