@@ -44,7 +44,7 @@ class SF_Instagram_API {
 	 * Constructor.
 	 *
 	 * @param string $access_token Instagram access token.
-	 * @param string $user_id      Instagram user ID (account_id_ext). Required for get_media().
+	 * @param string $user_id      Optional. Instagram user ID (account_id_ext). get_media() uses /me.
 	 */
 	public function __construct( $access_token, $user_id = '' ) {
 		$this->access_token = $access_token;
@@ -89,13 +89,6 @@ class SF_Instagram_API {
 	 * @return array|WP_Error Media data with pagination info or error.
 	 */
 	public function get_media( $limit = 20, $after_cursor = null ) {
-		if ( empty( $this->user_id ) ) {
-			return new WP_Error(
-				'missing_user_id',
-				__( 'Instagram user ID is required to fetch media. Pass account_id_ext when creating the API instance.', 'social-feed' )
-			);
-		}
-
 		$limit = min( absint( $limit ), 100 );
 
 		$fields = array(
@@ -120,7 +113,7 @@ class SF_Instagram_API {
 			$params['after'] = $after_cursor;
 		}
 
-		$url = add_query_arg( $params, self::GRAPH_URL . '/' . self::API_VERSION . '/' . $this->user_id . '/media' );
+		$url = add_query_arg( $params, self::GRAPH_URL . '/' . self::API_VERSION . '/me/media' );
 
 		$response = $this->make_api_request( $url );
 
