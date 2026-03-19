@@ -75,22 +75,19 @@ class SF_Ajax {
 	 *   https://yoursite.com/wp-json/social-feed/v1/instagram-callback
 	 */
 	public function handle_instagram_oauth_callback( $request = null ) {
-		// No nonce here: this endpoint is called by Instagram, not via our JS.
 		$page        = 'social-feed-create';
 		$redirect_to = admin_url( 'admin.php?page=' . $page );
 
-		$query_params = array();
-		if ( is_object( $request ) && method_exists( $request, 'get_query_params' ) ) {
-			$query_params = $request->get_query_params();
-		} else {
-			// Backwards-compatible: admin-ajax passes values via $_GET.
-			$query_params = $_GET;
-		}
+		// Handle both traditional $_GET and REST API $request object
+		$code      = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'code' ) : ( isset( $_GET['code'] ) ? $_GET['code'] : '' );
+		$error     = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'error' ) : ( isset( $_GET['error'] ) ? $_GET['error'] : '' );
+		$error_msg = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'error_description' ) : ( isset( $_GET['error_description'] ) ? $_GET['error_description'] : '' );
+		$state     = $request && is_a( $request, 'WP_REST_Request' ) ? $request->get_param( 'state' ) : ( isset( $_GET['state'] ) ? $_GET['state'] : '' );
 
-		$code      = isset( $query_params['code'] ) ? trim( (string) wp_unslash( $query_params['code'] ) ) : '';
-		$error     = isset( $query_params['error'] ) ? trim( (string) wp_unslash( $query_params['error'] ) ) : '';
-		$error_msg = isset( $query_params['error_description'] ) ? trim( (string) wp_unslash( $query_params['error_description'] ) ) : '';
-		$state     = isset( $query_params['state'] ) ? sanitize_text_field( wp_unslash( $query_params['state'] ) ) : '';
+		$code      = trim( (string) wp_unslash( $code ) );
+		$error     = trim( (string) wp_unslash( $error ) );
+		$error_msg = trim( (string) wp_unslash( $error_msg ) );
+		$state     = sanitize_text_field( wp_unslash( $state ) );
 
 		// CSRF protection: validate one-time OAuth state token.
 		$saved_state = get_transient( 'sf_instagram_oauth_state' );
