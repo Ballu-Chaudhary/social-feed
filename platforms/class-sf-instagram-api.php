@@ -93,7 +93,6 @@ class SF_Instagram_API {
 
 		$fields = array(
 			'id',
-			'caption',
 			'media_type',
 			'media_url',
 			'thumbnail_url',
@@ -180,7 +179,6 @@ class SF_Instagram_API {
 
 		$fields = array(
 			'id',
-			'caption',
 			'media_type',
 			'media_url',
 			'permalink',
