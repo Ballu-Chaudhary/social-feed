@@ -59,6 +59,7 @@ class SF_Instagram_API {
 	public function get_profile() {
 		$fields = array(
 			'id',
+			'user_id',
 			'username',
 			'profile_picture_url',
 			'followers_count',
@@ -78,7 +79,29 @@ class SF_Instagram_API {
 			return $response;
 		}
 
-		return $response;
+		$body = $response;
+
+		$actual_user_id = '';
+		if ( ! empty( $body['data'][0]['user_id'] ) ) {
+			$actual_user_id = $body['data'][0]['user_id'];
+		} elseif ( ! empty( $body['user_id'] ) ) {
+			$actual_user_id = $body['user_id'];
+		} elseif ( ! empty( $body['id'] ) ) {
+			$actual_user_id = $body['id'];
+		}
+
+		$username = ! empty( $body['data'][0]['username'] ) ? $body['data'][0]['username'] : ( ! empty( $body['username'] ) ? $body['username'] : '' );
+
+		if ( empty( $actual_user_id ) || empty( $username ) ) {
+			return new WP_Error( 'invalid_profile', __( 'Invalid profile response from Instagram.', 'social-feed' ) );
+		}
+
+		return array(
+			'id'                  => $actual_user_id,
+			'username'            => $username,
+			'profile_picture_url' => isset( $body['profile_picture_url'] ) ? $body['profile_picture_url'] : '',
+			'followers_count'     => isset( $body['followers_count'] ) ? (int) $body['followers_count'] : 0,
+		);
 	}
 
 	/**
@@ -110,7 +133,7 @@ class SF_Instagram_API {
 			$params['after'] = $after_cursor;
 		}
 
-		$url = add_query_arg( $params, self::GRAPH_URL . '/' . self::API_VERSION . '/me/media' );
+		$url = add_query_arg( $params, self::GRAPH_URL . '/' . self::API_VERSION . '/' . $this->user_id . '/media' );
 
 		$response = $this->make_api_request( $url );
 
