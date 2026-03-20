@@ -169,14 +169,18 @@ class SF_Ajax {
 			exit;
 		}
 
-		$profile = SF_Instagram::get_user_profile( $token_data['access_token'] );
-		if ( is_wp_error( $profile ) ) {
-			SF_Helpers::sf_log_error( 'Instagram OAuth profile (AJAX): ' . $profile->get_error_message(), 'instagram' );
+		// --- THE SMASH BALLOON METHOD: Direct Raw Fetch ---
+		// 1. Fetch the profile directly bypassing the internal API class
+		$access_token   = $token_data['access_token'];
+		$profile_url    = 'https://graph.instagram.com/v25.0/me?fields=id,user_id,username,media_count,profile_picture_url&access_token=' . $access_token;
+		$profile_res    = wp_remote_get( $profile_url );
+
+		if ( is_wp_error( $profile_res ) ) {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'sf_error' => '1',
-						'sf_msg'   => rawurlencode( $profile->get_error_message() ),
+						'sf_msg'   => rawurlencode( __( 'Failed to fetch profile.', 'social-feed' ) ),
 					),
 					$redirect_to
 				)
@@ -184,11 +188,43 @@ class SF_Ajax {
 			exit;
 		}
 
-		$account_id_ext = $token_data['user_id'] ?? $profile['id'];
-		$account_name   = $profile['username'] ?? $account_id_ext;
-		$access_token   = $token_data['access_token'];
+		$profile_body = json_decode( wp_remote_retrieve_body( $profile_res ), true );
+
+		// 2. Extract the REAL Professional ID (The Root Fix)
+		$real_account_id = '';
+		if ( ! empty( $profile_body['data'][0]['user_id'] ) ) {
+			$real_account_id = $profile_body['data'][0]['user_id'];
+		} elseif ( ! empty( $profile_body['user_id'] ) ) {
+			$real_account_id = $profile_body['user_id'];
+		} elseif ( ! empty( $profile_body['id'] ) ) {
+			$real_account_id = $profile_body['id'];
+		}
+
+		$username = ! empty( $profile_body['username'] ) ? $profile_body['username'] : __( 'Instagram User', 'social-feed' );
+		if ( ! empty( $profile_body['data'][0]['username'] ) ) {
+			$username = $profile_body['data'][0]['username'];
+		}
+
+		if ( empty( $real_account_id ) ) {
+			wp_safe_redirect(
+				add_query_arg(
+					array(
+						'sf_error' => '1',
+						'sf_msg'   => rawurlencode( __( 'Could not retrieve Professional IG_ID.', 'social-feed' ) ),
+					),
+					$redirect_to
+				)
+			);
+			exit;
+		}
+
+		$account_id_ext = $real_account_id;
+		$account_name   = $username;
 		$expires_in     = isset( $token_data['expires_in'] ) ? (int) $token_data['expires_in'] : 0;
-		$profile_pic    = ! empty( $profile['profile_picture_url'] ) ? esc_url_raw( $profile['profile_picture_url'] ) : '';
+		$profile_pic    = ! empty( $profile_body['profile_picture_url'] ) ? esc_url_raw( $profile_body['profile_picture_url'] ) : '';
+		if ( ! empty( $profile_body['data'][0]['profile_picture_url'] ) ) {
+			$profile_pic = esc_url_raw( $profile_body['data'][0]['profile_picture_url'] );
+		}
 
 		$encrypted_token = SF_Helpers::sf_encrypt( $access_token );
 		$token_expires   = $expires_in > 0 ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null;
