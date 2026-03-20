@@ -114,8 +114,12 @@ class SF_Feed_Manager {
 			return new WP_Error( 'class_missing', __( 'Instagram API class not found.', 'social-feed' ) );
 		}
 
-		$user_id = isset( $account['account_id_ext'] ) ? $account['account_id_ext'] : '';
-		$api     = new SF_Instagram_API( $access_token, $user_id );
+		// Use account_id_ext (17-digit Instagram Professional ID), NOT account['id'] (database row ID).
+		$user_id = isset( $account['account_id_ext'] ) ? (string) $account['account_id_ext'] : '';
+		if ( empty( $user_id ) ) {
+			return new WP_Error( 'missing_ig_id', __( 'Instagram account ID is missing. Please disconnect and reconnect the account.', 'social-feed' ) );
+		}
+		$api = new SF_Instagram_API( $access_token, $user_id );
 
 		$profile = $api->get_profile();
 		if ( is_wp_error( $profile ) ) {
@@ -345,9 +349,13 @@ class SF_Feed_Manager {
 			return new WP_Error( 'unknown_platform', __( 'This plugin supports Instagram feeds only.', 'social-feed' ) );
 		}
 
-		$user_id = isset( $account['account_id_ext'] ) ? $account['account_id_ext'] : '';
-		$api     = new SF_Instagram_API( $access_token, $user_id );
-		$media   = $api->get_media( $limit, $cursor );
+		// Use account_id_ext (17-digit Instagram Professional ID), NOT account['id'] (database row ID).
+		$user_id = isset( $account['account_id_ext'] ) ? (string) $account['account_id_ext'] : '';
+		if ( empty( $user_id ) ) {
+			return new WP_Error( 'missing_ig_id', __( 'Instagram account ID is missing. Please disconnect and reconnect the account.', 'social-feed' ) );
+		}
+		$api   = new SF_Instagram_API( $access_token, $user_id );
+		$media = $api->get_media( $limit, $cursor );
 
 		if ( is_wp_error( $media ) ) {
 			return $media;
