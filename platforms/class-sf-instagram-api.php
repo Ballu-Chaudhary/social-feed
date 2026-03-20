@@ -303,6 +303,14 @@ class SF_Instagram_API {
 		$status_code = wp_remote_retrieve_response_code( $response );
 		$body        = json_decode( wp_remote_retrieve_body( $response ), true );
 
+		// --- SILENT DEBUG LOGGER ---
+		$debug_log_path = __DIR__ . '/ig_debug.txt';
+		$debug_content  = "=== API REQUEST AT " . current_time( 'mysql' ) . " ===\n";
+		$debug_content .= "URL: " . $url . "\n";
+		$debug_content .= "RESPONSE:\n" . print_r( $body, true ) . "\n\n";
+		file_put_contents( $debug_log_path, $debug_content, FILE_APPEND );
+		// ---------------------------
+
 		if ( 401 === $status_code ) {
 			$error_msg = isset( $body['error']['message'] ) ? $body['error']['message'] : __( 'Access token has expired.', 'social-feed' );
 			SF_Helpers::sf_log_error( 'Instagram 401 Unauthorized: ' . $error_msg, 'instagram' );
