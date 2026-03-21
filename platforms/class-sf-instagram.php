@@ -17,11 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SF_Instagram {
 
 	/**
-	 * OAuth redirect URI.
+	 * Canonical OAuth redirect URI (no trailing slash).
 	 *
-	 * Uses the value from plugin settings (OAuth Redirect URI) if set,
-	 * otherwise builds from the current request to avoid HTTP/HTTPS or
-	 * rest_url() mismatches that cause Meta's "redirect_uri must be identical" error.
+	 * Uses plugin settings if set, otherwise rtrim(get_rest_url(...), '/') so both
+	 * get_login_url and get_access_token use an identical string for Meta API.
 	 *
 	 * @return string
 	 */
@@ -29,70 +28,10 @@ class SF_Instagram {
 		$settings     = get_option( 'sf_settings', array() );
 		$redirect_uri = isset( $settings['instagram_redirect_uri'] ) ? trim( (string) $settings['instagram_redirect_uri'] ) : '';
 		if ( ! empty( $redirect_uri ) ) {
-			return esc_url_raw( $redirect_uri );
+			return rtrim( esc_url_raw( $redirect_uri ), '/' );
 		}
 
-		return self::build_redirect_uri_from_request();
-	}
-
-	/**
-	 * Build redirect URI from the current HTTP request.
-	 *
-	 * Uses the actual scheme and host from the request so it matches exactly what
-	 * Meta/Instagram sees (fixes proxy/SSL/rest_url inconsistencies).
-	 *
-	 * @param string $path Optional. Path to use. If empty, uses request path when this is the callback, else REST path.
-	 * @return string
-	 */
-	public static function build_redirect_uri_from_request( $path = '' ) {
-		$scheme = 'https';
-		if ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off' ) {
-			$scheme = 'https';
-		} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https' ) {
-			$scheme = 'https';
-		} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_SSL'] ) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on' ) {
-			$scheme = 'https';
-		} elseif ( function_exists( 'is_ssl' ) && is_ssl() ) {
-			$scheme = 'https';
-		} else {
-			$scheme = 'http';
-		}
-
-		$host = '';
-		if ( ! empty( $_SERVER['HTTP_HOST'] ) ) {
-			$host = sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) );
-		}
-		if ( empty( $host ) ) {
-			$parsed = wp_parse_url( home_url() );
-			$host   = isset( $parsed['host'] ) ? $parsed['host'] : '';
-		}
-
-		if ( '' === $path && ! empty( $_SERVER['REQUEST_URI'] ) ) {
-			$req = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
-			if ( strpos( $req, 'social-feed' ) !== false || strpos( $req, 'rest_route' ) !== false ) {
-				// Extract path and query, but remove OAuth params (code, state, error, etc).
-				$parts = wp_parse_url( 'http://dummy' . $req );
-				$path  = isset( $parts['path'] ) ? $parts['path'] : '/';
-				if ( ! empty( $parts['query'] ) ) {
-					parse_str( $parts['query'], $qs );
-					$oauth_params = array( 'code', 'state', 'error', 'error_description', 'error_reason' );
-					foreach ( $oauth_params as $p ) {
-						unset( $qs[ $p ] );
-					}
-					$path .= '?' . http_build_query( $qs );
-				}
-			}
-		}
-		if ( '' === $path || ( strpos( $path, 'social-feed' ) === false && strpos( $path, 'rest_route' ) === false ) ) {
-			$rest  = rest_url( 'social-feed/v1/instagram-callback' );
-			$parsed = wp_parse_url( $rest );
-			$path   = isset( $parsed['path'] ) ? $parsed['path'] : '/wp-json/social-feed/v1/instagram-callback';
-			if ( ! empty( $parsed['query'] ) ) {
-				$path .= '?' . $parsed['query'];
-			}
-		}
-
-		return $scheme . '://' . $host . $path;
+		return rtrim( get_rest_url( null, 'social-feed/v1/instagram-callback' ), '/' );
 	}
 
 	/**
@@ -103,7 +42,7 @@ class SF_Instagram {
 	 * @return string|WP_Error Login URL or error if credentials missing.
 	 */
 	public static function get_login_url( $redirect_uri = '' ) {
-		$redirect_uri = ! empty( $redirect_uri ) ? (string) $redirect_uri : self::get_redirect_uri();
+		$redirect_uri = ! empty( $redirect_uri ) ? rtrim( (string) $redirect_uri, '/' ) : self::get_redirect_uri();
 
 		$settings = get_option( 'sf_settings', array() );
 		$app_id   = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
@@ -187,10 +126,10 @@ class SF_Instagram {
 	 * @return array|WP_Error Token data (access_token, expires_in) or error.
 	 */
 	public static function get_access_token( $code, $redirect_uri = '' ) {
-		$settings    = get_option( 'sf_settings', array() );
-		$app_id      = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
-		$app_secret  = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
-		$redirect_uri = ! empty( $redirect_uri ) ? (string) $redirect_uri : self::get_redirect_uri();
+		$settings     = get_option( 'sf_settings', array() );
+		$app_id       = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
+		$app_secret   = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
+		$redirect_uri = self::get_redirect_uri();
 
 		if ( empty( $app_id ) || empty( $app_secret ) ) {
 			return new WP_Error(
