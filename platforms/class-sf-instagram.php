@@ -78,6 +78,13 @@ class SF_Instagram {
 
 		$url = 'https://www.instagram.com/oauth/authorize?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 );
 
+		// --- TEMPORARY DEBUG LOG (remove after fixing) ---
+		$debug  = '=== AUTH URL DEBUG ' . gmdate( 'Y-m-d H:i:s' ) . " ===\n";
+		$debug .= 'redirect_uri sent to Instagram: ' . $redirect_uri . "\n";
+		$debug .= 'full auth URL: ' . $url . "\n\n";
+		file_put_contents( __DIR__ . '/oauth_debug.txt', $debug, FILE_APPEND );
+		// --- END DEBUG ---
+
 		return $url;
 	}
 
@@ -126,6 +133,9 @@ class SF_Instagram {
 		$app_secret   = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
 		$redirect_uri = 'https://one.mahihub.in/wp-json/social-feed/v1/instagram-callback';
 
+		// Strip trailing #_ that Instagram sometimes appends.
+		$code = preg_replace( '/#.*$/', '', trim( $code ) );
+
 		if ( empty( $app_id ) || empty( $app_secret ) ) {
 			return new WP_Error(
 				'missing_credentials',
@@ -133,26 +143,45 @@ class SF_Instagram {
 			);
 		}
 
+		$post_body = array(
+			'client_id'     => $app_id,
+			'client_secret' => $app_secret,
+			'grant_type'    => 'authorization_code',
+			'redirect_uri'  => $redirect_uri,
+			'code'          => $code,
+		);
+
+		// --- TEMPORARY DEBUG LOG (remove after fixing) ---
+		$debug  = '=== TOKEN EXCHANGE DEBUG ' . gmdate( 'Y-m-d H:i:s' ) . " ===\n";
+		$debug .= 'redirect_uri: ' . $redirect_uri . "\n";
+		$debug .= 'code (first 30 chars): ' . substr( $code, 0, 30 ) . "...\n";
+		$debug .= 'code length: ' . strlen( $code ) . "\n";
+		$debug .= 'app_id: ' . $app_id . "\n";
+		file_put_contents( __DIR__ . '/oauth_debug.txt', $debug, FILE_APPEND );
+		// --- END DEBUG ---
+
 		$response = wp_remote_post(
 			'https://api.instagram.com/oauth/access_token',
 			array(
 				'timeout' => 15,
-				'body'    => array(
-					'client_id'     => $app_id,
-					'client_secret' => $app_secret,
-					'grant_type'    => 'authorization_code',
-					'redirect_uri'  => $redirect_uri,
-					'code'          => $code,
-				),
+				'body'    => $post_body,
 			)
 		);
 
 		if ( is_wp_error( $response ) ) {
+			file_put_contents( __DIR__ . '/oauth_debug.txt', 'WP_Error: ' . $response->get_error_message() . "\n\n", FILE_APPEND );
 			return $response;
 		}
 
-		$status = wp_remote_retrieve_response_code( $response );
-		$body   = json_decode( wp_remote_retrieve_body( $response ), true );
+		$status   = wp_remote_retrieve_response_code( $response );
+		$raw_body = wp_remote_retrieve_body( $response );
+		$body     = json_decode( $raw_body, true );
+
+		// --- TEMPORARY DEBUG LOG ---
+		$debug2  = 'HTTP status: ' . $status . "\n";
+		$debug2 .= 'Response body: ' . $raw_body . "\n\n";
+		file_put_contents( __DIR__ . '/oauth_debug.txt', $debug2, FILE_APPEND );
+		// --- END DEBUG ---
 
 		if ( 200 !== $status ) {
 			$message = self::extract_instagram_error_message( $body, __( 'Failed to exchange code for token.', 'social-feed' ) );
