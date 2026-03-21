@@ -264,6 +264,14 @@ class SF_Ajax {
 			'instagram'
 		);
 
+		// Clear cache for all feeds using this account so they refetch with the correct account_id_ext.
+		$all_feeds = SF_Database::get_all_feeds( array( 'limit' => 500 ) );
+		foreach ( $all_feeds as $f ) {
+			if ( ! empty( $f['account_id'] ) && (int) $f['account_id'] === (int) $row_id ) {
+				SF_Cache::delete( $f['id'] );
+			}
+		}
+
 		// Redirect with sf_connected, account_id (row ID for admin UI), and connected_ig_id (real 17-digit ID)
 		wp_safe_redirect(
 			add_query_arg(
