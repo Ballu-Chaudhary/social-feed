@@ -165,15 +165,37 @@ class SF_Settings {
 		add_settings_field(
 			'instagram_redirect_uri',
 			__( 'OAuth Redirect URI', 'social-feed' ),
-			array( __CLASS__, 'render_text_field' ),
+			array( __CLASS__, 'render_redirect_uri_field' ),
 			'sf_settings_general',
 			'sf_instagram_api_section',
 			array(
 				'id'          => 'instagram_redirect_uri',
-				'placeholder' => esc_url_raw( rest_url( 'social-feed/v1/instagram-callback' ) ),
-				'description' => __( 'Exact URL used for OAuth. Add this to your Instagram app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard (e.g. https://yoursite.com/wp-json/social-feed/v1/instagram-callback). Leave empty to use the default.', 'social-feed' ),
+				'description' => __( 'Add the URL below to your app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard. Leave empty to use the auto-detected default.', 'social-feed' ),
 			)
 		);
+	}
+
+	/**
+	 * Render OAuth Redirect URI field with current effective URL.
+	 *
+	 * @param array $args Field arguments.
+	 */
+	public static function render_redirect_uri_field( $args ) {
+		$settings = get_option( self::OPTION_NAME, self::get_defaults() );
+		$value    = $settings[ $args['id'] ] ?? '';
+		$current  = class_exists( 'SF_Instagram' ) ? SF_Instagram::get_redirect_uri() : '';
+		?>
+		<input type="text"
+			name="<?php echo esc_attr( self::OPTION_NAME . '[' . $args['id'] . ']' ); ?>"
+			value="<?php echo esc_attr( $value ); ?>"
+			placeholder="<?php echo esc_attr( $current ); ?>"
+			class="regular-text large-text">
+		<p class="description"><strong><?php esc_html_e( 'Copy this exact URL to Meta:', 'social-feed' ); ?></strong><br>
+		<code style="word-break:break-all;"><?php echo esc_html( $current ); ?></code></p>
+		<?php if ( ! empty( $args['description'] ) ) : ?>
+			<p class="description"><?php echo esc_html( $args['description'] ); ?></p>
+		<?php endif; ?>
+		<?php
 	}
 
 	/**

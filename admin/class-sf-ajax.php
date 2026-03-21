@@ -123,8 +123,18 @@ class SF_Ajax {
 
 		$state_user_id = isset( $state_data['user_id'] ) ? absint( $state_data['user_id'] ) : 0;
 
-		// Use the exact redirect_uri from the OAuth request to avoid Meta's "redirect_uri must be identical" error.
-		$redirect_uri = ! empty( $state_data['redirect_uri'] ) ? $state_data['redirect_uri'] : ( class_exists( 'SF_Instagram' ) ? SF_Instagram::get_redirect_uri() : '' );
+		// Use the EXACT URL the user landed on (from this request) for token exchange.
+		// This fixes proxy/SSL/rest_url mismatches that cause Meta's redirect_uri error.
+		$redirect_uri = '';
+		if ( ! empty( $_SERVER['REQUEST_URI'] ) && ( strpos( $_SERVER['REQUEST_URI'], 'social-feed' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'rest_route' ) !== false ) ) {
+			$redirect_uri = SF_Instagram::build_redirect_uri_from_request( '' );
+		}
+		if ( empty( $redirect_uri ) && ! empty( $state_data['redirect_uri'] ) ) {
+			$redirect_uri = $state_data['redirect_uri'];
+		}
+		if ( empty( $redirect_uri ) && class_exists( 'SF_Instagram' ) ) {
+			$redirect_uri = SF_Instagram::get_redirect_uri();
+		}
 
 		if ( empty( $code ) ) {
 			wp_safe_redirect(
