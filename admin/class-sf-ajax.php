@@ -123,6 +123,9 @@ class SF_Ajax {
 
 		$state_user_id = isset( $state_data['user_id'] ) ? absint( $state_data['user_id'] ) : 0;
 
+		// Use the exact redirect_uri from the OAuth request to avoid Meta's "redirect_uri must be identical" error.
+		$redirect_uri = ! empty( $state_data['redirect_uri'] ) ? $state_data['redirect_uri'] : ( class_exists( 'SF_Instagram' ) ? SF_Instagram::get_redirect_uri() : '' );
+
 		if ( empty( $code ) ) {
 			wp_safe_redirect(
 				add_query_arg(
@@ -150,8 +153,7 @@ class SF_Ajax {
 			exit;
 		}
 
-		$redirect_uri     = SF_Instagram::get_redirect_uri();
-		$token_data       = SF_Instagram::get_access_token( $code, $redirect_uri );
+		$token_data = SF_Instagram::get_access_token( $code, $redirect_uri );
 
 		if ( is_wp_error( $token_data ) ) {
 			SF_Helpers::sf_log_error( 'Instagram OAuth (AJAX): ' . $token_data->get_error_message(), 'instagram' );

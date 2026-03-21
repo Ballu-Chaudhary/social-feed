@@ -62,12 +62,13 @@ class SF_Instagram {
 		// One-time OAuth CSRF token (validated in the AJAX callback).
 		set_transient( 'sf_instagram_oauth_state', $state, HOUR_IN_SECONDS );
 
-		// Store the calling WP user id for account association.
+		// Store the exact redirect_uri and user_id so the callback uses the identical URI for token exchange.
 		set_transient(
 			'sf_ig_oauth_state_' . $state,
 			array(
-				'issued_at' => time(),
-				'user_id'   => get_current_user_id(),
+				'issued_at'    => time(),
+				'user_id'      => get_current_user_id(),
+				'redirect_uri' => $redirect_uri,
 			),
 			15 * MINUTE_IN_SECONDS
 		);
