@@ -42,7 +42,7 @@ class SF_Instagram {
 	 * @return string|WP_Error Login URL or error if credentials missing.
 	 */
 	public static function get_login_url( $redirect_uri = '' ) {
-		$redirect_uri = ! empty( $redirect_uri ) ? rtrim( (string) $redirect_uri, '/' ) : self::get_redirect_uri();
+		$redirect_uri = 'https://one.mahihub.in/wp-json/social-feed/v1/instagram-callback';
 
 		$settings = get_option( 'sf_settings', array() );
 		$app_id   = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
@@ -129,7 +129,7 @@ class SF_Instagram {
 		$settings     = get_option( 'sf_settings', array() );
 		$app_id       = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
 		$app_secret   = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
-		$redirect_uri = self::get_redirect_uri();
+		$redirect_uri = 'https://one.mahihub.in/wp-json/social-feed/v1/instagram-callback';
 
 		if ( empty( $app_id ) || empty( $app_secret ) ) {
 			return new WP_Error(
