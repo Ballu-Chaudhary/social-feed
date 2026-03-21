@@ -57,10 +57,7 @@ class SF_Instagram {
 		$scope = 'instagram_business_basic';
 		$state = wp_generate_password( 24, false );
 
-		// One-time OAuth CSRF token (validated in the AJAX callback).
 		set_transient( 'sf_instagram_oauth_state', $state, HOUR_IN_SECONDS );
-
-		// Store the exact redirect_uri and user_id so the callback uses the identical URI for token exchange.
 		set_transient(
 			'sf_ig_oauth_state_' . $state,
 			array(
@@ -71,17 +68,15 @@ class SF_Instagram {
 			15 * MINUTE_IN_SECONDS
 		);
 
-		$url = add_query_arg(
-			array(
-				'force_reauth'   => 'true',
-				'client_id'      => $app_id,
-				'redirect_uri'   => $redirect_uri,
-				'response_type'  => 'code',
-				'scope'          => $scope,
-				'state'          => $state,
-			),
-			'https://www.instagram.com/oauth/authorize'
+		$params = array(
+			'client_id'     => $app_id,
+			'redirect_uri'  => $redirect_uri,
+			'response_type' => 'code',
+			'scope'         => $scope,
+			'state'         => $state,
 		);
+
+		$url = 'https://www.instagram.com/oauth/authorize?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 );
 
 		return $url;
 	}
