@@ -67,9 +67,9 @@ class SF_Ajax {
 	/**
 	 * Handle Instagram OAuth callback.
 	 *
-	 * This acts as a relay endpoint (redirect_uri) for Instagram. It performs
-	 * the server-side token exchange, saves/updates the account, then redirects
-	 * the admin back to the Create Feed screen with success or error notice.
+	 * Uses Smash Balloon–style direct fetch for the real Professional IG ID.
+	 * Redirects with sf_connected and account_id (DB row ID for admin UI) plus
+	 * connected_ig_id (real 17-digit ID) for reference.
 	 *
 	 * Expected redirect URI in Meta app:
 	 *   https://yoursite.com/wp-json/social-feed/v1/instagram-callback
@@ -78,7 +78,7 @@ class SF_Ajax {
 		$page        = 'social-feed-create';
 		$redirect_to = admin_url( 'admin.php?page=' . $page );
 
-		// Safely extract parameters whether it's a REST request or a direct GET
+		// Extract params safely
 		$code      = ( $request instanceof WP_REST_Request ) ? $request->get_param( 'code' ) : ( isset( $_GET['code'] ) ? $_GET['code'] : '' );
 		$error     = ( $request instanceof WP_REST_Request ) ? $request->get_param( 'error' ) : ( isset( $_GET['error'] ) ? $_GET['error'] : '' );
 		$error_msg = ( $request instanceof WP_REST_Request ) ? $request->get_param( 'error_description' ) : ( isset( $_GET['error_description'] ) ? $_GET['error_description'] : '' );
@@ -88,29 +88,6 @@ class SF_Ajax {
 		$error     = trim( (string) wp_unslash( $error ) );
 		$error_msg = trim( (string) wp_unslash( $error_msg ) );
 		$state     = sanitize_text_field( wp_unslash( $state ) );
-
-		// CSRF protection: validate the unique one-time OAuth state token.
-		$state_key  = 'sf_ig_oauth_state_' . $state;
-		$state_data = get_transient( $state_key );
-
-		if ( empty( $state ) || empty( $state_data ) || ! is_array( $state_data ) ) {
-			wp_safe_redirect(
-				add_query_arg(
-					array(
-						'sf_error' => '1',
-						'sf_msg'   => rawurlencode( __( 'Invalid or expired OAuth state. Please retry the connection.', 'social-feed' ) ),
-					),
-					$redirect_to
-				)
-			);
-			exit;
-		}
-
-		// Token is valid, delete it so it cannot be reused (Replay Attack Prevention).
-		delete_transient( $state_key );
-		delete_transient( 'sf_instagram_oauth_state' ); // Clean up the old unused global transient just in case.
-
-		$state_user_id = isset( $state_data['user_id'] ) ? absint( $state_data['user_id'] ) : 0;
 
 		if ( ! empty( $error ) ) {
 			wp_safe_redirect(
@@ -125,6 +102,27 @@ class SF_Ajax {
 			exit;
 		}
 
+		// Validate state
+		$state_key  = 'sf_ig_oauth_state_' . $state;
+		$state_data = get_transient( $state_key );
+
+		if ( empty( $state ) || empty( $state_data ) || ! is_array( $state_data ) ) {
+			wp_safe_redirect(
+				add_query_arg(
+					array(
+						'sf_error' => '1',
+						'sf_msg'   => rawurlencode( __( 'Invalid or expired OAuth state.', 'social-feed' ) ),
+					),
+					$redirect_to
+				)
+			);
+			exit;
+		}
+		delete_transient( $state_key );
+		delete_transient( 'sf_instagram_oauth_state' );
+
+		$state_user_id = isset( $state_data['user_id'] ) ? absint( $state_data['user_id'] ) : 0;
+
 		if ( empty( $code ) ) {
 			wp_safe_redirect(
 				add_query_arg(
@@ -138,6 +136,7 @@ class SF_Ajax {
 			exit;
 		}
 
+		// Get Access Token
 		if ( ! class_exists( 'SF_Instagram' ) ) {
 			wp_safe_redirect(
 				add_query_arg(
@@ -151,10 +150,9 @@ class SF_Ajax {
 			exit;
 		}
 
-		// Use the same redirect URI we told Instagram to use.
-		$redirect_uri = SF_Instagram::get_redirect_uri();
+		$redirect_uri     = SF_Instagram::get_redirect_uri();
+		$token_data       = SF_Instagram::get_access_token( $code, $redirect_uri );
 
-		$token_data = SF_Instagram::get_access_token( $code, $redirect_uri );
 		if ( is_wp_error( $token_data ) ) {
 			SF_Helpers::sf_log_error( 'Instagram OAuth (AJAX): ' . $token_data->get_error_message(), 'instagram' );
 			wp_safe_redirect(
@@ -169,18 +167,18 @@ class SF_Ajax {
 			exit;
 		}
 
-		// --- THE SMASH BALLOON METHOD: Direct Raw Fetch ---
-		// 1. Fetch the profile directly bypassing the internal API class
-		$access_token   = $token_data['access_token'];
-		$profile_url    = 'https://graph.instagram.com/v25.0/me?fields=id,user_id,username,media_count,profile_picture_url&access_token=' . $access_token;
-		$profile_res    = wp_remote_get( $profile_url );
+		$access_token = $token_data['access_token'];
+
+		// --- DIRECT FETCH FOR REAL IG_ID (Smash Balloon Style) ---
+		$profile_url = 'https://graph.instagram.com/v25.0/me?fields=id,user_id,username,profile_picture_url&access_token=' . $access_token;
+		$profile_res = wp_remote_get( $profile_url );
 
 		if ( is_wp_error( $profile_res ) ) {
 			wp_safe_redirect(
 				add_query_arg(
 					array(
 						'sf_error' => '1',
-						'sf_msg'   => rawurlencode( __( 'Failed to fetch profile.', 'social-feed' ) ),
+						'sf_msg'   => rawurlencode( __( 'Failed to fetch Instagram profile.', 'social-feed' ) ),
 					),
 					$redirect_to
 				)
@@ -188,22 +186,18 @@ class SF_Ajax {
 			exit;
 		}
 
-		$profile_body = json_decode( wp_remote_retrieve_body( $profile_res ), true );
+		$body = json_decode( wp_remote_retrieve_body( $profile_res ), true );
 
-		// 2. Extract the REAL Professional ID (The Root Fix)
 		$real_account_id = '';
-		if ( ! empty( $profile_body['data'][0]['user_id'] ) ) {
-			$real_account_id = $profile_body['data'][0]['user_id'];
-		} elseif ( ! empty( $profile_body['user_id'] ) ) {
-			$real_account_id = $profile_body['user_id'];
-		} elseif ( ! empty( $profile_body['id'] ) ) {
-			$real_account_id = $profile_body['id'];
+		if ( ! empty( $body['data'][0]['user_id'] ) ) {
+			$real_account_id = $body['data'][0]['user_id'];
+		} elseif ( ! empty( $body['user_id'] ) ) {
+			$real_account_id = $body['user_id'];
+		} elseif ( ! empty( $body['id'] ) ) {
+			$real_account_id = $body['id'];
 		}
 
-		$username = ! empty( $profile_body['username'] ) ? $profile_body['username'] : __( 'Instagram User', 'social-feed' );
-		if ( ! empty( $profile_body['data'][0]['username'] ) ) {
-			$username = $profile_body['data'][0]['username'];
-		}
+		$username = ! empty( $body['data'][0]['username'] ) ? $body['data'][0]['username'] : ( ! empty( $body['username'] ) ? $body['username'] : __( 'Instagram User', 'social-feed' ) );
 
 		if ( empty( $real_account_id ) ) {
 			wp_safe_redirect(
@@ -218,23 +212,21 @@ class SF_Ajax {
 			exit;
 		}
 
-		$account_id_ext = $real_account_id;
-		$account_name   = $username;
-		$expires_in     = isset( $token_data['expires_in'] ) ? (int) $token_data['expires_in'] : 0;
-		$profile_pic    = ! empty( $profile_body['profile_picture_url'] ) ? esc_url_raw( $profile_body['profile_picture_url'] ) : '';
-		if ( ! empty( $profile_body['data'][0]['profile_picture_url'] ) ) {
-			$profile_pic = esc_url_raw( $profile_body['data'][0]['profile_picture_url'] );
+		// --- SAVE TO DATABASE (using plugin schema: account_id_ext, account_name, is_connected) ---
+		$profile_pic    = ! empty( $body['profile_picture_url'] ) ? esc_url_raw( $body['profile_picture_url'] ) : '';
+		if ( ! empty( $body['data'][0]['profile_picture_url'] ) ) {
+			$profile_pic = esc_url_raw( $body['data'][0]['profile_picture_url'] );
 		}
-
+		$expires_in     = isset( $token_data['expires_in'] ) ? (int) $token_data['expires_in'] : 0;
+		$token_expires  = $expires_in > 0 ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null;
 		$encrypted_token = SF_Helpers::sf_encrypt( $access_token );
-		$token_expires   = $expires_in > 0 ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null;
 
-		$existing = SF_Database::get_account_by_external_id( 'instagram', $account_id_ext );
+		$existing = SF_Database::get_account_by_external_id( 'instagram', $real_account_id );
 
 		$account_data = array(
 			'platform'       => 'instagram',
-			'account_name'   => $account_name,
-			'account_id_ext' => $account_id_ext,
+			'account_name'   => $username,
+			'account_id_ext' => $real_account_id,
 			'access_token'   => $encrypted_token,
 			'refresh_token'  => null,
 			'token_expires'  => $token_expires,
@@ -245,14 +237,14 @@ class SF_Ajax {
 
 		if ( $existing ) {
 			$result     = SF_Database::update_account( $existing['id'], $account_data );
-			$account_id = $existing['id'];
+			$row_id     = $existing['id'];
 		} else {
 			$account_data['wp_user_id'] = $state_user_id ? $state_user_id : get_current_user_id();
-			$account_id                 = SF_Database::create_account( $account_data );
-			$result                     = $account_id ? true : false;
+			$row_id                     = SF_Database::create_account( $account_data );
+			$result                     = $row_id ? true : false;
 		}
 
-		if ( ! $result && ! $account_id ) {
+		if ( ! $result || ! $row_id ) {
 			global $wpdb;
 			$db_error = ( isset( $wpdb->last_error ) && '' !== $wpdb->last_error ) ? $wpdb->last_error : __( 'Unknown database error.', 'social-feed' );
 			wp_safe_redirect(
@@ -268,15 +260,17 @@ class SF_Ajax {
 		}
 
 		SF_Helpers::sf_log_success(
-			sprintf( 'Instagram account @%s connected successfully (AJAX).', $account_name ),
+			sprintf( 'Instagram account @%s connected successfully (AJAX).', $username ),
 			'instagram'
 		);
 
+		// Redirect with sf_connected, account_id (row ID for admin UI), and connected_ig_id (real 17-digit ID)
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'sf_connected' => '1',
-					'account_id'   => $account_id,
+					'sf_connected'    => '1',
+					'account_id'      => $row_id,
+					'connected_ig_id' => $real_account_id,
 				),
 				$redirect_to
 			)
