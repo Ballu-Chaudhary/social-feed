@@ -78,13 +78,6 @@ class SF_Instagram {
 
 		$url = 'https://www.instagram.com/oauth/authorize?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 );
 
-		// --- TEMPORARY DEBUG LOG (remove after fixing) ---
-		$debug  = '=== AUTH URL DEBUG ' . gmdate( 'Y-m-d H:i:s' ) . " ===\n";
-		$debug .= 'redirect_uri sent to Instagram: ' . $redirect_uri . "\n";
-		$debug .= 'full auth URL: ' . $url . "\n\n";
-		file_put_contents( __DIR__ . '/oauth_debug.txt', $debug, FILE_APPEND );
-		// --- END DEBUG ---
-
 		return $url;
 	}
 
@@ -151,15 +144,6 @@ class SF_Instagram {
 			'code'          => $code,
 		);
 
-		// --- TEMPORARY DEBUG LOG (remove after fixing) ---
-		$debug  = '=== TOKEN EXCHANGE DEBUG ' . gmdate( 'Y-m-d H:i:s' ) . " ===\n";
-		$debug .= 'redirect_uri: ' . $redirect_uri . "\n";
-		$debug .= 'code (first 30 chars): ' . substr( $code, 0, 30 ) . "...\n";
-		$debug .= 'code length: ' . strlen( $code ) . "\n";
-		$debug .= 'app_id: ' . $app_id . "\n";
-		file_put_contents( __DIR__ . '/oauth_debug.txt', $debug, FILE_APPEND );
-		// --- END DEBUG ---
-
 		$response = wp_remote_post(
 			'https://api.instagram.com/oauth/access_token',
 			array(
@@ -169,7 +153,10 @@ class SF_Instagram {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			file_put_contents( __DIR__ . '/oauth_debug.txt', 'WP_Error: ' . $response->get_error_message() . "\n\n", FILE_APPEND );
+			update_option( 'sf_oauth_debug_token', array(
+				'time'  => gmdate( 'Y-m-d H:i:s' ),
+				'error' => 'WP_Error: ' . $response->get_error_message(),
+			) );
 			return $response;
 		}
 
@@ -177,10 +164,16 @@ class SF_Instagram {
 		$raw_body = wp_remote_retrieve_body( $response );
 		$body     = json_decode( $raw_body, true );
 
-		// --- TEMPORARY DEBUG LOG ---
-		$debug2  = 'HTTP status: ' . $status . "\n";
-		$debug2 .= 'Response body: ' . $raw_body . "\n\n";
-		file_put_contents( __DIR__ . '/oauth_debug.txt', $debug2, FILE_APPEND );
+		// --- TEMPORARY DEBUG (remove after fixing) ---
+		update_option( 'sf_oauth_debug_token', array(
+			'time'         => gmdate( 'Y-m-d H:i:s' ),
+			'redirect_uri' => $redirect_uri,
+			'code_length'  => strlen( $code ),
+			'code_start'   => substr( $code, 0, 20 ),
+			'http_status'  => $status,
+			'response'     => $raw_body,
+			'app_id'       => $app_id,
+		) );
 		// --- END DEBUG ---
 
 		if ( 200 !== $status ) {
