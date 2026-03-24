@@ -71,99 +71,12 @@ class SF_OAuth {
 			return;
 		}
 
-		if ( ! current_user_can( 'manage_options' ) ) {
-			$this->redirect_with_error( __( 'Unauthorized access.', 'social-feed' ) );
-			return;
+		// Reuse the existing callback logic from SF_Ajax on admin page callback.
+		if ( ! class_exists( 'SF_Ajax' ) ) {
+			require_once SF_PLUGIN_PATH . 'admin/class-sf-ajax.php';
 		}
-
-		$code      = isset( $_GET['code'] ) ? trim( (string) wp_unslash( $_GET['code'] ) ) : '';
-		$error     = isset( $_GET['error'] ) ? trim( (string) wp_unslash( $_GET['error'] ) ) : '';
-		$error_msg = isset( $_GET['error_description'] ) ? trim( (string) wp_unslash( $_GET['error_description'] ) ) : '';
-
-		if ( ! empty( $error ) ) {
-			$this->redirect_with_error( ! empty( $error_msg ) ? $error_msg : $error );
-			return;
-		}
-
-		if ( empty( $code ) ) {
-			$this->redirect_with_error( __( 'Invalid callback parameters.', 'social-feed' ) );
-			return;
-		}
-
-		if ( ! class_exists( 'SF_Instagram' ) ) {
-			$this->redirect_with_error( __( 'Instagram OAuth is not available.', 'social-feed' ) );
-			return;
-		}
-
-		$redirect_uri = $this->consume_redirect_uri_for_exchange();
-		$token_data   = SF_Instagram::get_access_token( $code, $redirect_uri );
-		if ( is_wp_error( $token_data ) ) {
-			SF_Helpers::sf_log_error( 'Instagram OAuth: ' . $token_data->get_error_message(), 'instagram' );
-			$this->redirect_with_error( $token_data->get_error_message() );
-			return;
-		}
-
-		$profile = SF_Instagram::get_user_profile( $token_data['access_token'] );
-		if ( is_wp_error( $profile ) ) {
-			SF_Helpers::sf_log_error( 'Instagram OAuth profile: ' . $profile->get_error_message(), 'instagram' );
-			$this->redirect_with_error( $profile->get_error_message() );
-			return;
-		}
-
-		$account_id_ext = $token_data['user_id'] ?? $profile['id'];
-		$account_name   = $profile['username'] ?? $account_id_ext;
-		$access_token   = $token_data['access_token'];
-		$expires_in     = isset( $token_data['expires_in'] ) ? (int) $token_data['expires_in'] : 0;
-		$profile_pic    = ! empty( $profile['profile_picture_url'] ) ? esc_url_raw( $profile['profile_picture_url'] ) : '';
-
-		$encrypted_token = SF_Helpers::sf_encrypt( $access_token );
-		$token_expires   = $expires_in > 0 ? gmdate( 'Y-m-d H:i:s', time() + $expires_in ) : null;
-
-		$existing = SF_Database::get_account_by_external_id( 'instagram', $account_id_ext );
-
-		$account_data = array(
-			'platform'       => 'instagram',
-			'account_name'   => $account_name,
-			'account_id_ext' => $account_id_ext,
-			'access_token'   => $encrypted_token,
-			'refresh_token'  => null,
-			'token_expires'  => $token_expires,
-			'profile_pic'    => $profile_pic,
-			'is_connected'   => 1,
-			'last_error'     => null,
-		);
-
-		if ( $existing ) {
-			$result     = SF_Database::update_account( $existing['id'], $account_data );
-			$account_id = $existing['id'];
-		} else {
-			$account_data['wp_user_id'] = get_current_user_id();
-			$account_id = SF_Database::create_account( $account_data );
-			$result     = $account_id ? true : false;
-		}
-
-		if ( ! $result && ! $account_id ) {
-			global $wpdb;
-			$db_error = ( isset( $wpdb->last_error ) && '' !== $wpdb->last_error ) ? $wpdb->last_error : __( 'Unknown database error.', 'social-feed' );
-			$this->redirect_with_error( sprintf( __( 'Failed to save account to database: %s', 'social-feed' ), $db_error ) );
-			return;
-		}
-
-		SF_Helpers::sf_log_success(
-			sprintf( 'Instagram account @%s connected successfully.', $account_name ),
-			'instagram'
-		);
-
-		$redirect_url = add_query_arg(
-			array(
-				'page'         => 'social-feed-create',
-				'sf_connected' => '1',
-				'account_id'   => $account_id,
-			),
-			admin_url( 'admin.php' )
-		);
-
-		wp_safe_redirect( $redirect_url );
+		$ajax = new SF_Ajax();
+		$ajax->handle_instagram_oauth_callback();
 		exit;
 	}
 

@@ -18,19 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Register REST API Route for Instagram OAuth Callback
-add_action( 'rest_api_init', function () {
-	if ( ! class_exists( 'SF_Ajax' ) ) {
-		require_once plugin_dir_path( __FILE__ ) . 'admin/class-sf-ajax.php';
-	}
-	$sf_ajax = new SF_Ajax();
-
-	register_rest_route( 'social-feed/v1', '/instagram-callback', array(
-		'methods'             => 'GET',
-		'callback'            => array( $sf_ajax, 'handle_instagram_oauth_callback' ),
-		'permission_callback' => '__return_true',
-	) );
-} );
+// OAuth callback is now handled via admin_init on admin.php?page=social-feed-create.
 
 // Plugin constants.
 define( 'SF_VERSION', '1.0.0' );

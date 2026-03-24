@@ -31,7 +31,7 @@ class SF_Instagram {
 			return rtrim( esc_url_raw( $redirect_uri ), '/' );
 		}
 
-		return rtrim( get_rest_url( null, 'social-feed/v1/instagram-callback' ), '/' );
+		return admin_url( 'admin.php?page=social-feed-create' );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class SF_Instagram {
 	 * @return string|WP_Error Login URL or error if credentials missing.
 	 */
 	public static function get_login_url( $redirect_uri = '' ) {
-		$redirect_uri = 'https://one.mahihub.in/wp-json/social-feed/v1/instagram-callback';
+		$redirect_uri = admin_url( 'admin.php?page=social-feed-create' );
 
 		$settings = get_option( 'sf_settings', array() );
 		$app_id   = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
@@ -124,7 +124,7 @@ class SF_Instagram {
 		$settings     = get_option( 'sf_settings', array() );
 		$app_id       = isset( $settings['instagram_app_id'] ) ? trim( $settings['instagram_app_id'] ) : '';
 		$app_secret   = isset( $settings['instagram_app_secret'] ) ? trim( $settings['instagram_app_secret'] ) : '';
-		$redirect_uri = 'https://one.mahihub.in/wp-json/social-feed/v1/instagram-callback';
+		$redirect_uri = admin_url( 'admin.php?page=social-feed-create' );
 
 		// Strip trailing #_ that Instagram sometimes appends.
 		$code = preg_replace( '/#.*$/', '', trim( $code ) );
