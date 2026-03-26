@@ -31,6 +31,20 @@ class SF_Settings {
 	const OPTION_NAME = 'sf_settings';
 
 	/**
+	 * Stored OAuth token option key.
+	 *
+	 * @var string
+	 */
+	const MAHIHUB_TOKEN_OPTION = 'sf_mahihub_token';
+
+	/**
+	 * Stored OAuth expiry option key.
+	 *
+	 * @var string
+	 */
+	const MAHIHUB_EXPIRES_OPTION = 'sf_mahihub_expires';
+
+	/**
 	 * Settings tabs.
 	 *
 	 * @var array
@@ -42,6 +56,118 @@ class SF_Settings {
 	 */
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
+		add_action( 'admin_init', array( __CLASS__, 'handle_mahihub_oauth_redirect' ) );
+		add_action( 'admin_init', array( __CLASS__, 'handle_mahihub_unlink' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'render_admin_notices' ) );
+	}
+
+	/**
+	 * Detect if current request is this settings page.
+	 *
+	 * @return bool
+	 */
+	private static function is_settings_page_request() {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		return 'social-feed-settings' === $page;
+	}
+
+	/**
+	 * Handle OAuth redirect back to WP admin.
+	 *
+	 * Expects `mahihub_token` and optionally `mahihub_expires` in URL.
+	 */
+	public static function handle_mahihub_oauth_redirect() {
+		if ( ! self::is_settings_page_request() ) {
+			return;
+		}
+
+		if ( empty( $_GET['mahihub_token'] ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Unauthorized access.', 'social-feed' ) );
+		}
+
+		$token   = sanitize_text_field( wp_unslash( $_GET['mahihub_token'] ) );
+		$expires = isset( $_GET['mahihub_expires'] ) ? sanitize_text_field( wp_unslash( $_GET['mahihub_expires'] ) ) : '';
+
+		update_option( self::MAHIHUB_TOKEN_OPTION, $token, false );
+		update_option( self::MAHIHUB_EXPIRES_OPTION, $expires, false );
+
+		$redirect_url = add_query_arg(
+			array(
+				'page'      => 'social-feed-settings',
+				'connected' => 'true',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+		if ( $tab ) {
+			$redirect_url = add_query_arg( 'tab', $tab, $redirect_url );
+		}
+
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	/**
+	 * Handle unlink action: deletes stored token options.
+	 */
+	public static function handle_mahihub_unlink() {
+		if ( ! self::is_settings_page_request() ) {
+			return;
+		}
+
+		$unlink = isset( $_GET['sf_unlink_instagram'] ) ? sanitize_key( wp_unslash( $_GET['sf_unlink_instagram'] ) ) : '';
+		if ( '1' !== $unlink ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Unauthorized access.', 'social-feed' ) );
+		}
+
+		check_admin_referer( 'sf_unlink_instagram' );
+
+		delete_option( self::MAHIHUB_TOKEN_OPTION );
+		delete_option( self::MAHIHUB_EXPIRES_OPTION );
+
+		$redirect_url = add_query_arg(
+			array(
+				'page'      => 'social-feed-settings',
+				'unlinked'  => 'true',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+		if ( $tab ) {
+			$redirect_url = add_query_arg( 'tab', $tab, $redirect_url );
+		}
+
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	/**
+	 * Render admin notices for this settings page.
+	 */
+	public static function render_admin_notices() {
+		if ( ! self::is_settings_page_request() ) {
+			return;
+		}
+
+		$connected = isset( $_GET['connected'] ) ? sanitize_key( wp_unslash( $_GET['connected'] ) ) : '';
+		if ( 'true' === $connected ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Instagram Account Successfully Connected!', 'social-feed' ) . '</p></div>';
+		}
+
+		$unlinked = isset( $_GET['unlinked'] ) ? sanitize_key( wp_unslash( $_GET['unlinked'] ) ) : '';
+		if ( 'true' === $unlinked ) {
+			echo '<div class="notice notice-info is-dismissible"><p>' . esc_html__( 'Instagram account unlinked.', 'social-feed' ) . '</p></div>';
+		}
 	}
 
 	/**
@@ -200,6 +326,46 @@ class SF_Settings {
 	 * Render Instagram connect button (OAuth authorize link).
 	 */
 	public static function render_instagram_connect_button_field() {
+		$saved_token = (string) get_option( self::MAHIHUB_TOKEN_OPTION, '' );
+		$expires     = (string) get_option( self::MAHIHUB_EXPIRES_OPTION, '' );
+
+		if ( ! empty( $saved_token ) ) {
+			$unlink_url = wp_nonce_url(
+				add_query_arg(
+					array(
+						'page'               => 'social-feed-settings',
+						'sf_unlink_instagram' => '1',
+					),
+					admin_url( 'admin.php' )
+				),
+				'sf_unlink_instagram'
+			);
+			$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+			if ( $tab ) {
+				$unlink_url = add_query_arg( 'tab', $tab, $unlink_url );
+			}
+			?>
+			<div class="sf-instagram-connected">
+				<p style="margin: 0 0 10px;"><strong><?php esc_html_e( 'Connected', 'social-feed' ); ?></strong></p>
+				<?php if ( $expires ) : ?>
+					<p class="description" style="margin: 0 0 12px;">
+						<?php
+						printf(
+							/* translators: %s: expiry string */
+							esc_html__( 'Token expiry: %s', 'social-feed' ),
+							esc_html( $expires )
+						);
+						?>
+					</p>
+				<?php endif; ?>
+				<a class="button button-secondary" href="<?php echo esc_url( $unlink_url ); ?>">
+					<?php esc_html_e( 'Unlink Account', 'social-feed' ); ?>
+				</a>
+			</div>
+			<?php
+			return;
+		}
+
 		$base_url = menu_page_url( 'social-feed-settings', false );
 		$get      = isset( $_GET ) ? wp_unslash( $_GET ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( is_array( $get ) ) {
