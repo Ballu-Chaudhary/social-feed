@@ -130,48 +130,18 @@ class SF_Settings {
 		);
 
 		add_settings_section(
-			'sf_instagram_api_section',
-			__( 'Instagram API Credentials', 'social-feed' ),
-			array( __CLASS__, 'render_instagram_api_section_desc' ),
+			'sf_instagram_connect_section',
+			__( 'Instagram Connection', 'social-feed' ),
+			array( __CLASS__, 'render_instagram_connect_section_desc' ),
 			'sf_settings_general'
 		);
 
 		add_settings_field(
-			'instagram_app_id',
-			__( 'App ID', 'social-feed' ),
-			array( __CLASS__, 'render_text_field' ),
+			'instagram_connect_button',
+			__( 'Connect', 'social-feed' ),
+			array( __CLASS__, 'render_instagram_connect_button_field' ),
 			'sf_settings_general',
-			'sf_instagram_api_section',
-			array(
-				'id'          => 'instagram_app_id',
-				'placeholder' => __( 'Enter your Instagram App ID', 'social-feed' ),
-				'description' => __( 'Found in your Meta Developer App dashboard under Instagram > Basic Display.', 'social-feed' ),
-			)
-		);
-
-		add_settings_field(
-			'instagram_app_secret',
-			__( 'App Secret', 'social-feed' ),
-			array( __CLASS__, 'render_password_field' ),
-			'sf_settings_general',
-			'sf_instagram_api_section',
-			array(
-				'id'          => 'instagram_app_secret',
-				'placeholder' => __( 'Enter your Instagram App Secret', 'social-feed' ),
-				'description' => __( 'Keep this value private. Never share it publicly.', 'social-feed' ),
-			)
-		);
-
-		add_settings_field(
-			'instagram_redirect_uri',
-			__( 'OAuth Redirect URI', 'social-feed' ),
-			array( __CLASS__, 'render_redirect_uri_field' ),
-			'sf_settings_general',
-			'sf_instagram_api_section',
-			array(
-				'id'          => 'instagram_redirect_uri',
-				'description' => __( 'Add the URL below to your app\'s Valid OAuth Redirect URIs in the Meta Developer dashboard. Leave empty to use the auto-detected default.', 'social-feed' ),
-			)
+			'sf_instagram_connect_section'
 		);
 	}
 
@@ -218,16 +188,43 @@ class SF_Settings {
 	}
 
 	/**
-	 * Render Instagram API section description.
+	 * Render Instagram connection section description.
 	 */
-	public static function render_instagram_api_section_desc() {
+	public static function render_instagram_connect_section_desc() {
 		echo '<p class="description">';
-		printf(
-			/* translators: %s: URL to Meta developer docs */
-			esc_html__( 'Create an app at %s to get your credentials. Required for connecting Instagram accounts.', 'social-feed' ),
-			'<a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">developers.facebook.com/apps</a>'
-		);
+		esc_html_e( 'Connect your Instagram account to start showing your feed.', 'social-feed' );
 		echo '</p>';
+	}
+
+	/**
+	 * Render Instagram connect button (OAuth authorize link).
+	 */
+	public static function render_instagram_connect_button_field() {
+		$base_url = menu_page_url( 'social-feed-settings', false );
+		$get      = isset( $_GET ) ? wp_unslash( $_GET ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( is_array( $get ) ) {
+			unset( $get['page'] );
+		} else {
+			$get = array();
+		}
+
+		$page_url = add_query_arg( array_map( 'sanitize_text_field', $get ), $base_url );
+		if ( empty( $page_url ) ) {
+			$page_url = admin_url( 'admin.php?page=social-feed-settings' );
+		}
+		$state      = base64_encode( (string) $page_url );
+		$oauth_url  = 'https://api.instagram.com/oauth/authorize?client_id=2067986510434194&redirect_uri=https://mahihub.in/ig-api/oauth.php&scope=user_profile,user_media&response_type=code&state=' . rawurlencode( $state );
+		?>
+		<a class="sf-connect-instagram-btn sf-oauth-connect-btn" href="<?php echo esc_url( $oauth_url ); ?>">
+			<span class="sf-icon-instagram" aria-hidden="true">
+				<svg viewBox="0 0 24 24" width="18" height="18" focusable="false" aria-hidden="true">
+					<path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+				</svg>
+			</span>
+			<span><?php esc_html_e( 'Connect with Instagram', 'social-feed' ); ?></span>
+		</a>
+		<p class="description sf-connect-note"><?php esc_html_e( 'You will be redirected back to this settings page after authorization.', 'social-feed' ); ?></p>
+		<?php
 	}
 
 	/**
