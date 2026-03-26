@@ -92,6 +92,7 @@ class SF_Core {
 		}
 
 		new SF_Shortcode();
+		new SF_Mahihub_Feed_Shortcode();
 
 		if ( class_exists( 'SF_Blocks' ) ) {
 			new SF_Blocks();
