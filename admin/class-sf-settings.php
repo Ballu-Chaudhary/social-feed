@@ -380,7 +380,7 @@ class SF_Settings {
 		}
 		$state = base64_encode( (string) $page_url );
 
-		$oauth_url = 'https://api.instagram.com/oauth/authorize?client_id=2067986510434194&redirect_uri=https://one.mahihub.in/ig-api/oauth.php&scope=user_profile,user_media&response_type=code&state=' . rawurlencode( $state );
+		$oauth_url = 'https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=2067986510434194&redirect_uri=https://one.mahihub.in/ig-api/oauth.php&response_type=code&scope=instagram_business_basic,instagram_manage_comments,instagram_business_manage_messages&state=' . rawurlencode( $state );
 		?>
 		<a
 			class="sf-connect-instagram-btn sf-oauth-connect-btn"
